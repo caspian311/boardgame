@@ -7,6 +7,6 @@ import org.junit.Test;
 public class FailingTest {
 	@Test
 	public void test() {
-		assertEquals(2, 2);
+		assertEquals(1, 2);
 	}
 }
