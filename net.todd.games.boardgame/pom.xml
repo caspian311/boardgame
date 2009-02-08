@@ -9,6 +9,22 @@
 	<scm>
 		<connection>scm:svn:http://localhost/svn/myproject/games/boardgame/net.todd.games.boardgame</connection>
 	</scm>
+	<ciManagement>
+		<system>continuum</system>
+		<url>http://localhost:8888/continuum</url>
+		<notifiers>
+			<notifier>
+				<type>mail</type>
+				<sendOnError>true</sendOnError>
+				<sendOnFailure>true</sendOnFailure>
+				<sendOnSuccess>false</sendOnSuccess>
+				<sendOnWarning>false</sendOnWarning>
+				<configuration>
+					<address>matt.c.todd@gmail.com</address>
+				</configuration>
+			</notifier>
+		</notifiers>
+	</ciManagement>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
