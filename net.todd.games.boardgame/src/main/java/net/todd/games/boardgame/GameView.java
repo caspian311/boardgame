@@ -7,6 +7,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.media.j3d.AmbientLight;
+import javax.media.j3d.Background;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
@@ -67,9 +68,17 @@ public class GameView {
 
 		lightScene(bg);
 		createGameGrid(bg);
+		createBackground(bg);
 		bg.compile();
 
 		return bg;
+	}
+
+	private void createBackground(BranchGroup bg) {
+		Background background = new Background();
+		background.setApplicationBounds(bounds);
+		background.setColor(0.50f, 0.50f, 0.50f);
+		bg.addChild(background);
 	}
 
 	private void createGameGrid(BranchGroup bg) {
