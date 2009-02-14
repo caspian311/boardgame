@@ -22,6 +22,7 @@ public class CheckeredBoard {
 		for (int x = -35; x <= 35; x = x + 10) {
 			for (int z = -35; z <= 35; z = z + 10) {
 				log.debug("Drawing tile at: (" + x + ", 0, " + z + ")");
+
 				Tile tile = new Tile(x, 0, z, 10, getNextColor());
 				boardBG.addChild(tile.getShape());
 			}
