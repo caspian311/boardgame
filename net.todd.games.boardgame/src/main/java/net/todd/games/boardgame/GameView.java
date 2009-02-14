@@ -107,8 +107,7 @@ public class GameView {
 		TransformGroup tg = vp.getViewPlatformTransform();
 		Transform3D t3d = new Transform3D();
 		tg.getTransform(t3d);
-		t3d.lookAt(new Point3d(0, 50.0, -100.0), new Point3d(0.0, 0.0, 0.0),
-		        new Vector3d(0, 1, 0));
+		t3d.lookAt(new Point3d(0, 50.0, -100.0), new Point3d(0.0, 0.0, 0.0), new Vector3d(0, 1, 0));
 		t3d.invert();
 		tg.setTransform(t3d);
 	}

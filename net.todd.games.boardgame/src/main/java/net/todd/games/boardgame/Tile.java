@@ -42,17 +42,13 @@ public class Tile {
 
 	private Geometry getGeometry() {
 		Point3f[] points = new Point3f[4];
-		points[0] = new Point3f(new float[] { centerX - (size / 2), centerY,
-		        centerZ - (size / 2) });
-		points[1] = new Point3f(new float[] { centerX + (size / 2), centerY,
-		        centerZ - (size / 2) });
-		points[2] = new Point3f(new float[] { centerX + (size / 2), centerY,
-		        centerZ + (size / 2) });
-		points[3] = new Point3f(new float[] { centerX - (size / 2), centerY,
-		        centerZ + (size / 2) });
+		points[0] = new Point3f(new float[] { centerX - (size / 2), centerY, centerZ - (size / 2) });
+		points[1] = new Point3f(new float[] { centerX + (size / 2), centerY, centerZ - (size / 2) });
+		points[2] = new Point3f(new float[] { centerX + (size / 2), centerY, centerZ + (size / 2) });
+		points[3] = new Point3f(new float[] { centerX - (size / 2), centerY, centerZ + (size / 2) });
 
 		QuadArray quadArray = new QuadArray(points.length, GeometryArray.COORDINATES
-		        | GeometryArray.COLOR_3);
+				| GeometryArray.COLOR_3);
 		quadArray.setCoordinates(0, points);
 
 		for (int i = 0; i < points.length; i++) {
