@@ -14,10 +14,9 @@ public class ShadowShape extends Shape3D {
 		int vCount = geometry.getVertexCount();
 		QuadArray poly = new QuadArray(vCount, GeometryArray.COORDINATES | GeometryArray.COLOR_3);
 
-		int v;
 		Point3f vertex = new Point3f();
 		Point3f shadow = new Point3f();
-		for (v = 0; v < vCount; v++) {
+		for (int v = 0; v < vCount; v++) {
 			geometry.getCoordinate(v, vertex);
 			float shadowX = (vertex.x + (vertex.y - height) * lightDirection.x);
 			float shadowY = height + 0.0001f;

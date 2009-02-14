@@ -6,15 +6,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.media.j3d.AmbientLight;
-import javax.media.j3d.Appearance;
 import javax.media.j3d.Background;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
-import javax.media.j3d.GeometryArray;
-import javax.media.j3d.Material;
-import javax.media.j3d.Shape3D;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.View;
@@ -26,15 +22,11 @@ import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
-import com.sun.j3d.utils.geometry.Sphere;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
 public class GameView {
 	private static final Color3f white = new Color3f(1.0f, 1.0f, 1.0f);
-	private static final Color3f black = new Color3f(0.0f, 0.0f, 0.0f);
-	private static final Color3f specular = new Color3f(0.9f, 0.9f, 0.9f);
-	private static final Color3f blue = new Color3f(0.0f, 0.0f, 1.0f);
 
 	private final BoundingSphere bounds;
 	private Vector3f lightDirection;
@@ -86,50 +78,10 @@ public class GameView {
 	}
 
 	private void createUsersPiece(BranchGroup bg) {
-		BranchGroup userPieceBG = new BranchGroup();
-		BranchGroup userPieceShadowBG = new BranchGroup();
+		UserPiece piece = new UserPiece();
 
-		Transform3D piecePosition = new Transform3D();
-		piecePosition.set(getUserStartingPosition());
-		TransformGroup pieceTG = new TransformGroup(piecePosition);
-
-		Material matterial = new Material(black, blue, black, specular, 128.0f);
-		Appearance appearance = new Appearance();
-		appearance.setMaterial(matterial);
-
-		Sphere sphere = new Sphere(3f, 1, 50, appearance);
-		pieceTG.addChild(sphere);
-
-		userPieceBG.addChild(pieceTG);
-
-		Shape3D shadow = new ShadowShape((GeometryArray) sphere.getShape().getGeometry(),
-				lightDirection, 0.1f);
-
-		Transform3D shadowPosition = new Transform3D();
-		shadowPosition.set(getShadowPosition());
-		TransformGroup shadowTG = new TransformGroup(shadowPosition);
-
-		shadowTG.addChild(shadow);
-
-		userPieceShadowBG.addChild(shadowTG);
-
-		bg.addChild(userPieceBG);
-		bg.addChild(userPieceShadowBG);
-	}
-
-	private Vector3f getShadowPosition() {
-		float height = 0.001f;
-		Vector3f userStartingPosition = getUserStartingPosition();
-		float shadowX = (userStartingPosition.x + (userStartingPosition.y - height)
-				* lightDirection.x);
-		float shadowZ = userStartingPosition.z + (userStartingPosition.y - height)
-				* lightDirection.y;
-
-		return new Vector3f(shadowX, height, shadowZ);
-	}
-
-	private Vector3f getUserStartingPosition() {
-		return new Vector3f(5f, 5f, -35f);
+		bg.addChild(piece.getGraphNode());
+		bg.addChild(piece.getShadowNode(lightDirection));
 	}
 
 	private void createBackground(BranchGroup bg) {
