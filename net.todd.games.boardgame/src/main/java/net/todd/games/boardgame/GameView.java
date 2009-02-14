@@ -14,6 +14,7 @@ import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
+import javax.media.j3d.View;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.vecmath.Color3f;
@@ -31,6 +32,7 @@ public class GameView {
 
 	public GameView() {
 		GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+
 		Canvas3D canvas3D = new Canvas3D(config);
 		canvas3D.setFocusable(true);
 		canvas3D.requestFocus();
@@ -59,7 +61,7 @@ public class GameView {
 		mainPanel.add(canvas3D, BorderLayout.CENTER);
 		c.add(mainPanel, BorderLayout.CENTER);
 		frame.getContentPane().add(c);
-		frame.setSize(400, 400);
+		frame.setSize(1000, 800);
 		frame.setVisible(true);
 	}
 
@@ -99,10 +101,13 @@ public class GameView {
 
 	private void createCamera(SimpleUniverse su) {
 		ViewingPlatform vp = su.getViewingPlatform();
+		View view = su.getViewer().getView();
+		view.setBackClipDistance(100);
+
 		TransformGroup tg = vp.getViewPlatformTransform();
 		Transform3D t3d = new Transform3D();
 		tg.getTransform(t3d);
-		t3d.lookAt(new Point3d(-50.0, 10.0, -50.0), new Point3d(0.0, 0.0, 0.0),
+		t3d.lookAt(new Point3d(0, 50.0, -100.0), new Point3d(0.0, 0.0, 0.0),
 		        new Vector3d(0, 1, 0));
 		t3d.invert();
 		tg.setTransform(t3d);
