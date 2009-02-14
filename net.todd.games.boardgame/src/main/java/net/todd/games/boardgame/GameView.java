@@ -47,7 +47,7 @@ public class GameView {
 
 		createCamera(su);
 
-		JFrame frame = new JFrame();
+		JFrame frame = new JFrame("Board Game");
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
