@@ -24,7 +24,7 @@ public class CheckeredBoard {
 				log.debug("Drawing tile at: (" + x + ", 0, " + z + ")");
 
 				Tile tile = new Tile(x, 0, z, 10, getNextColor());
-				boardBG.addChild(tile.getShape());
+				boardBG.addChild(tile);
 			}
 			getNextColor();
 		}

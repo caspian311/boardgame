@@ -13,11 +13,10 @@ import javax.vecmath.Point3f;
 import com.sun.j3d.utils.geometry.GeometryInfo;
 import com.sun.j3d.utils.geometry.NormalGenerator;
 
-public class Tile {
+public class Tile extends Shape3D {
 	private static final Color3f black = new Color3f(0.0f, 0.0f, 0.0f);
 	private static final Color3f specular = new Color3f(0.9f, 0.9f, 0.9f);
 
-	private final Shape3D shape;
 	private final int size;
 	private final int centerX;
 	private final int centerY;
@@ -30,12 +29,12 @@ public class Tile {
 		this.centerZ = centerZ;
 		this.size = size;
 		this.tileColor = tileColor;
-		shape = new Shape3D();
-		shape.setGeometry(getGeometry());
-		shape.setAppearance(getAppearance());
+		setGeometry(getMyGeometry());
+		setAppearance(getMyAppearance());
+		setPickable(true);
 	}
 
-	private Appearance getAppearance() {
+	private Appearance getMyAppearance() {
 		Appearance appearance = new Appearance();
 
 		PolygonAttributes polygonAttributes = new PolygonAttributes();
@@ -47,7 +46,7 @@ public class Tile {
 		return appearance;
 	}
 
-	private Geometry getGeometry() {
+	private Geometry getMyGeometry() {
 		Point3f[] points = new Point3f[4];
 		points[0] = new Point3f(new float[] { centerX + (size / 2), centerY, centerZ + (size / 2) });
 		points[1] = new Point3f(new float[] { centerX + (size / 2), centerY, centerZ - (size / 2) });
@@ -64,7 +63,8 @@ public class Tile {
 		return quadArray;
 	}
 
-	public Shape3D getShape() {
-		return shape;
+	@Override
+	public String toString() {
+		return "Center: (" + centerX + ", " + centerY + ", " + centerZ + ")";
 	}
 }
