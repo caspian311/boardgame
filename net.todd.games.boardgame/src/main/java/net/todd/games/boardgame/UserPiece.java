@@ -21,6 +21,7 @@ public class UserPiece {
 	public UserPiece() {
 		Transform3D piecePosition = new Transform3D();
 		pieceTG = new TransformGroup(piecePosition);
+		pieceTG.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 
 		Material matterial = new Material(black, blue, black, specular, 128.0f);
 		Appearance appearance = new Appearance();

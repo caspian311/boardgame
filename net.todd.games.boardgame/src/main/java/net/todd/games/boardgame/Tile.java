@@ -22,8 +22,10 @@ public class Tile extends Shape3D implements ITile {
 	private final float centerY;
 	private final float centerZ;
 	private final Color3f tileColor;
+	private final TileData tileData;
 
 	public Tile(TileData datum) {
+		this.tileData = datum;
 		this.centerX = datum.getPosition()[0];
 		this.centerY = datum.getPosition()[1];
 		this.centerZ = datum.getPosition()[2];
@@ -66,5 +68,9 @@ public class Tile extends Shape3D implements ITile {
 	@Override
 	public String toString() {
 		return "Center: (" + centerX + ", " + centerY + ", " + centerZ + ")";
+	}
+
+	public TileData getTileData() {
+		return tileData;
 	}
 }

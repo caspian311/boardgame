@@ -1,7 +1,6 @@
 package net.todd.games.boardgame;
 
 public class GameGridModelProvider {
-
 	private static GameGridModel model;
 
 	public static IGameGridModel getModel() {
@@ -10,5 +9,4 @@ public class GameGridModelProvider {
 		}
 		return model;
 	}
-
 }

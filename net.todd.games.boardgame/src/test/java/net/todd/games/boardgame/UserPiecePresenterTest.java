@@ -2,6 +2,7 @@ package net.todd.games.boardgame;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import net.todd.common.uitools.IListener;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,19 +25,43 @@ public class UserPiecePresenterTest {
 		assertEquals(model.startingPosition, view.startingPosition);
 	}
 
+	@Test
+	public void testPresenterNewPositionToMoveToFromModelWhenModelFiresEvent() {
+		model.position = new float[] { 1f, 2f, 3f };
+		new UserPiecePresenter(view, model);
+		assertNull(view.moveToPosition);
+		model.userModelListener.fireEvent();
+		assertEquals(view.moveToPosition, model.position);
+	}
+
 	private static class UserPieceViewStub implements IUserPieceView {
+		private float[] moveToPosition;
 		private float[] startingPosition;
 
 		public void setStartingPoint(float[] startingPoint) {
 			this.startingPosition = startingPoint;
 		}
+
+		public void movePieceTo(float[] position) {
+			moveToPosition = position;
+		}
 	}
 
 	private static class UserPieceModelStub implements IUserPieceModel {
 		private float[] startingPosition;
+		private IListener userModelListener;
+		private float[] position;
 
 		public float[] getStartingPoint() {
 			return startingPosition;
+		}
+
+		public void addListener(IListener listener) {
+			userModelListener = listener;
+		}
+
+		public float[] getCurrentPosition() {
+			return position;
 		}
 	}
 }

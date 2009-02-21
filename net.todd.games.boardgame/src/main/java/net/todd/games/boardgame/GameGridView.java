@@ -15,7 +15,7 @@ import com.sun.j3d.utils.pickfast.PickCanvas;
 public class GameGridView implements IGameGridView {
 	private final BranchGroup board;
 
-	private ITile selectedTile;
+	private TileData selectedTile;
 
 	private final ListenerManager tileSelectedListeners = new ListenerManager();
 
@@ -33,7 +33,7 @@ public class GameGridView implements IGameGridView {
 				PickInfo pickClosest = pickCanvas.pickClosest();
 				if (pickClosest != null) {
 					Tile tile = (Tile) pickClosest.getNode();
-					selectedTile = tile;
+					selectedTile = tile.getTileData();
 					tileSelectedListeners.notifyListeners();
 				}
 			}
@@ -53,7 +53,7 @@ public class GameGridView implements IGameGridView {
 		return board;
 	}
 
-	public ITile getSelectedTile() {
+	public TileData getSelectedTile() {
 		return selectedTile;
 	}
 

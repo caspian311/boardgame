@@ -21,16 +21,12 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
 public class GameEngine {
 	private static final Color3f white = new Color3f(1.0f, 1.0f, 1.0f);
-	private final Log log = LogFactory.getLog(getClass());
 
 	private final BoundingSphere bounds;
 	private Vector3f lightDirection;

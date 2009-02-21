@@ -16,4 +16,9 @@ public class UserPieceView implements IUserPieceView {
 	public void setStartingPoint(float[] startingPoint) {
 		piece.setPosition(new Vector3f(startingPoint));
 	}
+
+	public void movePieceTo(float[] position) {
+		// TODO make this an animation
+		setStartingPoint(position);
+	}
 }
