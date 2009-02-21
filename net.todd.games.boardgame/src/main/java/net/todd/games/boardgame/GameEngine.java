@@ -95,9 +95,9 @@ public class GameEngine {
 	}
 
 	private void createGameGrid(BranchGroup bg, Canvas3D canvas3D) {
-		ICheckeredBoardView boardView = new CheckeredBoardView(canvas3D);
-		ICheckerBoardModel boardModel = new CheckeredBoardModel();
-		new CheckerBoardPresenter(boardView, boardModel);
+		IGameGridView boardView = new GameGridView(canvas3D);
+		IGameGridModel boardModel = new GameGridModel();
+		new GameGridPresenter(boardView, boardModel);
 
 		bg.addChild(boardView.getBG());
 	}

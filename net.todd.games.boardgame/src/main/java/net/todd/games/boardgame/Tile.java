@@ -13,22 +13,33 @@ import javax.vecmath.Point3f;
 import com.sun.j3d.utils.geometry.GeometryInfo;
 import com.sun.j3d.utils.geometry.NormalGenerator;
 
-public class Tile extends Shape3D {
+public class Tile extends Shape3D implements ITile {
 	private static final Color3f black = new Color3f(0.0f, 0.0f, 0.0f);
 	private static final Color3f specular = new Color3f(0.9f, 0.9f, 0.9f);
 
-	private final int size;
-	private final int centerX;
-	private final int centerY;
-	private final int centerZ;
+	private final float size;
+	private final float centerX;
+	private final float centerY;
+	private final float centerZ;
 	private final Color3f tileColor;
 
-	public Tile(int centerX, int centerY, int centerZ, int size, Color3f tileColor) {
+	public Tile(int centerX, int centerY, int centerZ, float size, Color3f tileColor) {
 		this.centerX = centerX;
 		this.centerY = centerY;
 		this.centerZ = centerZ;
 		this.size = size;
 		this.tileColor = tileColor;
+		setGeometry(getMyGeometry());
+		setAppearance(getMyAppearance());
+		setPickable(true);
+	}
+
+	public Tile(TileData datum) {
+		this.centerX = datum.getPosition()[0];
+		this.centerY = datum.getPosition()[1];
+		this.centerZ = datum.getPosition()[2];
+		this.size = datum.getSize();
+		this.tileColor = new Color3f(datum.getColor());
 		setGeometry(getMyGeometry());
 		setAppearance(getMyAppearance());
 		setPickable(true);
