@@ -23,17 +23,6 @@ public class Tile extends Shape3D implements ITile {
 	private final float centerZ;
 	private final Color3f tileColor;
 
-	public Tile(int centerX, int centerY, int centerZ, float size, Color3f tileColor) {
-		this.centerX = centerX;
-		this.centerY = centerY;
-		this.centerZ = centerZ;
-		this.size = size;
-		this.tileColor = tileColor;
-		setGeometry(getMyGeometry());
-		setAppearance(getMyAppearance());
-		setPickable(true);
-	}
-
 	public Tile(TileData datum) {
 		this.centerX = datum.getPosition()[0];
 		this.centerY = datum.getPosition()[1];
