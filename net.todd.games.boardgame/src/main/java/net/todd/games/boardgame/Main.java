@@ -6,6 +6,6 @@ public class Main {
 	}
 
 	private void execute() {
-		new GameView();
+		new GameEngine();
 	}
 }

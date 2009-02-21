@@ -2,8 +2,6 @@ package net.todd.games.boardgame;
 
 import java.awt.BorderLayout;
 import java.awt.GraphicsConfiguration;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -13,7 +11,6 @@ import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
-import javax.media.j3d.PickInfo;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.View;
@@ -27,18 +24,17 @@ import javax.vecmath.Vector3f;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.sun.j3d.utils.pickfast.PickCanvas;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
-public class GameView {
+public class GameEngine {
 	private static final Color3f white = new Color3f(1.0f, 1.0f, 1.0f);
 	private final Log log = LogFactory.getLog(getClass());
 
 	private final BoundingSphere bounds;
 	private Vector3f lightDirection;
 
-	public GameView() {
+	public GameEngine() {
 		JFrame frame = new JFrame("Board Game");
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
@@ -99,25 +95,11 @@ public class GameView {
 	}
 
 	private void createGameGrid(BranchGroup bg, Canvas3D canvas3D) {
-		CheckeredBoard board = new CheckeredBoard();
-		bg.addChild(board.getBG());
+		ICheckeredBoardView boardView = new CheckeredBoardView(canvas3D);
+		ICheckerBoardModel boardModel = new CheckeredBoardModel();
+		new CheckerBoardPresenter(boardView, boardModel);
 
-		final PickCanvas pickCanvas = new PickCanvas(canvas3D, board.getBG());
-		pickCanvas.setMode(PickInfo.PICK_GEOMETRY);
-		pickCanvas.setTolerance(4.0f);
-
-		canvas3D.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent mouseEvent) {
-				pickCanvas.setShapeLocation(mouseEvent);
-				PickInfo pickClosest = pickCanvas.pickClosest();
-				if (pickClosest != null) {
-					log.debug("something was picked: " + pickClosest.getNode());
-				} else {
-					log.debug("nothing was picked");
-				}
-			}
-		});
+		bg.addChild(boardView.getBG());
 	}
 
 	private void lightScene(BranchGroup bg) {
