@@ -55,5 +55,9 @@ public class GameGridPresenterTest {
 		public GameGridData getGridData() {
 			return data;
 		}
+
+		public float[] getTeamOneStartingGridPosition() {
+			throw new UnsupportedOperationException();
+		}
 	}
 }

@@ -60,29 +60,23 @@ public class GameGridDataTest {
 	@Test
 	public void testGridDataTilesContainTilePositions() {
 		TileData[][] tileData = gridData.getTileData();
-		compareArrays(new float[] { -35f, 0f, -35f }, tileData[0][0].getPosition());
-		compareArrays(new float[] { -25f, 0f, -35f }, tileData[0][1].getPosition());
-		compareArrays(new float[] { -15f, 0f, -35f }, tileData[0][2].getPosition());
-		compareArrays(new float[] { -5f, 0f, -35f }, tileData[0][3].getPosition());
-		compareArrays(new float[] { 5f, 0f, -35f }, tileData[0][4].getPosition());
-		compareArrays(new float[] { 15f, 0f, -35f }, tileData[0][5].getPosition());
-		compareArrays(new float[] { 25f, 0f, -35f }, tileData[0][6].getPosition());
-		compareArrays(new float[] { 35f, 0f, -35f }, tileData[0][7].getPosition());
-		compareArrays(new float[] { -35f, 0f, -25f }, tileData[1][0].getPosition());
-		compareArrays(new float[] { -25f, 0f, -25f }, tileData[1][1].getPosition());
-		compareArrays(new float[] { -15f, 0f, -25f }, tileData[1][2].getPosition());
-		compareArrays(new float[] { -5f, 0f, -25f }, tileData[1][3].getPosition());
-		compareArrays(new float[] { 5f, 0f, -25f }, tileData[1][4].getPosition());
-		compareArrays(new float[] { 15f, 0f, -25f }, tileData[1][5].getPosition());
-		compareArrays(new float[] { 25f, 0f, -25f }, tileData[1][6].getPosition());
-		compareArrays(new float[] { 35f, 0f, -25f }, tileData[1][7].getPosition());
-		compareArrays(new float[] { -35f, 0f, -15f }, tileData[2][0].getPosition());
-		compareArrays(new float[] { -25f, 0f, -15f }, tileData[2][1].getPosition());
-	}
-
-	private void compareArrays(float[] array1, float[] array2) {
-		for (int i = 0; i < array1.length; i++) {
-			assertEquals(array1[i], array2[i]);
-		}
+		TestUtil.compareArrays(new float[] { -35f, 0f, -35f }, tileData[0][0].getPosition());
+		TestUtil.compareArrays(new float[] { -25f, 0f, -35f }, tileData[0][1].getPosition());
+		TestUtil.compareArrays(new float[] { -15f, 0f, -35f }, tileData[0][2].getPosition());
+		TestUtil.compareArrays(new float[] { -5f, 0f, -35f }, tileData[0][3].getPosition());
+		TestUtil.compareArrays(new float[] { 5f, 0f, -35f }, tileData[0][4].getPosition());
+		TestUtil.compareArrays(new float[] { 15f, 0f, -35f }, tileData[0][5].getPosition());
+		TestUtil.compareArrays(new float[] { 25f, 0f, -35f }, tileData[0][6].getPosition());
+		TestUtil.compareArrays(new float[] { 35f, 0f, -35f }, tileData[0][7].getPosition());
+		TestUtil.compareArrays(new float[] { -35f, 0f, -25f }, tileData[1][0].getPosition());
+		TestUtil.compareArrays(new float[] { -25f, 0f, -25f }, tileData[1][1].getPosition());
+		TestUtil.compareArrays(new float[] { -15f, 0f, -25f }, tileData[1][2].getPosition());
+		TestUtil.compareArrays(new float[] { -5f, 0f, -25f }, tileData[1][3].getPosition());
+		TestUtil.compareArrays(new float[] { 5f, 0f, -25f }, tileData[1][4].getPosition());
+		TestUtil.compareArrays(new float[] { 15f, 0f, -25f }, tileData[1][5].getPosition());
+		TestUtil.compareArrays(new float[] { 25f, 0f, -25f }, tileData[1][6].getPosition());
+		TestUtil.compareArrays(new float[] { 35f, 0f, -25f }, tileData[1][7].getPosition());
+		TestUtil.compareArrays(new float[] { -35f, 0f, -15f }, tileData[2][0].getPosition());
+		TestUtil.compareArrays(new float[] { -25f, 0f, -15f }, tileData[2][1].getPosition());
 	}
 }

@@ -24,6 +24,7 @@ import javax.vecmath.Vector3f;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
@@ -81,10 +82,9 @@ public class GameEngine {
 	}
 
 	private void createUsersPiece(BranchGroup bg) {
-		UserPiece piece = new UserPiece();
-
-		bg.addChild(piece.getGraphNode());
-		bg.addChild(piece.getShadowNode(lightDirection));
+		IUserPieceView userPieceView = new UserPieceView(bg);
+		IUserPieceModel userPieceModel = new UserPieceModel(GameGridModelProvider.getModel());
+		new UserPiecePresenter(userPieceView, userPieceModel);
 	}
 
 	private void createBackground(BranchGroup bg) {
@@ -96,8 +96,7 @@ public class GameEngine {
 
 	private void createGameGrid(BranchGroup bg, Canvas3D canvas3D) {
 		IGameGridView boardView = new GameGridView(canvas3D);
-		IGameGridModel boardModel = new GameGridModel();
-		new GameGridPresenter(boardView, boardModel);
+		new GameGridPresenter(boardView, GameGridModelProvider.getModel());
 
 		bg.addChild(boardView.getBG());
 	}
@@ -125,9 +124,8 @@ public class GameEngine {
 		t3d.invert();
 		tg.setTransform(t3d);
 
-		// OrbitBehavior orbit = new OrbitBehavior(c,
-		// OrbitBehavior.REVERSE_ALL);
-		// orbit.setSchedulingBounds(bounds);
-		// vp.setViewPlatformBehavior(orbit);
+		OrbitBehavior orbit = new OrbitBehavior(c, OrbitBehavior.REVERSE_ALL);
+		orbit.setSchedulingBounds(bounds);
+		vp.setViewPlatformBehavior(orbit);
 	}
 }

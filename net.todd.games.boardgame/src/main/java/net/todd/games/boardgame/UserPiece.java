@@ -1,10 +1,8 @@
 package net.todd.games.boardgame;
 
 import javax.media.j3d.Appearance;
-import javax.media.j3d.GeometryArray;
 import javax.media.j3d.Material;
 import javax.media.j3d.Node;
-import javax.media.j3d.Shape3D;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.vecmath.Color3f;
@@ -22,7 +20,6 @@ public class UserPiece {
 
 	public UserPiece() {
 		Transform3D piecePosition = new Transform3D();
-		piecePosition.set(getUserStartingPosition());
 		pieceTG = new TransformGroup(piecePosition);
 
 		Material matterial = new Material(black, blue, black, specular, 128.0f);
@@ -33,35 +30,41 @@ public class UserPiece {
 		pieceTG.addChild(sphere);
 	}
 
+	public void setPosition(Vector3f position) {
+		Transform3D transformation = new Transform3D();
+		pieceTG.getTransform(transformation);
+		transformation.set(position);
+		pieceTG.setTransform(transformation);
+	}
+
 	public Node getGraphNode() {
 		return pieceTG;
 	}
 
-	public Node getShadowNode(Vector3f lightDirection) {
-		Shape3D shadow = new ShadowShape((GeometryArray) sphere.getShape().getGeometry(),
-				lightDirection, 0.1f);
-
-		Transform3D shadowPosition = new Transform3D();
-		shadowPosition.set(getShadowPosition(lightDirection));
-		TransformGroup shadowTG = new TransformGroup(shadowPosition);
-
-		shadowTG.addChild(shadow);
-
-		return shadowTG;
-	}
-
-	private Vector3f getShadowPosition(Vector3f lightDirection) {
-		float height = 0.001f;
-		Vector3f userStartingPosition = getUserStartingPosition();
-		float shadowX = (userStartingPosition.x + (userStartingPosition.y - height)
-				* lightDirection.x);
-		float shadowZ = userStartingPosition.z + (userStartingPosition.y - height)
-				* lightDirection.y;
-
-		return new Vector3f(shadowX, height, shadowZ);
-	}
-
-	private Vector3f getUserStartingPosition() {
-		return new Vector3f(5f, 5f, -35f);
-	}
+	// public Node getShadowNode(Vector3f lightDirection) {
+	// Shape3D shadow = new ShadowShape((GeometryArray)
+	// sphere.getShape().getGeometry(),
+	// lightDirection, 0.1f);
+	//
+	// Transform3D shadowPosition = new Transform3D();
+	// shadowPosition.set(getShadowPosition(lightDirection));
+	// TransformGroup shadowTG = new TransformGroup(shadowPosition);
+	//
+	// shadowTG.addChild(shadow);
+	//
+	// return shadowTG;
+	// }
+	//
+	// private Vector3f getShadowPosition(Vector3f lightDirection) {
+	// float height = 0.001f;
+	// Vector3f userStartingPosition = getUserStartingPosition();
+	// float shadowX = (userStartingPosition.x + (userStartingPosition.y -
+	// height)
+	// * lightDirection.x);
+	// float shadowZ = userStartingPosition.z + (userStartingPosition.y -
+	// height)
+	// * lightDirection.y;
+	//
+	// return new Vector3f(shadowX, height, shadowZ);
+	// }
 }
