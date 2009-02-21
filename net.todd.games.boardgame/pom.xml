@@ -65,7 +65,7 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<finalName>boardgame2</finalName>
+							<finalName>boardgame</finalName>
 						</configuration>
 					</execution>
 				</executions>
