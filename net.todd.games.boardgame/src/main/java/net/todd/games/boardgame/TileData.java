@@ -1,7 +1,8 @@
 package net.todd.games.boardgame;
 
 /**
- * TileData contains the size and color of the tile
+ * TileData is a bean that contains data about the individual tiles: color,
+ * position, size, etc.
  */
 public class TileData {
 	private float size;
