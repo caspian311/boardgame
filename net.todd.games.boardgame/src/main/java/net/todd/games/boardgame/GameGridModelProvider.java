@@ -5,7 +5,7 @@ public class GameGridModelProvider {
 
 	public static IGameGridModel getModel() {
 		if (model == null) {
-			model = new GameGridModel();
+			model = new GameGridModel(new GameGridData());
 		}
 		return model;
 	}

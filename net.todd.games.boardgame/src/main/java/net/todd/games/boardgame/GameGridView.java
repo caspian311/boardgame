@@ -31,7 +31,7 @@ public class GameGridView implements IGameGridView {
 			public void mouseClicked(MouseEvent mouseEvent) {
 				pickCanvas.setShapeLocation(mouseEvent);
 				PickInfo pickClosest = pickCanvas.pickClosest();
-				if (pickClosest != null) {
+				if (pickClosest.getNode() instanceof Tile) {
 					Tile tile = (Tile) pickClosest.getNode();
 					selectedTile = tile.getTileData();
 					tileSelectedListeners.notifyListeners();
@@ -40,10 +40,10 @@ public class GameGridView implements IGameGridView {
 		});
 	}
 
-	public void constructGrid(GameGridData data) {
-		for (int x = 0; x < data.getTileData().length; x++) {
-			for (int z = 0; z < data.getTileData()[0].length; z++) {
-				Tile tile = new Tile(data.getTileData()[x][z]);
+	public void constructGrid(TileData[][] tileData) {
+		for (int x = 0; x < tileData.length; x++) {
+			for (int z = 0; z < tileData[0].length; z++) {
+				Tile tile = new Tile(tileData[x][z]);
 				board.addChild(tile);
 			}
 		}

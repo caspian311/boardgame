@@ -3,9 +3,9 @@ package net.todd.games.boardgame;
 import net.todd.common.uitools.IListener;
 
 public interface IGameGridModel {
-	GameGridData getGridData();
+	TileData[][] getTileData();
 
-	float[] getTeamOneStartingGridPosition();
+	float[][] getTeamOneStartingGridPositions();
 
 	void addPositionSelectedListener(IListener listener);
 

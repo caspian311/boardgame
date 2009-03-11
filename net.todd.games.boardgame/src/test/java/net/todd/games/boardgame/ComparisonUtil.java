@@ -8,4 +8,12 @@ public class ComparisonUtil {
 			assertEquals(array1[i], array2[i]);
 		}
 	}
+
+	public static void compareDoubleArrays(Object[][] data1, Object[][] data2) {
+		for (int i = 0; i < data1.length; i++) {
+			for (int t = 0; t < data1[i].length; i++) {
+				assertEquals(data1[i][t], data2[i][t]);
+			}
+		}
+	}
 }

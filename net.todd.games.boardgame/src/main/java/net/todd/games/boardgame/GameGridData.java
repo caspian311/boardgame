@@ -17,7 +17,9 @@ public class GameGridData {
 
 	public GameGridData() {
 		tileData = new TileData[8][8];
+	}
 
+	public TileData[][] getTileData() {
 		for (int x = 0; x < 8; x++) {
 			float nextZ = getNextZ();
 			for (int y = 0; y < 8; y++) {
@@ -30,9 +32,7 @@ public class GameGridData {
 			}
 			getNextColor();
 		}
-	}
-
-	public TileData[][] getTileData() {
+		
 		return tileData;
 	}
 
@@ -53,5 +53,10 @@ public class GameGridData {
 	private float[] getNextColor() {
 		colorIndex++;
 		return colorIndex % 2 == 0 ? white : black;
+	}
+
+	public float[][] getTeamOneStartingPositions() {
+		return new float[][] { { -15f, 0f, -35f }, { -5f, 0f, -35f }, { 5f, 0f, -35f },
+				{ 15f, 0f, -35f } };
 	}
 }

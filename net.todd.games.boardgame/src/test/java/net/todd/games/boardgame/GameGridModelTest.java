@@ -1,8 +1,6 @@
 package net.todd.games.boardgame;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import net.todd.common.uitools.IListener;
 
@@ -10,46 +8,37 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class GameGridModelTest {
-	private GameGridModel model;
 	private float[] positionSelected;
 
 	@Before
 	public void setUp() {
-		model = new GameGridModel();
 		positionSelected = null;
 	}
-
+	
 	@Test
-	public void testGridDataIsNeverNull() {
-		assertNotNull(model.getGridData());
+	public void testGetTileDataPullsFromGridData() {
+		TileData[][] tileData = new TileData[][] {};
+		GameGridDataMock gameGridData = new GameGridDataMock();
+		gameGridData.tileData = tileData;
+		GameGridModel model = new GameGridModel(gameGridData);
+		ComparisonUtil.compareDoubleArrays(tileData, model.getTileData());
 	}
 
 	@Test
-	public void testTeamOneStartingPositionIsInCorrectPosition1() {
+	public void testTeamOneStartingPositionIsInCorrectPosition3() {
 		GameGridDataMock gameGridData = new GameGridDataMock();
-		gameGridData.tileData = new TileData[4][4];
-		gameGridData.tileData[0][2] = new TileData();
-		gameGridData.tileData[0][2].setPosition(new float[] {});
-		model.setGridData(gameGridData);
+		GameGridModel model = new GameGridModel(gameGridData);
+		gameGridData.teamOneStartingPosition = new float[][] { { 1f, 2f, 3f }, { 4f, 5f, 6f } };
 
-		assertEquals(gameGridData.tileData[0][2].getPosition(), model
-				.getTeamOneStartingGridPosition());
-	}
-
-	@Test
-	public void testTeamOneStartingPositionIsInCorrectPosition2() {
-		GameGridDataMock gameGridData = new GameGridDataMock();
-		gameGridData.tileData = new TileData[3][3];
-		gameGridData.tileData[0][1] = new TileData();
-		gameGridData.tileData[0][1].setPosition(new float[] {});
-		model.setGridData(gameGridData);
-
-		assertEquals(gameGridData.tileData[0][1].getPosition(), model
-				.getTeamOneStartingGridPosition());
+		ComparisonUtil.compareArrays(new float[] { 1f, 2f, 3f }, model
+				.getTeamOneStartingGridPositions()[0]);
+		ComparisonUtil.compareArrays(new float[] { 4f, 5f, 6f }, model
+				.getTeamOneStartingGridPositions()[1]);
 	}
 
 	@Test
 	public void testModelNotifiesListenersWhenAGridPositionIsSelected() {
+		GameGridModel model = new GameGridModel(null);
 		PositionSelectedListenerStub listenerStub1 = new PositionSelectedListenerStub();
 		PositionSelectedListenerStub listenerStub2 = new PositionSelectedListenerStub();
 		model.addPositionSelectedListener(listenerStub1);
@@ -63,6 +52,7 @@ public class GameGridModelTest {
 
 	@Test
 	public void testModelMakesSelectedPositionInformationAvailableBeforeNotifyingListeners() {
+		final GameGridModel model = new GameGridModel(null);
 		model.addPositionSelectedListener(new IListener() {
 			public void fireEvent() {
 				positionSelected = model.getSelectedPosition();
@@ -76,11 +66,17 @@ public class GameGridModelTest {
 	}
 
 	private static class GameGridDataMock extends GameGridData {
+		float[][] teamOneStartingPosition;
 		private TileData[][] tileData;
 
 		@Override
 		public TileData[][] getTileData() {
 			return tileData;
+		}
+		
+		@Override
+		public float[][] getTeamOneStartingPositions() {
+			return teamOneStartingPosition;
 		}
 	}
 

@@ -20,9 +20,9 @@ public class UserPiecePresenterTest {
 	@Test
 	public void testPresenterGetsUserStartingPositionFromModelAndGivesItToView() {
 		assertNull(view.startingPosition);
-		model.startingPosition = new float[] { 1f, 2f, 3f };
+		model.position = new float[] { 1f, 2f, 3f };
 		new UserPiecePresenter(view, model);
-		assertEquals(model.startingPosition, view.startingPosition);
+		assertEquals(model.position, view.startingPosition);
 	}
 
 	@Test
@@ -48,13 +48,8 @@ public class UserPiecePresenterTest {
 	}
 
 	private static class UserPieceModelStub implements IUserPieceModel {
-		private float[] startingPosition;
 		private IListener userModelListener;
 		private float[] position;
-
-		public float[] getStartingPoint() {
-			return startingPosition;
-		}
 
 		public void addListener(IListener listener) {
 			userModelListener = listener;
@@ -62,6 +57,10 @@ public class UserPiecePresenterTest {
 
 		public float[] getCurrentPosition() {
 			return position;
+		}
+
+		public void selected() {
+			throw new UnsupportedOperationException();
 		}
 	}
 }

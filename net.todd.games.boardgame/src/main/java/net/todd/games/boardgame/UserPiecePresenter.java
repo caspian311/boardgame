@@ -5,7 +5,7 @@ import net.todd.common.uitools.IListener;
 public class UserPiecePresenter {
 	public UserPiecePresenter(final IUserPieceView userPieceView,
 			final IUserPieceModel userPieceModel) {
-		userPieceView.setStartingPoint(userPieceModel.getStartingPoint());
+		userPieceView.setStartingPoint(userPieceModel.getCurrentPosition());
 		userPieceModel.addListener(new IListener() {
 			public void fireEvent() {
 				userPieceView.movePieceTo(userPieceModel.getCurrentPosition());

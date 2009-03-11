@@ -22,7 +22,7 @@ public class GameGridPresenterTest {
 
 	@Test
 	public void testGridIsCreatedWithDimensionFromModel() {
-		model.data = new GameGridData();
+		model.data = new TileData[][] {};
 
 		assertNull(view.data);
 		new GameGridPresenter(view, model);
@@ -31,7 +31,7 @@ public class GameGridPresenterTest {
 
 	@Test
 	public void testPresenterListensForSelectedTilesFromViewAndNotifiesModel() {
-		model.data = new GameGridData();
+		model.data = new TileData[][] {};
 
 		view.tileData = new TileData();
 		view.tileData.setPosition(new float[] { 1f, 2f, 3f });
@@ -44,7 +44,7 @@ public class GameGridPresenterTest {
 	}
 
 	public class GameGridViewStub implements IGameGridView {
-		private GameGridData data;
+		private TileData[][] data;
 		private IListener listener;
 		private TileData tileData;
 
@@ -60,20 +60,20 @@ public class GameGridPresenterTest {
 			return tileData;
 		}
 
-		public void constructGrid(GameGridData data) {
+		public void constructGrid(TileData[][] data) {
 			this.data = data;
 		}
 	}
 
 	private static class GameGridModelStub implements IGameGridModel {
 		private TileData selectedPosition;
-		private GameGridData data;
+		private TileData[][] data;
 
-		public GameGridData getGridData() {
+		public TileData[][] getTileData() {
 			return data;
 		}
 
-		public float[] getTeamOneStartingGridPosition() {
+		public float[][] getTeamOneStartingGridPositions() {
 			throw new UnsupportedOperationException();
 		}
 

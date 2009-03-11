@@ -79,4 +79,14 @@ public class GameGridDataTest {
 		ComparisonUtil.compareArrays(new float[] { -35f, 0f, -15f }, tileData[2][0].getPosition());
 		ComparisonUtil.compareArrays(new float[] { -25f, 0f, -15f }, tileData[2][1].getPosition());
 	}
+
+	@Test
+	public void testCoordinatesForTeamOneStartingPositions() {
+		float[][] teamOneStartingPositions = gridData.getTeamOneStartingPositions();
+		assertEquals(4, teamOneStartingPositions.length);
+		ComparisonUtil.compareArrays(new float[] { -15f, 0f, -35f }, teamOneStartingPositions[0]);
+		ComparisonUtil.compareArrays(new float[] { -5f, 0f, -35f }, teamOneStartingPositions[1]);
+		ComparisonUtil.compareArrays(new float[] { 5f, 0f, -35f }, teamOneStartingPositions[2]);
+		ComparisonUtil.compareArrays(new float[] { 15f, 0f, -35f }, teamOneStartingPositions[3]);
+	}
 }

@@ -11,5 +11,5 @@ public interface IGameGridView {
 
 	void addTileSelectedListener(IListener listener);
 
-	void constructGrid(GameGridData data);
+	void constructGrid(TileData[][] tileData);
 }
