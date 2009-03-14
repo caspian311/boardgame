@@ -31,10 +31,12 @@ public class GameGridView implements IGameGridView {
 			public void mouseClicked(MouseEvent mouseEvent) {
 				pickCanvas.setShapeLocation(mouseEvent);
 				PickInfo pickClosest = pickCanvas.pickClosest();
-				if (pickClosest.getNode() instanceof Tile) {
-					Tile tile = (Tile) pickClosest.getNode();
-					selectedTile = tile.getTileData();
-					tileSelectedListeners.notifyListeners();
+				if (pickClosest != null) {
+					if (pickClosest.getNode() instanceof Tile) {
+						Tile tile = (Tile) pickClosest.getNode();
+						selectedTile = tile.getTileData();
+						tileSelectedListeners.notifyListeners();
+					}
 				}
 			}
 		});

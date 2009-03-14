@@ -78,16 +78,12 @@ public class GameEngine {
 	}
 
 	private void createPieces(BranchGroup bg, Canvas3D canvas3D) {
-		BranchGroup userPiecesBG = new BranchGroup();
-
 		IGameGridModel gameGridModel = GameGridModelProvider.getModel();
-		UserPieceModelFactory modelFactory = new UserPieceModelFactory(gameGridModel);
-		for (IUserPieceModel userPieceModel : modelFactory.getUserPieceModels()) {
-			IUserPieceView userPieceView = new UserPieceView(userPiecesBG, bounds, canvas3D);
-			new UserPiecePresenter(userPieceView, userPieceModel);
-		}
-		
-		bg.addChild(userPiecesBG);
+		IUserPiecesModel userPiecesModel = new UserPiecesModel(gameGridModel);
+		IUserPiecesView userPiecesView = new UserPiecesView(bounds, canvas3D);
+		new UserPiecesPresenter(userPiecesView, userPiecesModel);
+
+		bg.addChild(userPiecesView.getBranchGroup());
 	}
 
 	private void createBackground(BranchGroup bg) {

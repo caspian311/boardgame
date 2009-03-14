@@ -3,7 +3,10 @@ package net.todd.games.boardgame;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.util.List;
+
 import javax.media.j3d.BranchGroup;
+import javax.vecmath.Vector3f;
 
 import net.todd.common.uitools.IListener;
 
@@ -73,7 +76,7 @@ public class GameGridPresenterTest {
 			return data;
 		}
 
-		public float[][] getTeamOneStartingGridPositions() {
+		public List<Vector3f> getTeamOneStartingGridPositions() {
 			throw new UnsupportedOperationException();
 		}
 
@@ -81,7 +84,7 @@ public class GameGridPresenterTest {
 			throw new UnsupportedOperationException();
 		}
 
-		public float[] getSelectedPosition() {
+		public Vector3f getSelectedPosition() {
 			throw new UnsupportedOperationException();
 		}
 

@@ -3,6 +3,10 @@ package net.todd.games.boardgame;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.List;
+
+import javax.vecmath.Vector3f;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -82,11 +86,11 @@ public class GameGridDataTest {
 
 	@Test
 	public void testCoordinatesForTeamOneStartingPositions() {
-		float[][] teamOneStartingPositions = gridData.getTeamOneStartingPositions();
-		assertEquals(4, teamOneStartingPositions.length);
-		ComparisonUtil.compareArrays(new float[] { -15f, 0f, -35f }, teamOneStartingPositions[0]);
-		ComparisonUtil.compareArrays(new float[] { -5f, 0f, -35f }, teamOneStartingPositions[1]);
-		ComparisonUtil.compareArrays(new float[] { 5f, 0f, -35f }, teamOneStartingPositions[2]);
-		ComparisonUtil.compareArrays(new float[] { 15f, 0f, -35f }, teamOneStartingPositions[3]);
+		List<Vector3f> teamOneStartingPositions = gridData.getTeamOneStartingPositions();
+		assertEquals(4, teamOneStartingPositions.size());
+		assertEquals(new Vector3f(new float[] { -15f, 0f, -35f }), teamOneStartingPositions.get(0));
+		assertEquals(new Vector3f(new float[] { -5f, 0f, -35f }), teamOneStartingPositions.get(1));
+		assertEquals(new Vector3f(new float[] { 5f, 0f, -35f }), teamOneStartingPositions.get(2));
+		assertEquals(new Vector3f(new float[] { 15f, 0f, -35f }), teamOneStartingPositions.get(3));
 	}
 }

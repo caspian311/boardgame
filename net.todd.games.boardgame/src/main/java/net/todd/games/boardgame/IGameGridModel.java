@@ -1,15 +1,19 @@
 package net.todd.games.boardgame;
 
+import java.util.List;
+
+import javax.vecmath.Vector3f;
+
 import net.todd.common.uitools.IListener;
 
 public interface IGameGridModel {
 	TileData[][] getTileData();
 
-	float[][] getTeamOneStartingGridPositions();
+	List<Vector3f> getTeamOneStartingGridPositions();
 
 	void addPositionSelectedListener(IListener listener);
 
-	float[] getSelectedPosition();
+	Vector3f getSelectedPosition();
 
 	void setSelectedTile(TileData tileData);
 }

@@ -2,6 +2,13 @@ package net.todd.games.boardgame;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.media.j3d.Node;
+import javax.vecmath.Vector3f;
+
 import net.todd.common.uitools.IListener;
 
 import org.junit.Before;
@@ -18,49 +25,61 @@ public class UserPiecePresenterTest {
 	}
 
 	@Test
-	public void testPresenterGetsUserStartingPositionFromModelAndGivesItToView() {
-		assertNull(view.startingPosition);
-		model.position = new float[] { 1f, 2f, 3f };
-		new UserPiecePresenter(view, model);
-		assertEquals(model.position, view.startingPosition);
+	public void testPresenterGetsPiecesFromModelAndAddsPiecesToView() {
+		PieceInfo pieceInfo1 = PieceFixture.createPieceInfo();
+		PieceInfo pieceInfo2 = PieceFixture.createPieceInfo();
+		model.pieces.add(pieceInfo1);
+		model.pieces.add(pieceInfo2);
+		assertEquals(0, view.startingPositions.size());
+		new UserPiecesPresenter(view, model);
+
+		assertEquals(pieceInfo1.getPosition(), view.startingPositions.get(0));
+		assertEquals(pieceInfo2.getPosition(), view.startingPositions.get(1));
 	}
 
 	@Test
-	public void testPresenterNewPositionToMoveToFromModelWhenModelFiresEvent() {
-		model.position = new float[] { 1f, 2f, 3f };
-		new UserPiecePresenter(view, model);
+	public void testWhenModelFiresEventPresenterTellsViewWhereToMovePiece() {
+		PieceInfo pieceInfo1 = PieceFixture.createPieceInfo();
+		model.pieces.add(pieceInfo1);
+		model.position = new Vector3f(new float[] { 1f, 2f, 3f });
+		new UserPiecesPresenter(view, model);
 		assertNull(view.moveToPosition);
 		model.userModelListener.fireEvent();
 		assertEquals(view.moveToPosition, model.position);
 	}
 
-	private static class UserPieceViewStub implements IUserPieceView {
-		private float[] moveToPosition;
-		private float[] startingPosition;
+	private static class UserPieceViewStub implements IUserPiecesView {
+		Vector3f moveToPosition;
+		List<Vector3f> startingPositions = new ArrayList<Vector3f>();
 
-		public void setStartingPoint(float[] startingPoint) {
-			this.startingPosition = startingPoint;
+		public void addPiece(Vector3f startingPoint) {
+			startingPositions.add(startingPoint);
 		}
 
-		public void movePieceTo(float[] position) {
+		public void movePieceTo(Vector3f position) {
 			moveToPosition = position;
+		}
+
+		public Node getBranchGroup() {
+			throw new UnsupportedOperationException();
 		}
 	}
 
-	private static class UserPieceModelStub implements IUserPieceModel {
-		private IListener userModelListener;
-		private float[] position;
+	private static class UserPieceModelStub implements IUserPiecesModel {
+		IListener userModelListener;
+		Vector3f position;
+		final List<PieceInfo> pieces = new ArrayList<PieceInfo>();
 
 		public void addListener(IListener listener) {
 			userModelListener = listener;
 		}
 
-		public float[] getCurrentPosition() {
-			return position;
+		public List<PieceInfo> getAllPieces() {
+			return pieces;
 		}
 
-		public void selected() {
-			throw new UnsupportedOperationException();
+		public Vector3f getCurrentPosition() {
+			return position;
 		}
 	}
 }

@@ -1,12 +1,16 @@
 package net.todd.games.boardgame;
 
+import java.util.List;
+
+import javax.vecmath.Vector3f;
+
 import net.todd.common.uitools.IListener;
 import net.todd.common.uitools.ListenerManager;
 
 public class GameGridModel implements IGameGridModel {
 	private final GameGridData gameGridData;
 	private final ListenerManager positionSelectedListenerManager = new ListenerManager();
-	private float[] selectedPosition;
+	private Vector3f selectedPosition;
 
 	public GameGridModel(GameGridData gameGridData) {
 		this.gameGridData = gameGridData;
@@ -16,7 +20,7 @@ public class GameGridModel implements IGameGridModel {
 		return gameGridData.getTileData();
 	}
 
-	public float[][] getTeamOneStartingGridPositions() {
+	public List<Vector3f> getTeamOneStartingGridPositions() {
 		return gameGridData.getTeamOneStartingPositions();
 	}
 
@@ -25,11 +29,11 @@ public class GameGridModel implements IGameGridModel {
 	}
 
 	public void setSelectedTile(TileData tileData) {
-		selectedPosition = tileData.getPosition();
+		selectedPosition = new Vector3f(tileData.getPosition());
 		positionSelectedListenerManager.notifyListeners();
 	}
 
-	public float[] getSelectedPosition() {
+	public Vector3f getSelectedPosition() {
 		return selectedPosition;
 	}
 }

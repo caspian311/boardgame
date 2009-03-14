@@ -1,7 +1,14 @@
 package net.todd.games.boardgame;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.vecmath.Vector3f;
+
 import net.todd.common.uitools.IListener;
 import net.todd.common.uitools.ListenerManager;
 
@@ -10,7 +17,7 @@ import org.junit.Test;
 
 public class UserPieceModelTest {
 	private GameGridModelStub gameGridModel;
-	private float[] currentPieceLocation;
+	private Vector3f currentPieceLocation;
 
 	@Before
 	public void setUp() {
@@ -20,50 +27,20 @@ public class UserPieceModelTest {
 
 	@Test
 	public void testUserStartingPositionIsGottenFromGridModelButAdjustedForHeightOfPiece() {
-		gameGridModel.startingPosition = new float[][] { { 1f, 0f, 1f } };
-		IUserPieceModel userPieceModel = new UserPieceModelFactory(gameGridModel)
-				.getUserPieceModels().get(0);
+		gameGridModel.startingPositions.add(new Vector3f(new float[] { 1f, 0f, 1f }));
+		IUserPiecesModel userPieceModel = new UserPiecesModel(gameGridModel);
+		List<PieceInfo> allPieces = userPieceModel.getAllPieces();
 
-		ComparisonUtil.compareArrays(new float[] { 1f, 5f, 1f }, userPieceModel
-				.getCurrentPosition());
-	}
-
-	// @Test
-	// public void testUserPieceDoesNotListensToGameGridWhenItIsNotSelected() {
-	// UserModelListenerStub userModelListener1 = new UserModelListenerStub();
-	//
-	// UserPieceModel userPieceModel = new UserPieceModel(gameGridModel,
-	// new float[] { 1f, 0f, 1f });
-	//
-	// userPieceModel.addListener(userModelListener1);
-	// assertFalse(userModelListener1.eventFired);
-	// gameGridModel.positionSelectedListener.notifyListeners();
-	// assertFalse(userModelListener1.eventFired);
-	// }
-
-	@Test
-	public void testUserPieceListensToGameGridWhenItIsSelected() {
-		UserModelListenerStub userModelListener1 = new UserModelListenerStub();
-
-		UserPieceModel userPieceModel = new UserPieceModel(gameGridModel,
-				new float[] { 1f, 0f, 1f });
-
-		userPieceModel.addListener(userModelListener1);
-		// userPieceModel.selected();
-		gameGridModel.positionSelectedListener.notifyListeners();
-		assertTrue(userModelListener1.eventFired);
+		assertEquals(new Vector3f(new float[] { 1f, 5f, 1f }), allPieces.get(0).getPosition());
 	}
 
 	@Test
 	public void testUserPieceModelTellsItsListenersThatAPieceShouldMove() {
 		UserModelListenerStub userModelListener1 = new UserModelListenerStub();
 		UserModelListenerStub userModelListener2 = new UserModelListenerStub();
-		
-		gameGridModel.startingPosition = new float[][] { { 1f, 0f, 1f } };
-		IUserPieceModel userPieceModel = new UserPieceModelFactory(gameGridModel)
-				.getUserPieceModels().get(0);
-		// userPieceModel.selected();
-		
+
+		IUserPiecesModel userPieceModel = new UserPiecesModel(gameGridModel);
+
 		userPieceModel.addListener(userModelListener1);
 		userPieceModel.addListener(userModelListener2);
 		assertFalse(userModelListener1.eventFired);
@@ -74,41 +51,38 @@ public class UserPieceModelTest {
 	}
 
 	@Test
-	public void testUserPieceModelGetsSelectedTilePositionFromGridModelThenNotifiesListeners() {
-		gameGridModel.startingPosition = new float[][] { { 1f, 0f, 1f } };
-		final IUserPieceModel userPieceModel = new UserPieceModelFactory(gameGridModel)
-				.getUserPieceModels().get(0);
-		
+	public void testUserPieceModelGetsNewPositionFromSelectedTilePositionAdjustedForHeightFromGridThenNotifiesListeners() {
+		final IUserPiecesModel userPieceModel = new UserPiecesModel(gameGridModel);
+
 		userPieceModel.addListener(new IListener() {
 			public void fireEvent() {
 				currentPieceLocation = userPieceModel.getCurrentPosition();
 			}
 		});
-		// userPieceModel.selected();
 
-		gameGridModel.selectedPosition = new float[] { 1f, 0f, 3f };
+		gameGridModel.selectedPosition = new Vector3f(new float[] { 1f, 0f, 3f });
 		gameGridModel.positionSelectedListener.notifyListeners();
-		ComparisonUtil.compareArrays(new float[] { 1f, 5f, 3f }, currentPieceLocation);
+		assertEquals(new Vector3f(new float[] { 1f, 5f, 3f }), currentPieceLocation);
 	}
 
 	private static class GameGridModelStub implements IGameGridModel {
-		float[] selectedPosition;
+		Vector3f selectedPosition;
 		public ListenerManager positionSelectedListener = new ListenerManager();
-		float[][] startingPosition;
+		List<Vector3f> startingPositions = new ArrayList<Vector3f>();
 
 		public TileData[][] getTileData() {
 			throw new UnsupportedOperationException();
 		}
 
-		public float[][] getTeamOneStartingGridPositions() {
-			return startingPosition;
+		public List<Vector3f> getTeamOneStartingGridPositions() {
+			return startingPositions;
 		}
 
 		public void addPositionSelectedListener(IListener listener) {
 			positionSelectedListener.addListener(listener);
 		}
 
-		public float[] getSelectedPosition() {
+		public Vector3f getSelectedPosition() {
 			return selectedPosition;
 		}
 
