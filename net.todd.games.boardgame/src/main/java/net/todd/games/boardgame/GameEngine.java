@@ -8,14 +8,16 @@ import javax.vecmath.Point3d;
 
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
-public class GameEngine {
+public class GameEngine implements IGameEngine {
 	private final ISceneGenerator sceneGenerator;
 	private final IPieceGenerator pieceGenerator;
 	private final ICameraGenerator cameraGenerator;
 	private final Bounds bounds;
+	private final BranchGroup bg;
 
 	public GameEngine(ISceneGenerator sceneGenerator, IPieceGenerator pieceGenerator,
 			ICameraGenerator cameraGenerator) {
+		bg = new BranchGroup();
 		this.sceneGenerator = sceneGenerator;
 		this.pieceGenerator = pieceGenerator;
 		this.cameraGenerator = cameraGenerator;
@@ -23,20 +25,20 @@ public class GameEngine {
 		bounds = new BoundingSphere(new Point3d(0, 0, 0), 100);
 	}
 
-	public void createScene(SimpleUniverse su, Canvas3D canvas3D) {
-		BranchGroup bg = new BranchGroup();
-
+	public void createScene(Canvas3D canvas3D) {
 		sceneGenerator.lightScene(bg, bounds);
 		sceneGenerator.createGameGrid(bg, canvas3D);
 		sceneGenerator.createBackground(bg, bounds);
 		pieceGenerator.createPieces(bg, canvas3D, bounds);
 
 		bg.compile();
-
-		su.addBranchGraph(bg);
 	}
 
 	public void createCamera(SimpleUniverse su, Canvas3D canvas3D) {
 		cameraGenerator.createCamera(su, canvas3D, bounds);
+	}
+
+	public BranchGroup getBranchGroup() {
+		return bg;
 	}
 }
