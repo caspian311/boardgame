@@ -6,8 +6,7 @@ public class Main {
 	}
 
 	private void execute() {
-		IUniverseFactory universeFactory = new UniverseFactory();
-		MainApplication mainApplication = new MainApplication("Board Game", universeFactory);
+		MainApplication mainApplication = new MainApplication("Board Game");
 		mainApplication.createGame();
 		mainApplication.start();
 	}

@@ -17,7 +17,7 @@ public class MainApplication {
 	private final Canvas3D canvas3D;
 	private final JFrame frame;
 
-	public MainApplication(String title, IUniverseFactory universeGenerator) {
+	public MainApplication(String title) {
 		frame = new JFrame(title);
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
@@ -33,7 +33,9 @@ public class MainApplication {
 		GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
 
 		canvas3D = new Canvas3D(config);
-		universe = universeGenerator.generateUniverse(canvas3D);
+		universe = new SimpleUniverse(canvas3D);
+		universe.getViewingPlatform().setNominalViewingTransform();
+		universe.getViewer().getView().setMinimumFrameCycleTime(5);
 
 		mainPanel.add(canvas3D, BorderLayout.CENTER);
 
