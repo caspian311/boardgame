@@ -6,15 +6,9 @@ public class Main {
 	}
 
 	private void execute() {
-		ISceneGenerator gameGridGenerator = new GameGridGenerator();
-		IPieceGenerator pieceGenerator = new PieceGenerator();
-		ICameraGenerator cameraGenerator = new CameraGenerator();
-
-		IGameEngine gameEngine = new GameEngine(gameGridGenerator, pieceGenerator, cameraGenerator);
-
-		UniverseGenerator canvas3DGenerator = new UniverseGenerator();
-		MainApplication mainApplication = new MainApplication("Board Game", canvas3DGenerator);
-		mainApplication.createGame(gameEngine);
+		IUniverseFactory universeFactory = new UniverseFactory();
+		MainApplication mainApplication = new MainApplication("Board Game", universeFactory);
+		mainApplication.createGame();
 		mainApplication.start();
 	}
 }

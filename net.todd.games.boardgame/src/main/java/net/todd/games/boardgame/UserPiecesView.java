@@ -1,18 +1,12 @@
 package net.todd.games.boardgame;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
 import javax.media.j3d.Bounds;
 import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Canvas3D;
-import javax.media.j3d.PickInfo;
+import javax.media.j3d.Node;
 import javax.vecmath.Vector3f;
 
 import net.todd.common.uitools.IListener;
 import net.todd.common.uitools.ListenerManager;
-
-import com.sun.j3d.utils.pickfast.PickCanvas;
 
 public class UserPiecesView implements IUserPiecesView {
 	private Piece selectedPiece;
@@ -20,24 +14,17 @@ public class UserPiecesView implements IUserPiecesView {
 	private final Bounds bounds;
 	private final BranchGroup allPiecesBranchGroup;
 
-	public UserPiecesView(Bounds bounds, Canvas3D canvas3D) {
+	public UserPiecesView(Bounds bounds, final IPicker picker) {
 		this.bounds = bounds;
 		this.allPiecesBranchGroup = new BranchGroup();
-		final PickCanvas pickCanvas = new PickCanvas(canvas3D, allPiecesBranchGroup);
-		pickCanvas.setMode(PickInfo.PICK_GEOMETRY);
-		pickCanvas.setTolerance(4.0f);
 
-		canvas3D.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent mouseEvent) {
-				pickCanvas.setShapeLocation(mouseEvent);
-				PickInfo pickClosest = pickCanvas.pickClosest();
-				if (pickClosest != null) {
-					if (pickClosest.getNode() instanceof UserPiece) {
-						UserPiece node = (UserPiece) pickClosest.getNode();
-						selectedPiece = node.getPiece();
-						pieceSelectedListeners.notifyListeners();
-					}
+		picker.addListener(new IListener() {
+			public void fireEvent() {
+				Node selectedNode = picker.getSelectedNode();
+				if (selectedNode instanceof UserPiece) {
+					UserPiece node = (UserPiece) selectedNode;
+					selectedPiece = node.getPiece();
+					pieceSelectedListeners.notifyListeners();
 				}
 			}
 		});

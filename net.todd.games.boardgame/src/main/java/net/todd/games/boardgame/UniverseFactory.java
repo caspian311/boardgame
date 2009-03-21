@@ -4,7 +4,7 @@ import javax.media.j3d.Canvas3D;
 
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
-public class UniverseGenerator {
+public class UniverseFactory implements IUniverseFactory {
 	public SimpleUniverse generateUniverse(Canvas3D canvas3D) {
 		SimpleUniverse su = new SimpleUniverse(canvas3D);
 		su.getViewingPlatform().setNominalViewingTransform();

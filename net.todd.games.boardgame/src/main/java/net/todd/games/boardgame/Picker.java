@@ -13,7 +13,7 @@ import net.todd.common.uitools.ListenerManager;
 
 import com.sun.j3d.utils.pickfast.PickCanvas;
 
-public class Picker {
+public class Picker implements IPicker {
 	private Node selectedNode;
 	private final ListenerManager pickListenerManager = new ListenerManager();
 
@@ -35,10 +35,22 @@ public class Picker {
 		});
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * net.todd.games.boardgame.IPicker#addListener(net.todd.common.uitools.
+	 * IListener)
+	 */
 	public void addListener(IListener listener) {
 		pickListenerManager.addListener(listener);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see net.todd.games.boardgame.IPicker#getSelectedNode()
+	 */
 	public Node getSelectedNode() {
 		return selectedNode;
 	}

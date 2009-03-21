@@ -8,16 +8,16 @@ import javax.vecmath.Point3d;
 
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
-public class GameEngine implements IGameEngine {
+public class GameEngine {
 	private final ISceneGenerator sceneGenerator;
 	private final IPieceGenerator pieceGenerator;
 	private final ICameraGenerator cameraGenerator;
 	private final Bounds bounds;
 	private final BranchGroup bg;
 
-	public GameEngine(ISceneGenerator sceneGenerator, IPieceGenerator pieceGenerator,
-			ICameraGenerator cameraGenerator) {
-		bg = new BranchGroup();
+	public GameEngine(BranchGroup bg, ISceneGenerator sceneGenerator,
+			IPieceGenerator pieceGenerator, ICameraGenerator cameraGenerator) {
+		this.bg = bg;
 		this.sceneGenerator = sceneGenerator;
 		this.pieceGenerator = pieceGenerator;
 		this.cameraGenerator = cameraGenerator;
@@ -25,20 +25,16 @@ public class GameEngine implements IGameEngine {
 		bounds = new BoundingSphere(new Point3d(0, 0, 0), 100);
 	}
 
-	public void createScene(Canvas3D canvas3D) {
+	public void createScene(IPicker picker) {
 		sceneGenerator.lightScene(bg, bounds);
-		sceneGenerator.createGameGrid(bg, canvas3D);
+		sceneGenerator.createGameGrid(bg, picker);
 		sceneGenerator.createBackground(bg, bounds);
-		pieceGenerator.createPieces(bg, canvas3D, bounds);
+		pieceGenerator.createPieces(bg, picker, bounds);
 
 		bg.compile();
 	}
 
 	public void createCamera(SimpleUniverse su, Canvas3D canvas3D) {
 		cameraGenerator.createCamera(su, canvas3D, bounds);
-	}
-
-	public BranchGroup getBranchGroup() {
-		return bg;
 	}
 }

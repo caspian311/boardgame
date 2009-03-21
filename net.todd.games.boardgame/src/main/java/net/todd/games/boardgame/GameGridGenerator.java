@@ -4,7 +4,6 @@ import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Background;
 import javax.media.j3d.Bounds;
 import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
 import javax.vecmath.Color3f;
 import javax.vecmath.Vector3f;
@@ -12,8 +11,8 @@ import javax.vecmath.Vector3f;
 public class GameGridGenerator implements ISceneGenerator {
 	private static final Color3f white = new Color3f(1.0f, 1.0f, 1.0f);
 
-	public void createGameGrid(BranchGroup bg, Canvas3D canvas3D) {
-		IGameGridView boardView = new GameGridView(canvas3D);
+	public void createGameGrid(BranchGroup bg, IPicker picker) {
+		IGameGridView boardView = new GameGridView(picker);
 		new GameGridPresenter(boardView, GameGridModelProvider.getModel());
 
 		bg.addChild(boardView.getBG());

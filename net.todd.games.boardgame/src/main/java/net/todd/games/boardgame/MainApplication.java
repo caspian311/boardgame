@@ -5,6 +5,7 @@ import java.awt.GraphicsConfiguration;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -16,7 +17,7 @@ public class MainApplication {
 	private final Canvas3D canvas3D;
 	private final JFrame frame;
 
-	public MainApplication(String title, UniverseGenerator universeGenerator) {
+	public MainApplication(String title, IUniverseFactory universeGenerator) {
 		frame = new JFrame(title);
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
@@ -45,10 +46,20 @@ public class MainApplication {
 		frame.setVisible(true);
 	}
 
-	public void createGame(IGameEngine gameEngine) {
-		gameEngine.createScene(canvas3D);
+	public void createGame() {
+		BranchGroup bg = new BranchGroup();
+		ISceneGenerator gameGridGenerator = new GameGridGenerator();
+		IPieceGenerator pieceGenerator = new PieceGenerator();
+		ICameraGenerator cameraGenerator = new CameraGenerator();
+
+		GameEngine gameEngine = new GameEngine(bg, gameGridGenerator, pieceGenerator,
+				cameraGenerator);
+
+		IPicker picker = new Picker(canvas3D, bg);
+
+		gameEngine.createScene(picker);
 		gameEngine.createCamera(universe, canvas3D);
 
-		universe.addBranchGraph(gameEngine.getBranchGroup());
+		universe.addBranchGraph(bg);
 	}
 }

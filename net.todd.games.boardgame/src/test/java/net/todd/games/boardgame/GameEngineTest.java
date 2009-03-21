@@ -1,7 +1,6 @@
 package net.todd.games.boardgame;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import javax.media.j3d.Bounds;
 import javax.media.j3d.BranchGroup;
@@ -25,24 +24,22 @@ public class GameEngineTest {
 	private PieceGeneratorStub pieceGenerator;
 	private SceneGeneratorStub sceneGenerator;
 
-	private SimpleUniverse su;
-	private Canvas3D canvas3D;
+	private BranchGroup bg;
 
 	@Before
 	public void setUp() {
-		su = new SimpleUniverse();
-		canvas3D = new Canvas3D(SimpleUniverse.getPreferredConfiguration());
 
 		cameraGenerator = new CameraGeneratorStub();
 		pieceGenerator = new PieceGeneratorStub();
 		sceneGenerator = new SceneGeneratorStub();
+		bg = new BranchGroup();
 	}
 
 	@Test
 	public void testCreateSceneCallsAllTheRightMethodsInCorrectOrder() {
-		IGameEngine gameEngine = new GameEngine(sceneGenerator, pieceGenerator, cameraGenerator);
+		GameEngine gameEngine = new GameEngine(bg, sceneGenerator, pieceGenerator, cameraGenerator);
 
-		gameEngine.createScene(canvas3D);
+		gameEngine.createScene(null);
 
 		assertEquals(1, lightSceneCallCount);
 		assertEquals(2, createGameGridCallCount);
@@ -52,16 +49,11 @@ public class GameEngineTest {
 
 	@Test
 	public void testCreateCameraCallsRightMethod() {
-		IGameEngine gameEngine = new GameEngine(null, null, cameraGenerator);
+		GameEngine gameEngine = new GameEngine(bg, null, null, cameraGenerator);
 
-		gameEngine.createCamera(su, canvas3D);
+		gameEngine.createCamera(null, null);
 
 		assertEquals(1, createCameraCallCount);
-	}
-
-	@Test
-	public void testGetBranchGroupNeverReturnsNull() {
-		assertNotNull(new GameEngine(null, null, null).getBranchGroup());
 	}
 
 	private class CameraGeneratorStub implements ICameraGenerator {
@@ -72,7 +64,7 @@ public class GameEngineTest {
 
 	private class PieceGeneratorStub implements IPieceGenerator {
 
-		public void createPieces(BranchGroup bg, Canvas3D canvas3D, Bounds bounds) {
+		public void createPieces(BranchGroup bg, IPicker picker, Bounds bounds) {
 			createPiecesCallCount = ++callCount;
 		}
 	}
@@ -83,7 +75,7 @@ public class GameEngineTest {
 			createBackgroundCallCount = ++callCount;
 		}
 
-		public void createGameGrid(BranchGroup bg, Canvas3D canvas3D) {
+		public void createGameGrid(BranchGroup bg, IPicker picker) {
 			createGameGridCallCount = ++callCount;
 		}
 
