@@ -12,8 +12,8 @@ public class GameGridView implements IGameGridView {
 
 	private final ListenerManager tileSelectedListeners = new ListenerManager();
 
-	public GameGridView(final IPicker picker) {
-		board = new BranchGroupFactory().createBranchGroup();
+	public GameGridView(final IPicker picker, IBranchGroupFactory branchGroupFactory) {
+		board = branchGroupFactory.createBranchGroup();
 
 		picker.addListener(new IListener() {
 			public void fireEvent() {
