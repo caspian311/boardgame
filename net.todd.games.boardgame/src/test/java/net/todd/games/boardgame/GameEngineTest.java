@@ -83,15 +83,13 @@ public class GameEngineTest {
 
 		assertNull(sceneGenerator.backgroundBounds);
 		assertNull(sceneGenerator.lightingBounds);
-		assertNull(pieceGenerator.bounds);
 		assertNull(cameraGenerator.bounds);
 
 		gameEngine.createScene(null);
 		gameEngine.createCamera(null);
 
 		assertSame(sceneGenerator.backgroundBounds, sceneGenerator.lightingBounds);
-		assertSame(sceneGenerator.lightingBounds, pieceGenerator.bounds);
-		assertSame(pieceGenerator.bounds, cameraGenerator.bounds);
+		assertSame(sceneGenerator.lightingBounds, cameraGenerator.bounds);
 	}
 
 	private class CameraGeneratorStub implements ICameraGenerator {
@@ -106,11 +104,9 @@ public class GameEngineTest {
 
 	private class PieceGeneratorStub implements IPieceGenerator {
 		IPicker picker;
-		Bounds bounds;
 
-		public void createPieces(IPicker picker, Bounds bounds) {
+		public void createPieces(IPicker picker, IUserPiecesFactory userPiecesFactory) {
 			this.picker = picker;
-			this.bounds = bounds;
 			createPiecesCallCount = ++callCount;
 		}
 	}

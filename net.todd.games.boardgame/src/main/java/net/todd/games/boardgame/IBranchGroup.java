@@ -8,5 +8,7 @@ public interface IBranchGroup {
 
 	void addChild(Node node);
 
+	void addChild(IBranchGroup child);
+
 	BranchGroup getInternal();
 }

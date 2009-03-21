@@ -1,6 +1,5 @@
 package net.todd.games.boardgame;
 
-import javax.media.j3d.Node;
 import javax.vecmath.Vector3f;
 
 public interface IUserPiecesView {
@@ -8,5 +7,5 @@ public interface IUserPiecesView {
 
 	void movePieceTo(Vector3f position);
 
-	Node getBranchGroup();
+	IBranchGroup getBranchGroup();
 }

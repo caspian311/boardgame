@@ -1,7 +1,6 @@
 package net.todd.games.boardgame;
 
 import javax.media.j3d.Bounds;
-import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Node;
 import javax.vecmath.Vector3f;
 
@@ -12,11 +11,11 @@ public class UserPiecesView implements IUserPiecesView {
 	private Piece selectedPiece;
 	private final ListenerManager pieceSelectedListeners = new ListenerManager();
 	private final Bounds bounds;
-	private final BranchGroup allPiecesBranchGroup;
+	private final IBranchGroup allPiecesBranchGroup;
 
 	public UserPiecesView(Bounds bounds, final IPicker picker) {
 		this.bounds = bounds;
-		this.allPiecesBranchGroup = new BranchGroup();
+		this.allPiecesBranchGroup = new BranchGroupFactory().createBranchGroup();
 
 		picker.addListener(new IListener() {
 			public void fireEvent() {
@@ -43,7 +42,7 @@ public class UserPiecesView implements IUserPiecesView {
 		return selectedPiece;
 	}
 
-	public BranchGroup getBranchGroup() {
+	public IBranchGroup getBranchGroup() {
 		return allPiecesBranchGroup;
 	}
 

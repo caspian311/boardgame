@@ -1,6 +1,8 @@
 package net.todd.games.boardgame;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,7 @@ import org.junit.Test;
 
 public class GameGridGeneratorTest {
 	private BranchGroupStub branchGroup;
-	private IGameGridFactory gameGridFactory;
+	private GameGridFactoryStub gameGridFactory;
 
 	@Before
 	public void setUp() {
@@ -35,12 +37,12 @@ public class GameGridGeneratorTest {
 		GameGridGenerator gridGenerator = new GameGridGenerator(branchGroup);
 		Bounds bounds = new BoundingSphere();
 
-		assertEquals(0, branchGroup.addedNode.size());
+		assertEquals(0, branchGroup.addedNodes.size());
 
 		gridGenerator.createBackground(bounds);
 
-		assertEquals(1, branchGroup.addedNode.size());
-		Background background = (Background) branchGroup.addedNode.get(0);
+		assertEquals(1, branchGroup.addedNodes.size());
+		Background background = (Background) branchGroup.addedNodes.get(0);
 		assertEquals(bounds, background.getApplicationBounds());
 		Color3f color = new Color3f();
 		background.getColor(color);
@@ -52,19 +54,19 @@ public class GameGridGeneratorTest {
 		GameGridGenerator gridGenerator = new GameGridGenerator(branchGroup);
 		Bounds bounds = new BoundingSphere();
 
-		assertEquals(0, branchGroup.addedNode.size());
+		assertEquals(0, branchGroup.addedNodes.size());
 
 		gridGenerator.lightScene(bounds);
 
-		assertEquals(2, branchGroup.addedNode.size());
+		assertEquals(2, branchGroup.addedNodes.size());
 
-		AmbientLight light1 = (AmbientLight) branchGroup.addedNode.get(0);
+		AmbientLight light1 = (AmbientLight) branchGroup.addedNodes.get(0);
 		assertEquals(bounds, light1.getInfluencingBounds());
 		Color3f color1 = new Color3f();
 		light1.getColor(color1);
 		assertEquals(color1, GameColors.LIGHT_COLOR);
 
-		DirectionalLight light2 = (DirectionalLight) branchGroup.addedNode.get(1);
+		DirectionalLight light2 = (DirectionalLight) branchGroup.addedNodes.get(1);
 		assertEquals(bounds, light2.getInfluencingBounds());
 		Color3f color2 = new Color3f();
 		light2.getColor(color2);
@@ -78,18 +80,21 @@ public class GameGridGeneratorTest {
 	public void testCreateGameGridAddsOnlyOneChild() {
 		GameGridGenerator gridGenerator = new GameGridGenerator(branchGroup);
 
-		assertEquals(0, branchGroup.addedNode.size());
+		assertEquals(0, branchGroup.addedGroup.size());
+		assertFalse(gameGridFactory.gameGridconstructed);
 
 		gridGenerator.createGameGrid(new PickerStub(), gameGridFactory);
 
-		assertEquals(1, branchGroup.addedNode.size());
+		assertEquals(1, branchGroup.addedGroup.size());
+		assertTrue(gameGridFactory.gameGridconstructed);
 	}
 
 	private static class BranchGroupStub implements IBranchGroup {
-		List<Node> addedNode = new ArrayList<Node>();
+		List<Node> addedNodes = new ArrayList<Node>();
+		List<IBranchGroup> addedGroup = new ArrayList<IBranchGroup>();
 
 		public void addChild(Node node) {
-			this.addedNode.add(node);
+			this.addedNodes.add(node);
 		}
 
 		public void compile() {
@@ -98,6 +103,10 @@ public class GameGridGeneratorTest {
 
 		public BranchGroup getInternal() {
 			throw new UnsupportedOperationException();
+		}
+
+		public void addChild(IBranchGroup child) {
+			this.addedGroup.add(child);
 		}
 	}
 
@@ -112,16 +121,25 @@ public class GameGridGeneratorTest {
 	}
 
 	private static class GameGridFactoryStub implements IGameGridFactory {
+		boolean gameGridconstructed;
+
 		public IBranchGroup constructGameGrid(IPicker picker) {
+			gameGridconstructed = true;
 			return new IBranchGroup() {
 				public void addChild(Node node) {
+					throw new UnsupportedOperationException();
 				}
 
 				public void compile() {
+					throw new UnsupportedOperationException();
 				}
 
 				public BranchGroup getInternal() {
-					return new BranchGroup();
+					throw new UnsupportedOperationException();
+				}
+
+				public void addChild(IBranchGroup child) {
+					throw new UnsupportedOperationException();
 				}
 			};
 		}

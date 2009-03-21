@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.media.j3d.Node;
 import javax.vecmath.Vector3f;
 
 import net.todd.common.uitools.IListener;
@@ -60,7 +59,7 @@ public class UserPiecePresenterTest {
 			moveToPosition = position;
 		}
 
-		public Node getBranchGroup() {
+		public IBranchGroup getBranchGroup() {
 			throw new UnsupportedOperationException();
 		}
 	}

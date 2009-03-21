@@ -10,6 +10,7 @@ public class GameEngine implements IGameEngine {
 	private final ICameraGenerator cameraGenerator;
 	private final Bounds bounds;
 	private final IGameGridFactory gameGridFactory;
+	private final IUserPiecesFactory userPiecesFactory;
 
 	public GameEngine(ISceneGenerator sceneGenerator, IPieceGenerator pieceGenerator,
 			ICameraGenerator cameraGenerator) {
@@ -19,13 +20,14 @@ public class GameEngine implements IGameEngine {
 
 		bounds = new BoundingSphere(new Point3d(0, 0, 0), 100);
 		gameGridFactory = new GameGridFactory();
+		userPiecesFactory = new UserPiecesFactory(bounds);
 	}
 
 	public void createScene(IPicker picker) {
 		sceneGenerator.lightScene(bounds);
 		sceneGenerator.createGameGrid(picker, gameGridFactory);
 		sceneGenerator.createBackground(bounds);
-		pieceGenerator.createPieces(picker, bounds);
+		pieceGenerator.createPieces(picker, userPiecesFactory);
 	}
 
 	public void createCamera(IUniverse su) {

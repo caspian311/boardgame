@@ -16,7 +16,7 @@ public class GameGridGenerator implements ISceneGenerator {
 	public void createGameGrid(IPicker picker, IGameGridFactory gameGridFactory) {
 		IBranchGroup bg = gameGridFactory.constructGameGrid(picker);
 
-		branchGroup.addChild(bg.getInternal());
+		branchGroup.addChild(bg);
 	}
 
 	public void lightScene(Bounds bounds) {

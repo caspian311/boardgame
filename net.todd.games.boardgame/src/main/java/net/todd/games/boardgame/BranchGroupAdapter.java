@@ -18,6 +18,10 @@ public class BranchGroupAdapter implements IBranchGroup {
 		branchGroup.addChild(child);
 	}
 
+	public void addChild(IBranchGroup child) {
+		branchGroup.addChild(child.getInternal());
+	}
+
 	public BranchGroup getInternal() {
 		return branchGroup;
 	}
