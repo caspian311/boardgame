@@ -2,20 +2,16 @@ package net.todd.games.boardgame;
 
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Canvas3D;
 import javax.vecmath.Point3d;
-
-import com.sun.j3d.utils.universe.SimpleUniverse;
 
 public class GameEngine {
 	private final ISceneGenerator sceneGenerator;
 	private final IPieceGenerator pieceGenerator;
 	private final ICameraGenerator cameraGenerator;
 	private final Bounds bounds;
-	private final BranchGroup bg;
+	private final IBranchGroup bg;
 
-	public GameEngine(BranchGroup bg, ISceneGenerator sceneGenerator,
+	public GameEngine(IBranchGroup bg, ISceneGenerator sceneGenerator,
 			IPieceGenerator pieceGenerator, ICameraGenerator cameraGenerator) {
 		this.bg = bg;
 		this.sceneGenerator = sceneGenerator;
@@ -30,9 +26,11 @@ public class GameEngine {
 		sceneGenerator.createGameGrid(bg, picker);
 		sceneGenerator.createBackground(bg, bounds);
 		pieceGenerator.createPieces(bg, picker, bounds);
+
+		bg.compile();
 	}
 
-	public void createCamera(SimpleUniverse su, Canvas3D canvas3D) {
-		cameraGenerator.createCamera(su, canvas3D, bounds);
+	public void createCamera(IUniverse su) {
+		cameraGenerator.createCamera(su, bounds);
 	}
 }

@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
 public class MainApplication {
-	private final SimpleUniverse universe;
+	private final IUniverse universe;
 	private final Canvas3D canvas3D;
 	private final JFrame frame;
 
@@ -33,9 +33,7 @@ public class MainApplication {
 		GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
 
 		canvas3D = new Canvas3D(config);
-		universe = new SimpleUniverse(canvas3D);
-		universe.getViewingPlatform().setNominalViewingTransform();
-		universe.getViewer().getView().setMinimumFrameCycleTime(5);
+		universe = new UniverseFactory(canvas3D).createUniverse();
 
 		mainPanel.add(canvas3D, BorderLayout.CENTER);
 
@@ -49,7 +47,8 @@ public class MainApplication {
 	}
 
 	public void createGame() {
-		BranchGroup bg = new BranchGroup();
+		BranchGroup branchGroup = new BranchGroup();
+		IBranchGroup bg = new BranchGroupAdapter(branchGroup);
 		ISceneGenerator gameGridGenerator = new GameGridGenerator();
 		IPieceGenerator pieceGenerator = new PieceGenerator();
 		ICameraGenerator cameraGenerator = new CameraGenerator();
@@ -57,12 +56,11 @@ public class MainApplication {
 		GameEngine gameEngine = new GameEngine(bg, gameGridGenerator, pieceGenerator,
 				cameraGenerator);
 
-		IPicker picker = new Picker(canvas3D, bg);
+		IPicker picker = new Picker(universe, branchGroup);
 
 		gameEngine.createScene(picker);
-		gameEngine.createCamera(universe, canvas3D);
+		gameEngine.createCamera(universe);
 
-		bg.compile();
 		universe.addBranchGraph(bg);
 	}
 }

@@ -31,44 +31,6 @@ public class UserPiece extends Shape3D {
 		setAppearance(sphere.getShape().getAppearance());
 	}
 
-	// public void setPosition(Vector3f position) {
-	// Transform3D transformation = new Transform3D();
-	// pieceTG.getTransform(transformation);
-	// transformation.set(position);
-	// pieceTG.setTransform(transformation);
-	// }
-
-	// public Node getGraphNode() {
-	// return pieceTG;
-	// }
-
-	// public Node getShadowNode(Vector3f lightDirection) {
-	// Shape3D shadow = new ShadowShape((GeometryArray)
-	// sphere.getShape().getGeometry(),
-	// lightDirection, 0.1f);
-	//
-	// Transform3D shadowPosition = new Transform3D();
-	// shadowPosition.set(getShadowPosition(lightDirection));
-	// TransformGroup shadowTG = new TransformGroup(shadowPosition);
-	//
-	// shadowTG.addChild(shadow);
-	//
-	// return shadowTG;
-	// }
-	//
-	// private Vector3f getShadowPosition(Vector3f lightDirection) {
-	// float height = 0.001f;
-	// Vector3f userStartingPosition = getUserStartingPosition();
-	// float shadowX = (userStartingPosition.x + (userStartingPosition.y -
-	// height)
-	// * lightDirection.x);
-	// float shadowZ = userStartingPosition.z + (userStartingPosition.y -
-	// height)
-	// * lightDirection.y;
-	//
-	// return new Vector3f(shadowX, height, shadowZ);
-	// }
-
 	public String getUuid() {
 		return uuid;
 	}

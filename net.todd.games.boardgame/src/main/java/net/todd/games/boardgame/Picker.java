@@ -17,12 +17,13 @@ public class Picker implements IPicker {
 	private Node selectedNode;
 	private final ListenerManager pickListenerManager = new ListenerManager();
 
-	public Picker(Canvas3D canvas3D, BranchGroup branchGroup) {
-		final PickCanvas pickCanvas = new PickCanvas(canvas3D, branchGroup);
+	public Picker(IUniverse universe, BranchGroup branchGroup) {
+		Canvas3D canvas = universe.getCanvas();
+		final PickCanvas pickCanvas = new PickCanvas(canvas, branchGroup);
 		pickCanvas.setMode(PickInfo.PICK_GEOMETRY);
 		pickCanvas.setTolerance(4.0f);
 
-		canvas3D.addMouseListener(new MouseAdapter() {
+		canvas.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent mouseEvent) {
 				pickCanvas.setShapeLocation(mouseEvent);
@@ -35,22 +36,10 @@ public class Picker implements IPicker {
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * net.todd.games.boardgame.IPicker#addListener(net.todd.common.uitools.
-	 * IListener)
-	 */
 	public void addListener(IListener listener) {
 		pickListenerManager.addListener(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.todd.games.boardgame.IPicker#getSelectedNode()
-	 */
 	public Node getSelectedNode() {
 		return selectedNode;
 	}

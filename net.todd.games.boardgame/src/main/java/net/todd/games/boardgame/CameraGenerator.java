@@ -9,11 +9,10 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
-import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
 public class CameraGenerator implements ICameraGenerator {
-	public void createCamera(SimpleUniverse su, Canvas3D canvas3D, Bounds bounds) {
+	public void createCamera(IUniverse su, Bounds bounds) {
 		ViewingPlatform vp = su.getViewingPlatform();
 		View view = su.getViewer().getView();
 		view.setBackClipDistance(100);
@@ -25,7 +24,8 @@ public class CameraGenerator implements ICameraGenerator {
 		t3d.invert();
 		tg.setTransform(t3d);
 
-		OrbitBehavior orbit = new OrbitBehavior(canvas3D, OrbitBehavior.REVERSE_ALL);
+		Canvas3D canvas = su.getCanvas();
+		OrbitBehavior orbit = new OrbitBehavior(canvas, OrbitBehavior.REVERSE_ALL);
 		orbit.setSchedulingBounds(bounds);
 		vp.setViewPlatformBehavior(orbit);
 	}
