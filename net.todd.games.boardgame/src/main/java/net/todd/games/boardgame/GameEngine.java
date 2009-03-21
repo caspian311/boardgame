@@ -30,8 +30,6 @@ public class GameEngine {
 		sceneGenerator.createGameGrid(bg, picker);
 		sceneGenerator.createBackground(bg, bounds);
 		pieceGenerator.createPieces(bg, picker, bounds);
-
-		bg.compile();
 	}
 
 	public void createCamera(SimpleUniverse su, Canvas3D canvas3D) {

@@ -62,6 +62,7 @@ public class MainApplication {
 		gameEngine.createScene(picker);
 		gameEngine.createCamera(universe, canvas3D);
 
+		bg.compile();
 		universe.addBranchGraph(bg);
 	}
 }
