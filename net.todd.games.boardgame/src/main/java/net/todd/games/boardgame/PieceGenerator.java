@@ -1,6 +1,5 @@
 package net.todd.games.boardgame;
 
-
 public class PieceGenerator implements IPieceGenerator {
 	private final IBranchGroup bg;
 
@@ -10,7 +9,6 @@ public class PieceGenerator implements IPieceGenerator {
 
 	public void createPieces(IPicker picker, IUserPiecesFactory userPiecesFactory) {
 		IBranchGroup branchGroup = userPiecesFactory.constructUserPieces(picker);
-
-		bg.addChild(branchGroup.getInternal());
+		bg.addChild(branchGroup);
 	}
 }

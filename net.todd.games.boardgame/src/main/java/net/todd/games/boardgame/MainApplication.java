@@ -41,7 +41,8 @@ public class MainApplication {
 
 	public void start() {
 		IBranchGroupFactory branchGroupFactory = new BranchGroupFactory();
-		gameLauncher.launchGame(universe, branchGroupFactory);
+		IGameEngineFactory gameEngineFactory = new GameEngineFactory();
+		gameLauncher.launchGame(universe, branchGroupFactory, gameEngineFactory);
 		frame.setVisible(true);
 	}
 }

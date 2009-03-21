@@ -1,6 +1,6 @@
 package net.todd.games.boardgame;
 
-public class GameEngineFactory {
+public class GameEngineFactory implements IGameEngineFactory {
 	public IGameEngine createGameEngine(IBranchGroup branchGroup) {
 		ISceneGenerator gameGridGenerator = new GameGridGenerator(branchGroup);
 		IPieceGenerator pieceGenerator = new PieceGenerator(branchGroup);
