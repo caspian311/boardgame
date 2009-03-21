@@ -1,6 +1,7 @@
 package net.todd.games.boardgame;
 
 import javax.media.j3d.Appearance;
+import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Geometry;
 import javax.media.j3d.GeometryArray;
 import javax.media.j3d.Material;
@@ -8,6 +9,7 @@ import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.QuadArray;
 import javax.media.j3d.Shape3D;
 import javax.vecmath.Color3f;
+import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
 
 import com.sun.j3d.utils.geometry.GeometryInfo;
@@ -34,6 +36,7 @@ public class Tile extends Shape3D implements ITile {
 		setGeometry(getMyGeometry());
 		setAppearance(getMyAppearance());
 		setPickable(true);
+		setBounds(new BoundingSphere(new Point3d(0, 0, 0), 100));
 	}
 
 	private Appearance getMyAppearance() {
