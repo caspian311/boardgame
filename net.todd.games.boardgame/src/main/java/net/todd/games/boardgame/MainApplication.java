@@ -1,11 +1,9 @@
 package net.todd.games.boardgame;
 
 import java.awt.BorderLayout;
-import java.awt.GraphicsConfiguration;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -14,10 +12,11 @@ import com.sun.j3d.utils.universe.SimpleUniverse;
 
 public class MainApplication {
 	private final IUniverse universe;
-	private final Canvas3D canvas3D;
 	private final JFrame frame;
+	private final IGameLauncher gameLauncher;
 
-	public MainApplication(String title) {
+	public MainApplication(String title, IGameLauncher gameLauncher) {
+		this.gameLauncher = gameLauncher;
 		frame = new JFrame(title);
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
@@ -30,37 +29,18 @@ public class MainApplication {
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
 
-		GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
-
-		canvas3D = new Canvas3D(config);
-		universe = new UniverseFactory(canvas3D).createUniverse();
-
+		Canvas3D canvas3D = new Canvas3D(SimpleUniverse.getPreferredConfiguration());
+		canvas3D.setFocusable(true);
+		canvas3D.requestFocus();
 		mainPanel.add(canvas3D, BorderLayout.CENTER);
 
 		frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
+
+		universe = new UniverseFactory(canvas3D).createUniverse();
 	}
 
 	public void start() {
-		canvas3D.setFocusable(true);
-		canvas3D.requestFocus();
+		gameLauncher.launchGame(universe);
 		frame.setVisible(true);
-	}
-
-	public void createGame() {
-		BranchGroup branchGroup = new BranchGroup();
-		IBranchGroup bg = new BranchGroupAdapter(branchGroup);
-		ISceneGenerator gameGridGenerator = new GameGridGenerator();
-		IPieceGenerator pieceGenerator = new PieceGenerator();
-		ICameraGenerator cameraGenerator = new CameraGenerator();
-
-		GameEngine gameEngine = new GameEngine(bg, gameGridGenerator, pieceGenerator,
-				cameraGenerator);
-
-		IPicker picker = new Picker(universe, branchGroup);
-
-		gameEngine.createScene(picker);
-		gameEngine.createCamera(universe);
-
-		universe.addBranchGraph(bg);
 	}
 }

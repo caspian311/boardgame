@@ -5,9 +5,7 @@ import javax.media.j3d.Node;
 import net.todd.common.uitools.IListener;
 
 public interface IPicker {
+	void addListener(IListener listener);
 
-	public abstract void addListener(IListener listener);
-
-	public abstract Node getSelectedNode();
-
+	Node getSelectedNode();
 }

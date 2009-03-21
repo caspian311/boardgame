@@ -55,7 +55,7 @@ public class GameGridPresenterTest {
 			this.listener = listener;
 		}
 
-		public BranchGroup getBG() {
+		public BranchGroup getBranchGroup() {
 			throw new UnsupportedOperationException();
 		}
 

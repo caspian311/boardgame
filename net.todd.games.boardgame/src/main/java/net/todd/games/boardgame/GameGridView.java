@@ -37,7 +37,7 @@ public class GameGridView implements IGameGridView {
 		}
 	}
 
-	public BranchGroup getBG() {
+	public BranchGroup getBranchGroup() {
 		return board;
 	}
 

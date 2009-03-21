@@ -7,7 +7,7 @@ import net.todd.common.uitools.IListener;
 public interface IGameGridView {
 	TileData getSelectedTile();
 
-	BranchGroup getBG();
+	BranchGroup getBranchGroup();
 
 	void addTileSelectedListener(IListener listener);
 

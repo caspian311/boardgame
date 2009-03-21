@@ -3,8 +3,6 @@ package net.todd.games.boardgame;
 import static org.junit.Assert.assertEquals;
 
 import javax.media.j3d.Bounds;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Node;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +13,6 @@ public class GameEngineTest {
 	private int createBackgroundCallCount;
 	private int createPiecesCallCount;
 	private int createCameraCallCount;
-	private int compileCount;
 
 	private int callCount;
 
@@ -23,20 +20,16 @@ public class GameEngineTest {
 	private PieceGeneratorStub pieceGenerator;
 	private SceneGeneratorStub sceneGenerator;
 
-	private IBranchGroup bg;
-
 	@Before
 	public void setUp() {
-
 		cameraGenerator = new CameraGeneratorStub();
 		pieceGenerator = new PieceGeneratorStub();
 		sceneGenerator = new SceneGeneratorStub();
-		bg = new BranchGroupStub();
 	}
 
 	@Test
 	public void testCreateSceneCallsAllTheRightMethodsInCorrectOrder() {
-		GameEngine gameEngine = new GameEngine(bg, sceneGenerator, pieceGenerator, cameraGenerator);
+		IGameEngine gameEngine = new GameEngine(sceneGenerator, pieceGenerator, cameraGenerator);
 
 		gameEngine.createScene(null);
 
@@ -44,12 +37,11 @@ public class GameEngineTest {
 		assertEquals(2, createGameGridCallCount);
 		assertEquals(3, createBackgroundCallCount);
 		assertEquals(4, createPiecesCallCount);
-		assertEquals(5, compileCount);
 	}
 
 	@Test
 	public void testCreateCameraCallsRightMethod() {
-		GameEngine gameEngine = new GameEngine(bg, null, null, cameraGenerator);
+		IGameEngine gameEngine = new GameEngine(null, null, cameraGenerator);
 
 		gameEngine.createCamera(null);
 
@@ -63,36 +55,22 @@ public class GameEngineTest {
 	}
 
 	private class PieceGeneratorStub implements IPieceGenerator {
-		public void createPieces(IBranchGroup bg, IPicker picker, Bounds bounds) {
+		public void createPieces(IPicker picker, Bounds bounds) {
 			createPiecesCallCount = ++callCount;
 		}
 	}
 
 	private class SceneGeneratorStub implements ISceneGenerator {
-		public void createBackground(IBranchGroup bg, Bounds bounds) {
+		public void createBackground(Bounds bounds) {
 			createBackgroundCallCount = ++callCount;
 		}
 
-		public void createGameGrid(IBranchGroup bg, IPicker picker) {
+		public void createGameGrid(IPicker picker) {
 			createGameGridCallCount = ++callCount;
 		}
 
-		public void lightScene(IBranchGroup bg, Bounds bounds) {
+		public void lightScene(Bounds bounds) {
 			lightSceneCallCount = ++callCount;
-		}
-	}
-
-	private class BranchGroupStub implements IBranchGroup {
-		public void compile() {
-			compileCount = ++callCount;
-		}
-
-		public void addChild(Node node) {
-			throw new UnsupportedOperationException();
-		}
-
-		public BranchGroup getInternal() {
-			throw new UnsupportedOperationException();
 		}
 	}
 }

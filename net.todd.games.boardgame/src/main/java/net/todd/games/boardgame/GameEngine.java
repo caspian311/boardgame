@@ -4,16 +4,14 @@ import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
-public class GameEngine {
+public class GameEngine implements IGameEngine {
 	private final ISceneGenerator sceneGenerator;
 	private final IPieceGenerator pieceGenerator;
 	private final ICameraGenerator cameraGenerator;
 	private final Bounds bounds;
-	private final IBranchGroup bg;
 
-	public GameEngine(IBranchGroup bg, ISceneGenerator sceneGenerator,
-			IPieceGenerator pieceGenerator, ICameraGenerator cameraGenerator) {
-		this.bg = bg;
+	public GameEngine(ISceneGenerator sceneGenerator, IPieceGenerator pieceGenerator,
+			ICameraGenerator cameraGenerator) {
 		this.sceneGenerator = sceneGenerator;
 		this.pieceGenerator = pieceGenerator;
 		this.cameraGenerator = cameraGenerator;
@@ -22,12 +20,10 @@ public class GameEngine {
 	}
 
 	public void createScene(IPicker picker) {
-		sceneGenerator.lightScene(bg, bounds);
-		sceneGenerator.createGameGrid(bg, picker);
-		sceneGenerator.createBackground(bg, bounds);
-		pieceGenerator.createPieces(bg, picker, bounds);
-
-		bg.compile();
+		sceneGenerator.lightScene(bounds);
+		sceneGenerator.createGameGrid(picker);
+		sceneGenerator.createBackground(bounds);
+		pieceGenerator.createPieces(picker, bounds);
 	}
 
 	public void createCamera(IUniverse su) {

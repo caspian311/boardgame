@@ -6,8 +6,8 @@ public class Main {
 	}
 
 	private void execute() {
-		MainApplication mainApplication = new MainApplication("Board Game");
-		mainApplication.createGame();
+		GameLauncher gameLauncher = new GameLauncher();
+		MainApplication mainApplication = new MainApplication("Board Game", gameLauncher);
 		mainApplication.start();
 	}
 }
