@@ -1,20 +1,19 @@
 package net.todd.games.boardgame;
 
-import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Node;
 
 import net.todd.common.uitools.IListener;
 import net.todd.common.uitools.ListenerManager;
 
 public class GameGridView implements IGameGridView {
-	private final BranchGroup board;
+	private final IBranchGroup board;
 
 	private TileData selectedTile;
 
 	private final ListenerManager tileSelectedListeners = new ListenerManager();
 
 	public GameGridView(final IPicker picker) {
-		board = new BranchGroup();
+		board = new BranchGroupFactory().createBranchGroup();
 
 		picker.addListener(new IListener() {
 			public void fireEvent() {
@@ -37,7 +36,7 @@ public class GameGridView implements IGameGridView {
 		}
 	}
 
-	public BranchGroup getBranchGroup() {
+	public IBranchGroup getBranchGroup() {
 		return board;
 	}
 

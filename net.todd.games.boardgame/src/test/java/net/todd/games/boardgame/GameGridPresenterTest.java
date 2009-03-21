@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
-import javax.media.j3d.BranchGroup;
 import javax.vecmath.Vector3f;
 
 import net.todd.common.uitools.IListener;
@@ -55,7 +54,7 @@ public class GameGridPresenterTest {
 			this.listener = listener;
 		}
 
-		public BranchGroup getBranchGroup() {
+		public IBranchGroup getBranchGroup() {
 			throw new UnsupportedOperationException();
 		}
 

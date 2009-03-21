@@ -1,10 +1,9 @@
 package net.todd.games.boardgame;
 
-import javax.media.j3d.BranchGroup;
 
 public class GameLauncher implements IGameLauncher {
-	public void launchGame(IUniverse universe) {
-		IBranchGroup branchGroup = new BranchGroupAdapter(new BranchGroup());
+	public void launchGame(IUniverse universe, IBranchGroupFactory branchGroupFactory) {
+		IBranchGroup branchGroup = branchGroupFactory.createBranchGroup();
 		IGameEngine gameEngine = new GameEngineFactory().createGameEngine(branchGroup);
 
 		IPicker picker = new Picker(universe, branchGroup);

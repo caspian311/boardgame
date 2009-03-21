@@ -125,7 +125,7 @@ public class GameEngineTest {
 			createBackgroundCallCount = ++callCount;
 		}
 
-		public void createGameGrid(IPicker picker) {
+		public void createGameGrid(IPicker picker, IGameGridFactory gameGridFactory) {
 			this.picker = picker;
 			createGameGridCallCount = ++callCount;
 		}

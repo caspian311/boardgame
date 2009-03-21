@@ -40,7 +40,8 @@ public class MainApplication {
 	}
 
 	public void start() {
-		gameLauncher.launchGame(universe);
+		IBranchGroupFactory branchGroupFactory = new BranchGroupFactory();
+		gameLauncher.launchGame(universe, branchGroupFactory);
 		frame.setVisible(true);
 	}
 }

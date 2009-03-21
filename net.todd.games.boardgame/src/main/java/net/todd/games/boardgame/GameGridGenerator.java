@@ -13,11 +13,10 @@ public class GameGridGenerator implements ISceneGenerator {
 		this.branchGroup = branchGroup;
 	}
 
-	public void createGameGrid(IPicker picker) {
-		IGameGridView boardView = new GameGridView(picker);
-		new GameGridPresenter(boardView, GameGridModelProvider.getModel());
+	public void createGameGrid(IPicker picker, IGameGridFactory gameGridFactory) {
+		IBranchGroup bg = gameGridFactory.constructGameGrid(picker);
 
-		branchGroup.addChild(boardView.getBranchGroup());
+		branchGroup.addChild(bg.getInternal());
 	}
 
 	public void lightScene(Bounds bounds) {

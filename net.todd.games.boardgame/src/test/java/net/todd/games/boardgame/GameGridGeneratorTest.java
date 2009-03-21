@@ -22,10 +22,12 @@ import org.junit.Test;
 
 public class GameGridGeneratorTest {
 	private BranchGroupStub branchGroup;
+	private IGameGridFactory gameGridFactory;
 
 	@Before
 	public void setUp() {
 		branchGroup = new BranchGroupStub();
+		gameGridFactory = new GameGridFactoryStub();
 	}
 
 	@Test
@@ -78,14 +80,7 @@ public class GameGridGeneratorTest {
 
 		assertEquals(0, branchGroup.addedNode.size());
 
-		gridGenerator.createGameGrid(new IPicker() {
-			public void addListener(IListener listener) {
-			}
-
-			public Node getSelectedNode() {
-				throw new UnsupportedOperationException();
-			}
-		});
+		gridGenerator.createGameGrid(new PickerStub(), gameGridFactory);
 
 		assertEquals(1, branchGroup.addedNode.size());
 	}
@@ -103,6 +98,32 @@ public class GameGridGeneratorTest {
 
 		public BranchGroup getInternal() {
 			throw new UnsupportedOperationException();
+		}
+	}
+
+	private static class PickerStub implements IPicker {
+		public void addListener(IListener listener) {
+			throw new UnsupportedOperationException();
+		}
+
+		public Node getSelectedNode() {
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	private static class GameGridFactoryStub implements IGameGridFactory {
+		public IBranchGroup constructGameGrid(IPicker picker) {
+			return new IBranchGroup() {
+				public void addChild(Node node) {
+				}
+
+				public void compile() {
+				}
+
+				public BranchGroup getInternal() {
+					return new BranchGroup();
+				}
+			};
 		}
 	}
 }
