@@ -14,11 +14,9 @@ public class UserPiecesModel implements IUserPiecesModel {
 	private final IGameGridModel gameGridModel;
 	private Vector3f currentPosition;
 
-
 	public UserPiecesModel(final IGameGridModel gameGridModel) {
 		this.gameGridModel = gameGridModel;
 		gameGridModel.addPositionSelectedListener(new IListener() {
-
 			public void fireEvent() {
 				currentPosition = gameGridModel.getSelectedPosition();
 				adjustPositionForHeight(currentPosition);
@@ -38,18 +36,26 @@ public class UserPiecesModel implements IUserPiecesModel {
 	}
 
 	public Vector3f getCurrentPosition() {
-		return currentPosition;// adjustCurrentPositionForHeight();
+		return currentPosition;
 	}
 
-	public List<PieceInfo> getAllPieces() {
-		List<PieceInfo> allPieces = new ArrayList<PieceInfo>();
-		for (Vector3f position : gameGridModel.getTeamOneStartingGridPositions()) {
+	public List<PieceInfo> getAllTeamOnePieces() {
+		return convertToPieceInfo(gameGridModel.getTeamOneStartingGridPositions());
+	}
+
+	public List<PieceInfo> getAllTeamTwoPieces() {
+		return convertToPieceInfo(gameGridModel.getTeamTwoStartingGridPositions());
+	}
+
+	private List<PieceInfo> convertToPieceInfo(List<Vector3f> positions) {
+		List<PieceInfo> teamTwoPieces = new ArrayList<PieceInfo>();
+		for (Vector3f position : positions) {
 			adjustPositionForHeight(position);
-			
+
 			PieceInfo piece = new PieceInfo();
 			piece.setPosition(position);
-			allPieces.add(piece);
+			teamTwoPieces.add(piece);
 		}
-		return allPieces;
+		return teamTwoPieces;
 	}
 }

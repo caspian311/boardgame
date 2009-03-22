@@ -10,6 +10,8 @@ public interface IUserPiecesModel {
 	void addListener(IListener userModelListener);
 
 	Vector3f getCurrentPosition();
-	
-	List<PieceInfo> getAllPieces();
+
+	List<PieceInfo> getAllTeamOnePieces();
+
+	List<PieceInfo> getAllTeamTwoPieces();
 }

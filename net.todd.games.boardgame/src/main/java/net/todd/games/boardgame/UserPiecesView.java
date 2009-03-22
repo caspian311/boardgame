@@ -30,7 +30,8 @@ public class UserPiecesView implements IUserPiecesView {
 		});
 	}
 
-	public void addPiece(Vector3f startingPoint) {
+	public void addPiece(PieceInfo pieceInfo) {
+		Vector3f startingPoint = pieceInfo.getPosition();
 		Piece piece = new Piece(bounds, startingPoint);
 		allPiecesBranchGroup.addChild(piece);
 	}

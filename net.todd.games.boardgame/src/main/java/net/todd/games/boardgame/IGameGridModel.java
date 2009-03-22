@@ -11,6 +11,8 @@ public interface IGameGridModel {
 
 	List<Vector3f> getTeamOneStartingGridPositions();
 
+	List<Vector3f> getTeamTwoStartingGridPositions();
+
 	void addPositionSelectedListener(IListener listener);
 
 	Vector3f getSelectedPosition();

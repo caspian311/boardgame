@@ -90,5 +90,9 @@ public class GameGridPresenterTest {
 		public void setSelectedTile(TileData position) {
 			selectedPosition = position;
 		}
+
+		public List<Vector3f> getTeamTwoStartingGridPositions() {
+			throw new UnsupportedOperationException();
+		}
 	}
 }

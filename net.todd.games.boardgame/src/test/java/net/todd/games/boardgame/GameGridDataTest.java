@@ -7,20 +7,15 @@ import java.util.List;
 
 import javax.vecmath.Vector3f;
 
-import org.junit.Before;
 import org.junit.Test;
 
 public class GameGridDataTest {
-	private GameGridData gridData;
-
-	@Before
-	public void setUp() {
-		gridData = new GameGridData();
-	}
-
 	@Test
 	public void testGridDataContainsTileInformationForAn8X8Grid() {
+		GameGridData gridData = new GameGridData();
+
 		TileData[][] tileData = gridData.getTileData();
+
 		assertNotNull(tileData);
 		assertEquals(8, tileData.length);
 		for (int i = 0; i < tileData.length; i++) {
@@ -30,7 +25,10 @@ public class GameGridDataTest {
 
 	@Test
 	public void testGridDataContainsTilesThatAre10X10InSize() {
+		GameGridData gridData = new GameGridData();
+
 		TileData[][] tileData = gridData.getTileData();
+
 		for (int x = 0; x < 8; x++) {
 			for (int y = 0; y < 8; y++) {
 				assertEquals(10f, tileData[x][y].getSize());
@@ -40,7 +38,10 @@ public class GameGridDataTest {
 
 	@Test
 	public void testGridDataTilesContainChessPatternInWhitesAndBlacks() {
+		GameGridData gridData = new GameGridData();
+
 		TileData[][] tileData = gridData.getTileData();
+
 		assertEquals(GameGridData.black, tileData[0][0].getColor());
 		assertEquals(GameGridData.white, tileData[0][1].getColor());
 		assertEquals(GameGridData.black, tileData[0][2].getColor());
@@ -63,7 +64,10 @@ public class GameGridDataTest {
 
 	@Test
 	public void testGridDataTilesContainTilePositions() {
+		GameGridData gridData = new GameGridData();
+
 		TileData[][] tileData = gridData.getTileData();
+
 		ComparisonUtil.compareArrays(new float[] { -35f, 0f, -35f }, tileData[0][0].getPosition());
 		ComparisonUtil.compareArrays(new float[] { -25f, 0f, -35f }, tileData[0][1].getPosition());
 		ComparisonUtil.compareArrays(new float[] { -15f, 0f, -35f }, tileData[0][2].getPosition());
@@ -86,11 +90,27 @@ public class GameGridDataTest {
 
 	@Test
 	public void testCoordinatesForTeamOneStartingPositions() {
+		GameGridData gridData = new GameGridData();
+
 		List<Vector3f> teamOneStartingPositions = gridData.getTeamOneStartingPositions();
+
 		assertEquals(4, teamOneStartingPositions.size());
-		assertEquals(new Vector3f(new float[] { -15f, 0f, -35f }), teamOneStartingPositions.get(0));
-		assertEquals(new Vector3f(new float[] { -5f, 0f, -35f }), teamOneStartingPositions.get(1));
-		assertEquals(new Vector3f(new float[] { 5f, 0f, -35f }), teamOneStartingPositions.get(2));
-		assertEquals(new Vector3f(new float[] { 15f, 0f, -35f }), teamOneStartingPositions.get(3));
+		assertEquals(new Vector3f(-15f, 0f, -35f), teamOneStartingPositions.get(0));
+		assertEquals(new Vector3f(-5f, 0f, -35f), teamOneStartingPositions.get(1));
+		assertEquals(new Vector3f(5f, 0f, -35f), teamOneStartingPositions.get(2));
+		assertEquals(new Vector3f(15f, 0f, -35f), teamOneStartingPositions.get(3));
+	}
+
+	@Test
+	public void testCoordinatesForTeamTwoStartingPositions() {
+		GameGridData gridData = new GameGridData();
+
+		List<Vector3f> teamOneStartingPositions = gridData.getTeamTwoStartingPositions();
+
+		assertEquals(4, teamOneStartingPositions.size());
+		assertEquals(new Vector3f(-15f, 0f, 35f), teamOneStartingPositions.get(0));
+		assertEquals(new Vector3f(-5f, 0f, 35f), teamOneStartingPositions.get(1));
+		assertEquals(new Vector3f(5f, 0f, 35f), teamOneStartingPositions.get(2));
+		assertEquals(new Vector3f(15f, 0f, 35f), teamOneStartingPositions.get(3));
 	}
 }

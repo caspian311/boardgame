@@ -56,8 +56,12 @@ public class UserPiecesViewTest {
 		branchGroupFactory.branchGroup = branchGroup;
 		UserPiecesView userPiecesView = new UserPiecesView(bounds, picker, branchGroupFactory);
 
-		userPiecesView.addPiece(new Vector3f());
-		userPiecesView.addPiece(new Vector3f());
+		PieceInfo pieceInfo1 = new PieceInfo();
+		pieceInfo1.setPosition(new Vector3f(1f, 2f, 3f));
+		PieceInfo pieceInfo2 = new PieceInfo();
+		pieceInfo2.setPosition(new Vector3f(1f, 2f, 3f));
+		userPiecesView.addPiece(pieceInfo1);
+		userPiecesView.addPiece(pieceInfo2);
 
 		assertSame(branchGroup, userPiecesView.getBranchGroup());
 		assertEquals(2, branchGroup.children.size());

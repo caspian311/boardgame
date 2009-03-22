@@ -26,12 +26,29 @@ public class UserPieceModelTest {
 	}
 
 	@Test
-	public void testUserStartingPositionIsGottenFromGridModelButAdjustedForHeightOfPiece() {
-		gameGridModel.startingPositions.add(new Vector3f(new float[] { 1f, 0f, 1f }));
-		IUserPiecesModel userPieceModel = new UserPiecesModel(gameGridModel);
-		List<PieceInfo> allPieces = userPieceModel.getAllPieces();
+	public void testTeamOneStartingPositionsAreGottenFromGridModelAndAdjustedForHeightOfPiece() {
+		gameGridModel.teamOneStartingPositions.add(new Vector3f(new float[] { 1f, 0f, 1f }));
+		gameGridModel.teamOneStartingPositions.add(new Vector3f(new float[] { 4f, 10f, 2f }));
+		UserPiecesModel userPieceModel = new UserPiecesModel(gameGridModel);
 
+		List<PieceInfo> allPieces = userPieceModel.getAllTeamOnePieces();
+
+		assertEquals(2, allPieces.size());
 		assertEquals(new Vector3f(new float[] { 1f, 5f, 1f }), allPieces.get(0).getPosition());
+		assertEquals(new Vector3f(new float[] { 4f, 5f, 2f }), allPieces.get(1).getPosition());
+	}
+
+	@Test
+	public void testTeamTwoStartingPositionsAreGottenFromGridModelAndAdjustedForHeightOfPiece() {
+		gameGridModel.teamTwoStartingPositions.add(new Vector3f(new float[] { 1f, 0f, 1f }));
+		gameGridModel.teamTwoStartingPositions.add(new Vector3f(new float[] { 4f, 0f, 3f }));
+		UserPiecesModel userPieceModel = new UserPiecesModel(gameGridModel);
+
+		List<PieceInfo> allPieces = userPieceModel.getAllTeamTwoPieces();
+
+		assertEquals(2, allPieces.size());
+		assertEquals(new Vector3f(new float[] { 1f, 5f, 1f }), allPieces.get(0).getPosition());
+		assertEquals(new Vector3f(new float[] { 4f, 5f, 3f }), allPieces.get(1).getPosition());
 	}
 
 	@Test
@@ -68,14 +85,15 @@ public class UserPieceModelTest {
 	private static class GameGridModelStub implements IGameGridModel {
 		Vector3f selectedPosition;
 		public ListenerManager positionSelectedListener = new ListenerManager();
-		List<Vector3f> startingPositions = new ArrayList<Vector3f>();
+		List<Vector3f> teamOneStartingPositions = new ArrayList<Vector3f>();
+		List<Vector3f> teamTwoStartingPositions = new ArrayList<Vector3f>();
 
-		public TileData[][] getTileData() {
-			throw new UnsupportedOperationException();
+		public List<Vector3f> getTeamTwoStartingGridPositions() {
+			return teamTwoStartingPositions;
 		}
 
 		public List<Vector3f> getTeamOneStartingGridPositions() {
-			return startingPositions;
+			return teamOneStartingPositions;
 		}
 
 		public void addPositionSelectedListener(IListener listener) {
@@ -84,6 +102,10 @@ public class UserPieceModelTest {
 
 		public Vector3f getSelectedPosition() {
 			return selectedPosition;
+		}
+
+		public TileData[][] getTileData() {
+			throw new UnsupportedOperationException();
 		}
 
 		public void setSelectedTile(TileData position) {

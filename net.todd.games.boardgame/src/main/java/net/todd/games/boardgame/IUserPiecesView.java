@@ -3,7 +3,7 @@ package net.todd.games.boardgame;
 import javax.vecmath.Vector3f;
 
 public interface IUserPiecesView {
-	void addPiece(Vector3f startingPoint);
+	void addPiece(PieceInfo pieceInfo);
 
 	void movePieceTo(Vector3f position);
 

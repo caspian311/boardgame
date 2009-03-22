@@ -37,7 +37,7 @@ public class GameGridData {
 			}
 			getNextColor();
 		}
-		
+
 		return tileData;
 	}
 
@@ -62,11 +62,21 @@ public class GameGridData {
 
 	public List<Vector3f> getTeamOneStartingPositions() {
 		List<Vector3f> startingPositions = new ArrayList<Vector3f>();
-		startingPositions.add(new Vector3f(new float[] { -15f, 0f, -35f }));
-		startingPositions.add(new Vector3f(new float[] {  -5f, 0f, -35f }));
-		startingPositions.add(new Vector3f(new float[] {   5f, 0f, -35f }));
-		startingPositions.add(new Vector3f(new float[] {  15f, 0f, -35f }));
-				
+		startingPositions.add(new Vector3f(-15f, 0f, -35f));
+		startingPositions.add(new Vector3f(-5f, 0f, -35f));
+		startingPositions.add(new Vector3f(5f, 0f, -35f));
+		startingPositions.add(new Vector3f(15f, 0f, -35f));
+
 		return startingPositions;
+	}
+
+	public List<Vector3f> getTeamTwoStartingPositions() {
+		List<Vector3f> teamTwoStartingPositions = new ArrayList<Vector3f>();
+		teamTwoStartingPositions.add(new Vector3f(-15f, 0f, 35f));
+		teamTwoStartingPositions.add(new Vector3f(-5f, 0f, 35f));
+		teamTwoStartingPositions.add(new Vector3f(5f, 0f, 35f));
+		teamTwoStartingPositions.add(new Vector3f(15f, 0f, 35f));
+
+		return teamTwoStartingPositions;
 	}
 }

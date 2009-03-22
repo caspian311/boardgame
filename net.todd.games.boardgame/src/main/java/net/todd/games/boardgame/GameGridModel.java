@@ -36,4 +36,8 @@ public class GameGridModel implements IGameGridModel {
 	public Vector3f getSelectedPosition() {
 		return selectedPosition;
 	}
+
+	public List<Vector3f> getTeamTwoStartingGridPositions() {
+		return gameGridData.getTeamTwoStartingPositions();
+	}
 }
