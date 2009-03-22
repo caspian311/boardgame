@@ -13,9 +13,10 @@ public class UserPiecesView implements IUserPiecesView {
 	private final Bounds bounds;
 	private final IBranchGroup allPiecesBranchGroup;
 
-	public UserPiecesView(Bounds bounds, final IPicker picker) {
+	public UserPiecesView(Bounds bounds, final IPicker picker,
+			IBranchGroupFactory branchGroupFactory) {
 		this.bounds = bounds;
-		this.allPiecesBranchGroup = new BranchGroupFactory().createBranchGroup();
+		this.allPiecesBranchGroup = branchGroupFactory.createBranchGroup();
 
 		picker.addListener(new IListener() {
 			public void fireEvent() {
