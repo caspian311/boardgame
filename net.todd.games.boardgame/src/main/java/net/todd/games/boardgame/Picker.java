@@ -14,7 +14,7 @@ import com.sun.j3d.utils.pickfast.PickCanvas;
 
 public class Picker implements IPicker {
 	private Node selectedNode;
-	private final ListenerManager pickListenerManager = new ListenerManager();
+	final ListenerManager pickListenerManager = new ListenerManager();
 
 	public Picker(IUniverse universe, IBranchGroup branchGroup) {
 		Canvas3D canvas = universe.getCanvas();
@@ -37,6 +37,10 @@ public class Picker implements IPicker {
 
 	public void addListener(IListener listener) {
 		pickListenerManager.addListener(listener);
+	}
+
+	public void removeListener(IListener listener) {
+		pickListenerManager.removeListener(listener);
 	}
 
 	public Node getSelectedNode() {

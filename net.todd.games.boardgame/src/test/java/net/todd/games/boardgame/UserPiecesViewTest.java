@@ -95,6 +95,10 @@ public class UserPiecesViewTest {
 		public Node getSelectedNode() {
 			return selectedNode;
 		}
+
+		public void removeListener(IListener listener) {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	private static class ListenerStub implements IListener {

@@ -8,4 +8,6 @@ public interface IPicker {
 	void addListener(IListener listener);
 
 	Node getSelectedNode();
+
+	void removeListener(IListener listener);
 }

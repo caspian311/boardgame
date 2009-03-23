@@ -129,6 +129,10 @@ public class GameGridGeneratorTest {
 		public Node getSelectedNode() {
 			throw new UnsupportedOperationException();
 		}
+
+		public void removeListener(IListener listener) {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	private static class GameGridFactoryStub implements IGameGridFactory {
