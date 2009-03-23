@@ -32,7 +32,7 @@ public class UserPiecesView implements IUserPiecesView {
 
 	public void addPiece(PieceInfo pieceInfo) {
 		Vector3f startingPoint = pieceInfo.getPosition();
-		Piece piece = new Piece(bounds, startingPoint);
+		Piece piece = new Piece(bounds, startingPoint, pieceInfo.getColor());
 		allPiecesBranchGroup.addChild(piece);
 	}
 

@@ -8,9 +8,9 @@ import javax.vecmath.Color3f;
 import com.sun.j3d.utils.geometry.Sphere;
 
 public class UserPiece extends Shape3D {
-	private static final Color3f black = new Color3f(0.0f, 0.0f, 0.0f);
-	private static final Color3f specular = new Color3f(0.9f, 0.9f, 0.9f);
-	private static final Color3f blue = new Color3f(0.0f, 0.0f, 1.0f);
+	private static final float SHININESS = 128.0f;
+	private static final Color3f BLACK = new Color3f(0.0f, 0.0f, 0.0f);
+	private static final Color3f SPECULAR = new Color3f(0.9f, 0.9f, 0.9f);
 	private final Piece piece;
 
 	public Piece getPiece() {
@@ -19,7 +19,8 @@ public class UserPiece extends Shape3D {
 
 	public UserPiece(Piece piece) {
 		this.piece = piece;
-		Material matterial = new Material(black, blue, black, specular, 128.0f);
+		Color3f color = piece.getColor();
+		Material matterial = new Material(BLACK, color, BLACK, SPECULAR, SHININESS);
 		Appearance appearance = new Appearance();
 		appearance.setMaterial(matterial);
 

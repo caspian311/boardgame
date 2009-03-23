@@ -13,6 +13,7 @@ import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Node;
+import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
 
@@ -58,8 +59,10 @@ public class UserPiecesViewTest {
 
 		PieceInfo pieceInfo1 = new PieceInfo();
 		pieceInfo1.setPosition(new Vector3f(1f, 2f, 3f));
+		pieceInfo1.setColor(new Color3f(1f, 2f, 3f));
 		PieceInfo pieceInfo2 = new PieceInfo();
 		pieceInfo2.setPosition(new Vector3f(1f, 2f, 3f));
+		pieceInfo2.setColor(new Color3f(1f, 2f, 3f));
 		userPiecesView.addPiece(pieceInfo1);
 		userPiecesView.addPiece(pieceInfo2);
 

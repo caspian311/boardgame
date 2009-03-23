@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.vecmath.Color3f;
 import javax.vecmath.Vector3f;
 
 import net.todd.common.uitools.IListener;
@@ -36,6 +37,30 @@ public class UserPieceModelTest {
 		assertEquals(2, allPieces.size());
 		assertEquals(new Vector3f(new float[] { 1f, 5f, 1f }), allPieces.get(0).getPosition());
 		assertEquals(new Vector3f(new float[] { 4f, 5f, 2f }), allPieces.get(1).getPosition());
+	}
+
+	@Test
+	public void testTeamOneColorIsBlue() {
+		gameGridModel.teamOneStartingPositions.add(new Vector3f());
+		gameGridModel.teamOneStartingPositions.add(new Vector3f());
+		UserPiecesModel userPieceModel = new UserPiecesModel(gameGridModel);
+
+		List<PieceInfo> allPieces = userPieceModel.getAllTeamOnePieces();
+		for (PieceInfo pieceInfo : allPieces) {
+			assertEquals(GameColors.TEAM_ONE_COLOR, pieceInfo.getColor());
+		}
+	}
+
+	@Test
+	public void testTeamTwoColorIsRed() {
+		gameGridModel.teamOneStartingPositions.add(new Vector3f());
+		gameGridModel.teamOneStartingPositions.add(new Vector3f());
+		UserPiecesModel userPieceModel = new UserPiecesModel(gameGridModel);
+
+		List<PieceInfo> allPieces = userPieceModel.getAllTeamTwoPieces();
+		for (PieceInfo pieceInfo : allPieces) {
+			assertEquals(GameColors.TEAM_TWO_COLOR, pieceInfo.getColor());
+		}
 	}
 
 	@Test
@@ -87,6 +112,8 @@ public class UserPieceModelTest {
 		public ListenerManager positionSelectedListener = new ListenerManager();
 		List<Vector3f> teamOneStartingPositions = new ArrayList<Vector3f>();
 		List<Vector3f> teamTwoStartingPositions = new ArrayList<Vector3f>();
+		Color3f teamOneColor;
+		Color3f teamTwoColor;
 
 		public List<Vector3f> getTeamTwoStartingGridPositions() {
 			return teamTwoStartingPositions;
@@ -94,6 +121,14 @@ public class UserPieceModelTest {
 
 		public List<Vector3f> getTeamOneStartingGridPositions() {
 			return teamOneStartingPositions;
+		}
+
+		public Color3f getTeamOneColor() {
+			return teamOneColor;
+		}
+
+		public Color3f getTeamTwoColor() {
+			return teamTwoColor;
 		}
 
 		public void addPositionSelectedListener(IListener listener) {

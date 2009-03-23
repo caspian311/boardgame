@@ -7,6 +7,7 @@ import javax.media.j3d.Bounds;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
+import javax.vecmath.Color3f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
@@ -16,16 +17,18 @@ import com.sun.j3d.utils.behaviors.interpolators.KBRotPosScaleSplinePathInterpol
 public class Piece extends BranchGroup implements IPiece {
 	private KBRotPosScaleSplinePathInterpolator linearInterpolator;
 	private KBKeyFrame[] linearKeyFrames;
+	private final Color3f color;
 
-	public Piece(Bounds bounds, Vector3f startingPoint) {
+	public Piece(Bounds bounds, Vector3f startingPoint, Color3f color) {
+		this.color = color;
 		TransformGroup userPieceTransformGroup = new TransformGroup(new Transform3D());
 		userPieceTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-		UserPiece piece = new UserPiece(this);
+		UserPiece userPiece = new UserPiece(this);
 
 		Transform3D piecePosition = new Transform3D();
 		TransformGroup pieceTG = new TransformGroup(piecePosition);
 		pieceTG.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-		pieceTG.addChild(piece);
+		pieceTG.addChild(userPiece);
 
 		userPieceTransformGroup.addChild(pieceTG);
 		createMovingBehavior(userPieceTransformGroup, bounds);
@@ -68,5 +71,9 @@ public class Piece extends BranchGroup implements IPiece {
 	private KBKeyFrame createKeyFrameAtPosition(Vector3f position) {
 		return new KBKeyFrame(1f, 0, new Point3f(position), 0f, 0f, 0, new Point3f(1, 1, 1), 0f,
 				0f, 0f);
+	}
+
+	public Color3f getColor() {
+		return color;
 	}
 }

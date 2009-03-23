@@ -3,6 +3,7 @@ package net.todd.games.boardgame;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.vecmath.Color3f;
 import javax.vecmath.Vector3f;
 
 import net.todd.common.uitools.IListener;
@@ -40,20 +41,23 @@ public class UserPiecesModel implements IUserPiecesModel {
 	}
 
 	public List<PieceInfo> getAllTeamOnePieces() {
-		return convertToPieceInfo(gameGridModel.getTeamOneStartingGridPositions());
+		return convertToPieceInfo(gameGridModel.getTeamOneStartingGridPositions(),
+				GameColors.TEAM_ONE_COLOR);
 	}
 
 	public List<PieceInfo> getAllTeamTwoPieces() {
-		return convertToPieceInfo(gameGridModel.getTeamTwoStartingGridPositions());
+		return convertToPieceInfo(gameGridModel.getTeamTwoStartingGridPositions(),
+				GameColors.TEAM_TWO_COLOR);
 	}
 
-	private List<PieceInfo> convertToPieceInfo(List<Vector3f> positions) {
+	private List<PieceInfo> convertToPieceInfo(List<Vector3f> positions, Color3f teamColor) {
 		List<PieceInfo> teamTwoPieces = new ArrayList<PieceInfo>();
 		for (Vector3f position : positions) {
 			adjustPositionForHeight(position);
 
 			PieceInfo piece = new PieceInfo();
 			piece.setPosition(position);
+			piece.setColor(teamColor);
 			teamTwoPieces.add(piece);
 		}
 		return teamTwoPieces;
