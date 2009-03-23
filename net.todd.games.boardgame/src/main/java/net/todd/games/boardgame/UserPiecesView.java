@@ -5,27 +5,42 @@ import javax.media.j3d.Node;
 import javax.vecmath.Vector3f;
 
 import net.todd.common.uitools.IListener;
-import net.todd.common.uitools.ListenerManager;
 
 public class UserPiecesView implements IUserPiecesView {
 	private PieceGroup selectedPiece;
-	private final ListenerManager pieceSelectedListeners = new ListenerManager();
 	private final Bounds bounds;
 	private final IBranchGroup allPiecesBranchGroup;
+	private final IBranchGroup teamTwoBranchGroup;
+	private final IBranchGroup teamOneBranchGroup;
 
 	public UserPiecesView(Bounds bounds, IPickerFactory pickerFactory,
 			IBranchGroupFactory branchGroupFactory) {
 		this.bounds = bounds;
 		this.allPiecesBranchGroup = branchGroupFactory.createBranchGroup();
+		this.teamOneBranchGroup = branchGroupFactory.createBranchGroup();
+		this.teamTwoBranchGroup = branchGroupFactory.createBranchGroup();
 
-		final IPicker picker = pickerFactory.createPicker(allPiecesBranchGroup);
-		picker.addListener(new IListener() {
+		allPiecesBranchGroup.addChild(teamOneBranchGroup);
+		allPiecesBranchGroup.addChild(teamTwoBranchGroup);
+
+		final IPicker teamOnePicker = pickerFactory.createPicker(teamOneBranchGroup);
+		teamOnePicker.addListener(new IListener() {
 			public void fireEvent() {
-				Node selectedNode = picker.getSelectedNode();
+				Node selectedNode = teamOnePicker.getSelectedNode();
 				if (selectedNode instanceof SelectablePiece) {
 					SelectablePiece node = (SelectablePiece) selectedNode;
 					selectedPiece = node.getPiece();
-					pieceSelectedListeners.notifyListeners();
+				}
+			}
+		});
+
+		final IPicker teamTwoPicker = pickerFactory.createPicker(teamTwoBranchGroup);
+		teamTwoPicker.addListener(new IListener() {
+			public void fireEvent() {
+				Node selectedNode = teamTwoPicker.getSelectedNode();
+				if (selectedNode instanceof SelectablePiece) {
+					SelectablePiece node = (SelectablePiece) selectedNode;
+					selectedPiece = node.getPiece();
 				}
 			}
 		});
@@ -34,11 +49,11 @@ public class UserPiecesView implements IUserPiecesView {
 	public void addPiece(PieceInfo pieceInfo) {
 		Vector3f startingPoint = pieceInfo.getPosition();
 		PieceGroup piece = new PieceGroup(bounds, startingPoint, pieceInfo.getColor());
-		allPiecesBranchGroup.addChild(piece);
-	}
-
-	public void addPieceSelectedListener(IListener listener) {
-		pieceSelectedListeners.addListener(listener);
+		if (pieceInfo.getTeam() == Team.ONE) {
+			teamOneBranchGroup.addChild(piece);
+		} else {
+			teamTwoBranchGroup.addChild(piece);
+		}
 	}
 
 	public PieceGroup getSelectedPiece() {

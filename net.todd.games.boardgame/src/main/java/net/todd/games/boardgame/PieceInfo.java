@@ -6,6 +6,7 @@ import javax.vecmath.Vector3f;
 public class PieceInfo {
 	private Vector3f position;
 	private Color3f color;
+	private Team team;
 
 	public Vector3f getPosition() {
 		return position;
@@ -21,5 +22,13 @@ public class PieceInfo {
 
 	public void setColor(Color3f color) {
 		this.color = color;
+	}
+
+	public Team getTeam() {
+		return team;
+	}
+
+	public void setTeam(Team team) {
+		this.team = team;
 	}
 }
