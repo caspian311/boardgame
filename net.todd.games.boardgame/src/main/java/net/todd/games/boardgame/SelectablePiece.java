@@ -7,17 +7,17 @@ import javax.vecmath.Color3f;
 
 import com.sun.j3d.utils.geometry.Sphere;
 
-public class UserPiece extends Shape3D {
+public class SelectablePiece extends Shape3D {
 	private static final float SHININESS = 128.0f;
 	private static final Color3f BLACK = new Color3f(0.0f, 0.0f, 0.0f);
 	private static final Color3f SPECULAR = new Color3f(0.9f, 0.9f, 0.9f);
-	private final Piece piece;
+	private final PieceGroup piece;
 
-	public Piece getPiece() {
+	public PieceGroup getPiece() {
 		return piece;
 	}
 
-	public UserPiece(Piece piece) {
+	public SelectablePiece(PieceGroup piece) {
 		this.piece = piece;
 		Color3f color = piece.getColor();
 		Material matterial = new Material(BLACK, color, BLACK, SPECULAR, SHININESS);

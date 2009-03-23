@@ -14,16 +14,16 @@ import javax.vecmath.Vector3f;
 import com.sun.j3d.utils.behaviors.interpolators.KBKeyFrame;
 import com.sun.j3d.utils.behaviors.interpolators.KBRotPosScaleSplinePathInterpolator;
 
-public class Piece extends BranchGroup implements IPiece {
+public class PieceGroup extends BranchGroup implements IPiece {
 	private KBRotPosScaleSplinePathInterpolator linearInterpolator;
 	private KBKeyFrame[] linearKeyFrames;
 	private final Color3f color;
 
-	public Piece(Bounds bounds, Vector3f startingPoint, Color3f color) {
+	public PieceGroup(Bounds bounds, Vector3f startingPoint, Color3f color) {
 		this.color = color;
 		TransformGroup userPieceTransformGroup = new TransformGroup(new Transform3D());
 		userPieceTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-		UserPiece userPiece = new UserPiece(this);
+		SelectablePiece userPiece = new SelectablePiece(this);
 
 		Transform3D piecePosition = new Transform3D();
 		TransformGroup pieceTG = new TransformGroup(piecePosition);

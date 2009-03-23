@@ -5,8 +5,6 @@ import static org.junit.Assert.assertSame;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Node;
 
-import net.todd.common.uitools.IListener;
-
 import org.junit.Test;
 
 public class PieceGeneratorTest {
@@ -15,19 +13,15 @@ public class PieceGeneratorTest {
 		BranchGroupStub branchGroup = new BranchGroupStub();
 		PieceGenerator pieceGenerator = new PieceGenerator(branchGroup);
 		UserPiecesFactoryStub userPiecesFactory = new UserPiecesFactoryStub();
-		IPicker picker = new IPicker() {
-			public void addListener(IListener listener) {
-				throw new UnsupportedOperationException();
-			}
-
-			public Node getSelectedNode() {
+		IPickerFactory pickerFactory = new IPickerFactory() {
+			public IPicker createPicker(IBranchGroup branchGroup) {
 				throw new UnsupportedOperationException();
 			}
 		};
 
-		pieceGenerator.createPieces(picker, userPiecesFactory);
+		pieceGenerator.createPieces(pickerFactory, userPiecesFactory);
 
-		assertSame(picker, userPiecesFactory.picker);
+		assertSame(pickerFactory, userPiecesFactory.pickerFactory);
 	}
 
 	@Test
@@ -63,10 +57,10 @@ public class PieceGeneratorTest {
 
 	private static class UserPiecesFactoryStub implements IUserPiecesFactory {
 		IBranchGroup branchGroup;
-		IPicker picker;
+		IPickerFactory pickerFactory;
 
-		public IBranchGroup constructUserPieces(IPicker picker) {
-			this.picker = picker;
+		public IBranchGroup constructUserPieces(IPickerFactory pickerFactory) {
+			this.pickerFactory = pickerFactory;
 			return branchGroup;
 		}
 	}

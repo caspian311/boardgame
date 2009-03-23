@@ -6,9 +6,9 @@ public class GameLauncher implements IGameLauncher {
 		IBranchGroup branchGroup = branchGroupFactory.createBranchGroup();
 		IGameEngine gameEngine = gameEngineFactory.createGameEngine(branchGroup);
 
-		IPicker picker = getPicker(universe, branchGroup);
+		IPickerFactory pickerFactory = getPickerFactory(universe);
 
-		gameEngine.createScene(picker);
+		gameEngine.createScene(pickerFactory);
 		gameEngine.createCamera(universe);
 
 		branchGroup.compile();
@@ -16,7 +16,7 @@ public class GameLauncher implements IGameLauncher {
 		universe.addBranchGraph(branchGroup);
 	}
 
-	IPicker getPicker(IUniverse universe, IBranchGroup branchGroup) {
-		return new Picker(universe, branchGroup);
+	IPickerFactory getPickerFactory(IUniverse universe) {
+		return new PickerFactory(universe);
 	}
 }

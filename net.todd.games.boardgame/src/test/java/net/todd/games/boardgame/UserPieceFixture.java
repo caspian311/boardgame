@@ -9,14 +9,14 @@ import javax.vecmath.Vector3f;
 public class UserPieceFixture {
 	private static final Color3f blue = new Color3f(0.0f, 0.0f, 1.0f);
 
-	public static UserPiece getUserPiece() {
-		UserPiece userPiece = new UserPiece(getPiece());
+	public static SelectablePiece getUserPiece() {
+		SelectablePiece userPiece = new SelectablePiece(getPiece());
 		return userPiece;
 	}
 
-	public static Piece getPiece() {
+	public static PieceGroup getPiece() {
 		Bounds bounds = new BoundingSphere(new Point3d(0, 0, 0), 100);
-		Piece piece = new Piece(bounds, new Vector3f(new float[] { 0, 0, 0 }), blue);
+		PieceGroup piece = new PieceGroup(bounds, new Vector3f(new float[] { 0, 0, 0 }), blue);
 		return piece;
 	}
 }

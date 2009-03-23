@@ -7,8 +7,6 @@ import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.Node;
 
-import net.todd.common.uitools.IListener;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,7 +18,7 @@ public class GameLauncherTest {
 	private BranchGroupFactoryStub branchGroupFactory;
 	private BranchGroupStub branchGroup;
 	private GameEngineFactoryStub gameEngineFactory;
-	private IPicker picker;
+	private IPickerFactory pickerFactory;
 	private int callCount;
 
 	@Before
@@ -30,16 +28,15 @@ public class GameLauncherTest {
 		branchGroup = new BranchGroupStub();
 		branchGroupFactory.branchGroup = branchGroup;
 		gameEngineFactory = new GameEngineFactoryStub();
-		picker = new PickerStub();
+		pickerFactory = new PickerFactoryStub();
 	}
 
 	@Test
 	public void testLaunchCompilesAfterCreatingScene() {
 		GameLauncher gameLauncher = new GameLauncher() {
-
 			@Override
-			IPicker getPicker(IUniverse universe, IBranchGroup branchGroup) {
-				return picker;
+			IPickerFactory getPickerFactory(IUniverse universe) {
+				return pickerFactory;
 			}
 		};
 
@@ -50,7 +47,7 @@ public class GameLauncherTest {
 		assertEquals(3, branchGroup.compileCallCount);
 		assertSame(branchGroup, universe.addedBranchGroup);
 		assertSame(universe, gameEngineFactory.universe);
-		assertSame(picker, gameEngineFactory.gamePicker);
+		assertSame(pickerFactory, gameEngineFactory.gamePickerFactory);
 	}
 
 	private static class UniverseStub implements IUniverse {
@@ -100,33 +97,28 @@ public class GameLauncherTest {
 	}
 
 	private class GameEngineFactoryStub implements IGameEngineFactory {
-		IPicker gamePicker;
+		IPickerFactory gamePickerFactory;
 		IUniverse universe;
 		int cameraCallCount;
 		int sceneCallCount;
 
 		public IGameEngine createGameEngine(IBranchGroup branchGroup) {
 			return new IGameEngine() {
-
 				public void createCamera(IUniverse su) {
 					cameraCallCount = ++callCount;
 					universe = su;
 				}
 
-				public void createScene(IPicker picker) {
+				public void createScene(IPickerFactory pickerFactory) {
 					sceneCallCount = ++callCount;
-					gamePicker = picker;
+					gamePickerFactory = pickerFactory;
 				}
 			};
 		}
 	}
 
-	private static class PickerStub implements IPicker {
-		public void addListener(IListener listener) {
-			throw new UnsupportedOperationException();
-		}
-
-		public Node getSelectedNode() {
+	private static class PickerFactoryStub implements IPickerFactory {
+		public IPicker createPicker(IBranchGroup branchGroup) {
 			throw new UnsupportedOperationException();
 		}
 	}

@@ -13,8 +13,8 @@ public class GameGridGenerator implements ISceneGenerator {
 		this.branchGroup = branchGroup;
 	}
 
-	public void createGameGrid(IPicker picker, IGameGridFactory gameGridFactory) {
-		IBranchGroup bg = gameGridFactory.constructGameGrid(picker);
+	public void createGameGrid(IPickerFactory pickerFactory, IGameGridFactory gameGridFactory) {
+		IBranchGroup bg = gameGridFactory.constructGameGrid(pickerFactory);
 
 		branchGroup.addChild(bg);
 	}

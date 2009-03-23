@@ -23,11 +23,11 @@ public class GameEngine implements IGameEngine {
 		userPiecesFactory = new UserPiecesFactory(bounds);
 	}
 
-	public void createScene(IPicker picker) {
+	public void createScene(IPickerFactory pickerFactory) {
 		sceneGenerator.lightScene(bounds);
-		sceneGenerator.createGameGrid(picker, gameGridFactory);
+		sceneGenerator.createGameGrid(pickerFactory, gameGridFactory);
 		sceneGenerator.createBackground(bounds);
-		pieceGenerator.createPieces(picker, userPiecesFactory);
+		pieceGenerator.createPieces(pickerFactory, userPiecesFactory);
 	}
 
 	public void createCamera(IUniverse su) {

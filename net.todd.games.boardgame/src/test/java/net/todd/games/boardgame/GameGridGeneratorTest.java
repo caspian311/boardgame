@@ -83,7 +83,10 @@ public class GameGridGeneratorTest {
 		assertEquals(0, branchGroup.addedGroup.size());
 		assertFalse(gameGridFactory.gameGridconstructed);
 
-		gridGenerator.createGameGrid(new PickerStub(), gameGridFactory);
+		PickerFactoryStub pickerFactory = new PickerFactoryStub();
+		PickerStub picker = new PickerStub();
+		pickerFactory.picker = picker;
+		gridGenerator.createGameGrid(pickerFactory, gameGridFactory);
 
 		assertEquals(1, branchGroup.addedGroup.size());
 		assertTrue(gameGridFactory.gameGridconstructed);
@@ -110,6 +113,14 @@ public class GameGridGeneratorTest {
 		}
 	}
 
+	private static class PickerFactoryStub implements IPickerFactory {
+		IPicker picker;
+
+		public IPicker createPicker(IBranchGroup branchGroup) {
+			return picker;
+		}
+	}
+
 	private static class PickerStub implements IPicker {
 		public void addListener(IListener listener) {
 			throw new UnsupportedOperationException();
@@ -123,7 +134,7 @@ public class GameGridGeneratorTest {
 	private static class GameGridFactoryStub implements IGameGridFactory {
 		boolean gameGridconstructed;
 
-		public IBranchGroup constructGameGrid(IPicker picker) {
+		public IBranchGroup constructGameGrid(IPickerFactory picker) {
 			gameGridconstructed = true;
 			return new IBranchGroup() {
 				public void addChild(Node node) {

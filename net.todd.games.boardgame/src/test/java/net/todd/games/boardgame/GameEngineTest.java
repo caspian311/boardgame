@@ -7,10 +7,7 @@ import static org.junit.Assert.assertSame;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
 import javax.media.j3d.Canvas3D;
-import javax.media.j3d.Node;
 import javax.vecmath.Point3d;
-
-import net.todd.common.uitools.IListener;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -69,12 +66,12 @@ public class GameEngineTest {
 	@Test
 	public void testPickerIsPassedOnToSceneAndPieceGenerators() {
 		GameEngine gameEngine = new GameEngine(sceneGenerator, pieceGenerator, null);
-		IPicker picker = new PickerStub();
+		IPickerFactory pickerFactory = new PickerFactoryStub();
 
-		gameEngine.createScene(picker);
+		gameEngine.createScene(pickerFactory);
 
-		assertSame(picker, sceneGenerator.picker);
-		assertSame(picker, pieceGenerator.picker);
+		assertSame(pickerFactory, sceneGenerator.pickerFactory);
+		assertSame(pickerFactory, pieceGenerator.pickerFactory);
 	}
 
 	@Test
@@ -103,16 +100,16 @@ public class GameEngineTest {
 	}
 
 	private class PieceGeneratorStub implements IPieceGenerator {
-		IPicker picker;
+		IPickerFactory pickerFactory;
 
-		public void createPieces(IPicker picker, IUserPiecesFactory userPiecesFactory) {
-			this.picker = picker;
+		public void createPieces(IPickerFactory pickerFactory, IUserPiecesFactory userPiecesFactory) {
+			this.pickerFactory = pickerFactory;
 			createPiecesCallCount = ++callCount;
 		}
 	}
 
 	private class SceneGeneratorStub implements ISceneGenerator {
-		IPicker picker;
+		IPickerFactory pickerFactory;
 		Bounds backgroundBounds;
 		Bounds lightingBounds;
 
@@ -121,8 +118,8 @@ public class GameEngineTest {
 			createBackgroundCallCount = ++callCount;
 		}
 
-		public void createGameGrid(IPicker picker, IGameGridFactory gameGridFactory) {
-			this.picker = picker;
+		public void createGameGrid(IPickerFactory pickerFactory, IGameGridFactory gameGridFactory) {
+			this.pickerFactory = pickerFactory;
 			createGameGridCallCount = ++callCount;
 		}
 
@@ -150,12 +147,8 @@ public class GameEngineTest {
 		}
 	}
 
-	private static class PickerStub implements IPicker {
-		public void addListener(IListener listener) {
-			throw new UnsupportedOperationException();
-		}
-
-		public Node getSelectedNode() {
+	private static class PickerFactoryStub implements IPickerFactory {
+		public IPicker createPicker(IBranchGroup branchGroup) {
 			throw new UnsupportedOperationException();
 		}
 	}

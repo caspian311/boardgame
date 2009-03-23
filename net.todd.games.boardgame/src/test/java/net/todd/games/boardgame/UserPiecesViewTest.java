@@ -27,10 +27,13 @@ public class UserPiecesViewTest {
 	@Test
 	public void testSelectingAPieceNotifiesViewsListenersAndPopulatesTheSelectedPiece() {
 		PickerStub picker = new PickerStub();
-		Piece piece = UserPieceFixture.getPiece();
-		picker.selectedNode = new UserPiece(piece);
+		PickerFactoryStub pickerFactory = new PickerFactoryStub();
+		pickerFactory.picker = picker;
+		PieceGroup piece = UserPieceFixture.getPiece();
+		picker.selectedNode = new SelectablePiece(piece);
 		IBranchGroupFactory branchGroupFactory = new BranchGroupFactoryStub();
-		UserPiecesView userPiecesView = new UserPiecesView(bounds, picker, branchGroupFactory);
+		UserPiecesView userPiecesView = new UserPiecesView(bounds, pickerFactory,
+				branchGroupFactory);
 		ListenerStub listener1 = new ListenerStub();
 		ListenerStub listener2 = new ListenerStub();
 		userPiecesView.addPieceSelectedListener(listener1);
@@ -50,12 +53,15 @@ public class UserPiecesViewTest {
 	@Test
 	public void testAddingPieceAddsItToTheBranchGroup() {
 		PickerStub picker = new PickerStub();
-		Piece piece = UserPieceFixture.getPiece();
-		picker.selectedNode = new UserPiece(piece);
+		PickerFactoryStub pickerFactory = new PickerFactoryStub();
+		pickerFactory.picker = picker;
+		PieceGroup piece = UserPieceFixture.getPiece();
+		picker.selectedNode = new SelectablePiece(piece);
 		BranchGroupStub branchGroup = new BranchGroupStub();
 		BranchGroupFactoryStub branchGroupFactory = new BranchGroupFactoryStub();
 		branchGroupFactory.branchGroup = branchGroup;
-		UserPiecesView userPiecesView = new UserPiecesView(bounds, picker, branchGroupFactory);
+		UserPiecesView userPiecesView = new UserPiecesView(bounds, pickerFactory,
+				branchGroupFactory);
 
 		PieceInfo pieceInfo1 = new PieceInfo();
 		pieceInfo1.setPosition(new Vector3f(1f, 2f, 3f));
@@ -68,6 +74,14 @@ public class UserPiecesViewTest {
 
 		assertSame(branchGroup, userPiecesView.getBranchGroup());
 		assertEquals(2, branchGroup.children.size());
+	}
+
+	private static class PickerFactoryStub implements IPickerFactory {
+		IPicker picker;
+
+		public IPicker createPicker(IBranchGroup branchGroup) {
+			return picker;
+		}
 	}
 
 	private static class PickerStub implements IPicker {
