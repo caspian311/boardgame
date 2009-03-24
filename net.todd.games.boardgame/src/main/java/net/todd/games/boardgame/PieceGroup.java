@@ -57,7 +57,7 @@ public class PieceGroup extends BranchGroup implements IPieceGroup {
 		userPieceTransformGroup.addChild(behaviorBranch);
 	}
 
-	public void movePieceTo(Vector3f position) {
+	public void movePieceTo(final Vector3f position) {
 		linearInterpolator.setEnable(false);
 		linearKeyFrames[0] = linearKeyFrames[1];
 		linearKeyFrames[0].knot = 0;

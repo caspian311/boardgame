@@ -174,10 +174,6 @@ public class UserPiecesViewTest {
 		teamTwoPicker.selectedNode = new SelectablePiece(pieceGroup2);
 
 		teamOnePicker.listener.fireEvent();
-
-		assertEquals(0, pieceGroup1.movePieceToCallCount);
-		assertEquals(0, pieceGroup2.movePieceToCallCount);
-
 		view.movePieceTo(new Vector3f());
 
 		assertEquals(1, pieceGroup1.movePieceToCallCount);
@@ -188,6 +184,18 @@ public class UserPiecesViewTest {
 
 		assertEquals(1, pieceGroup1.movePieceToCallCount);
 		assertEquals(1, pieceGroup2.movePieceToCallCount);
+
+		teamOnePicker.listener.fireEvent();
+		view.movePieceTo(new Vector3f());
+
+		assertEquals(2, pieceGroup1.movePieceToCallCount);
+		assertEquals(1, pieceGroup2.movePieceToCallCount);
+
+		teamTwoPicker.listener.fireEvent();
+		view.movePieceTo(new Vector3f());
+
+		assertEquals(2, pieceGroup1.movePieceToCallCount);
+		assertEquals(2, pieceGroup2.movePieceToCallCount);
 	}
 
 	private static class PickerFactoryStub implements IPickerFactory {

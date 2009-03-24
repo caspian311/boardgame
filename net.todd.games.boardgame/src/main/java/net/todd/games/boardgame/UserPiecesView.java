@@ -48,7 +48,6 @@ public class UserPiecesView implements IUserPiecesView {
 					if (!isTeamOnesTurn) {
 						SelectablePiece node = (SelectablePiece) selectedNode;
 						selectedPiece = node.getPiece();
-						isTeamOnesTurn = true;
 					}
 				}
 			}
