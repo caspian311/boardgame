@@ -7,11 +7,13 @@ import javax.vecmath.Vector3f;
 import net.todd.common.uitools.IListener;
 
 public class UserPiecesView implements IUserPiecesView {
-	private PieceGroup selectedPiece;
+	private IPieceGroup selectedPiece;
 	private final Bounds bounds;
 	private final IBranchGroup allPiecesBranchGroup;
 	private final IBranchGroup teamTwoBranchGroup;
 	private final IBranchGroup teamOneBranchGroup;
+
+	private boolean isTeamOnesTurn;
 
 	public UserPiecesView(Bounds bounds, IPickerFactory pickerFactory,
 			IBranchGroupFactory branchGroupFactory) {
@@ -23,13 +25,17 @@ public class UserPiecesView implements IUserPiecesView {
 		allPiecesBranchGroup.addChild(teamOneBranchGroup);
 		allPiecesBranchGroup.addChild(teamTwoBranchGroup);
 
+		isTeamOnesTurn = true;
+
 		final IPicker teamOnePicker = pickerFactory.createPicker(teamOneBranchGroup);
 		teamOnePicker.addListener(new IListener() {
 			public void fireEvent() {
 				Node selectedNode = teamOnePicker.getSelectedNode();
 				if (selectedNode instanceof SelectablePiece) {
-					SelectablePiece node = (SelectablePiece) selectedNode;
-					selectedPiece = node.getPiece();
+					if (isTeamOnesTurn) {
+						SelectablePiece node = (SelectablePiece) selectedNode;
+						selectedPiece = node.getPiece();
+					}
 				}
 			}
 		});
@@ -39,8 +45,11 @@ public class UserPiecesView implements IUserPiecesView {
 			public void fireEvent() {
 				Node selectedNode = teamTwoPicker.getSelectedNode();
 				if (selectedNode instanceof SelectablePiece) {
-					SelectablePiece node = (SelectablePiece) selectedNode;
-					selectedPiece = node.getPiece();
+					if (!isTeamOnesTurn) {
+						SelectablePiece node = (SelectablePiece) selectedNode;
+						selectedPiece = node.getPiece();
+						isTeamOnesTurn = true;
+					}
 				}
 			}
 		});
@@ -56,10 +65,6 @@ public class UserPiecesView implements IUserPiecesView {
 		}
 	}
 
-	public PieceGroup getSelectedPiece() {
-		return selectedPiece;
-	}
-
 	public IBranchGroup getBranchGroup() {
 		return allPiecesBranchGroup;
 	}
@@ -68,6 +73,11 @@ public class UserPiecesView implements IUserPiecesView {
 		if (selectedPiece != null) {
 			selectedPiece.movePieceTo(position);
 			selectedPiece = null;
+			toggleTeamTurn();
 		}
+	}
+
+	private void toggleTeamTurn() {
+		isTeamOnesTurn = !isTeamOnesTurn;
 	}
 }

@@ -114,6 +114,82 @@ public class UserPiecesViewTest {
 		assertSame(teamTwoBranchGroup, teamTwoPicker.associatedBranchGroup);
 	}
 
+	@Test
+	public void testTeamTwoCannotMoveUntilTeamOneMovesFirst() {
+		UserPiecesView view = new UserPiecesView(bounds, pickerFactory, branchGroupFactory);
+
+		PieceGroupStub pieceGroup1 = new PieceGroupStub();
+		teamOnePicker.selectedNode = new SelectablePiece(pieceGroup1);
+
+		PieceGroupStub pieceGroup2 = new PieceGroupStub();
+		teamTwoPicker.selectedNode = new SelectablePiece(pieceGroup2);
+
+		teamOnePicker.listener.fireEvent();
+		teamTwoPicker.listener.fireEvent();
+
+		assertEquals(0, pieceGroup1.movePieceToCallCount);
+		assertEquals(0, pieceGroup2.movePieceToCallCount);
+
+		view.movePieceTo(new Vector3f());
+
+		assertEquals(1, pieceGroup1.movePieceToCallCount);
+		assertEquals(0, pieceGroup2.movePieceToCallCount);
+	}
+
+	@Test
+	public void testTeamTwoCanMoveAfterTeamOnesMoves() {
+		UserPiecesView view = new UserPiecesView(bounds, pickerFactory, branchGroupFactory);
+
+		PieceGroupStub pieceGroup1 = new PieceGroupStub();
+		teamOnePicker.selectedNode = new SelectablePiece(pieceGroup1);
+
+		PieceGroupStub pieceGroup2 = new PieceGroupStub();
+		teamTwoPicker.selectedNode = new SelectablePiece(pieceGroup2);
+
+		teamOnePicker.listener.fireEvent();
+
+		assertEquals(0, pieceGroup1.movePieceToCallCount);
+		assertEquals(0, pieceGroup2.movePieceToCallCount);
+
+		view.movePieceTo(new Vector3f());
+
+		assertEquals(1, pieceGroup1.movePieceToCallCount);
+		assertEquals(0, pieceGroup2.movePieceToCallCount);
+
+		teamTwoPicker.listener.fireEvent();
+		view.movePieceTo(new Vector3f());
+
+		assertEquals(1, pieceGroup1.movePieceToCallCount);
+		assertEquals(1, pieceGroup2.movePieceToCallCount);
+	}
+
+	@Test
+	public void testTeamOneAndTwoAlternateMoves() {
+		UserPiecesView view = new UserPiecesView(bounds, pickerFactory, branchGroupFactory);
+
+		PieceGroupStub pieceGroup1 = new PieceGroupStub();
+		teamOnePicker.selectedNode = new SelectablePiece(pieceGroup1);
+
+		PieceGroupStub pieceGroup2 = new PieceGroupStub();
+		teamTwoPicker.selectedNode = new SelectablePiece(pieceGroup2);
+
+		teamOnePicker.listener.fireEvent();
+
+		assertEquals(0, pieceGroup1.movePieceToCallCount);
+		assertEquals(0, pieceGroup2.movePieceToCallCount);
+
+		view.movePieceTo(new Vector3f());
+
+		assertEquals(1, pieceGroup1.movePieceToCallCount);
+		assertEquals(0, pieceGroup2.movePieceToCallCount);
+
+		teamTwoPicker.listener.fireEvent();
+		view.movePieceTo(new Vector3f());
+
+		assertEquals(1, pieceGroup1.movePieceToCallCount);
+		assertEquals(1, pieceGroup2.movePieceToCallCount);
+	}
+
 	private static class PickerFactoryStub implements IPickerFactory {
 		PickerStub teamTwoPicker;
 		PickerStub teamOnePicker;
@@ -188,6 +264,18 @@ public class UserPiecesViewTest {
 
 		public BranchGroup getInternal() {
 			throw new UnsupportedOperationException();
+		}
+	}
+
+	private static class PieceGroupStub implements IPieceGroup {
+		int movePieceToCallCount;
+
+		public void movePieceTo(Vector3f position) {
+			++movePieceToCallCount;
+		}
+
+		public Color3f getColor() {
+			return new Color3f();
 		}
 	}
 }

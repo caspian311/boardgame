@@ -42,15 +42,16 @@ public class UserPiecesModel implements IUserPiecesModel {
 
 	public List<PieceInfo> getAllTeamOnePieces() {
 		return convertToPieceInfo(gameGridModel.getTeamOneStartingGridPositions(),
-				GameColors.TEAM_ONE_COLOR);
+				GameColors.TEAM_ONE_COLOR, Team.ONE);
 	}
 
 	public List<PieceInfo> getAllTeamTwoPieces() {
 		return convertToPieceInfo(gameGridModel.getTeamTwoStartingGridPositions(),
-				GameColors.TEAM_TWO_COLOR);
+				GameColors.TEAM_TWO_COLOR, Team.TWO);
 	}
 
-	private List<PieceInfo> convertToPieceInfo(List<Vector3f> positions, Color3f teamColor) {
+	private List<PieceInfo> convertToPieceInfo(List<Vector3f> positions, Color3f teamColor,
+			Team team) {
 		List<PieceInfo> teamTwoPieces = new ArrayList<PieceInfo>();
 		for (Vector3f position : positions) {
 			adjustPositionForHeight(position);
@@ -58,6 +59,7 @@ public class UserPiecesModel implements IUserPiecesModel {
 			PieceInfo piece = new PieceInfo();
 			piece.setPosition(position);
 			piece.setColor(teamColor);
+			piece.setTeam(team);
 			teamTwoPieces.add(piece);
 		}
 		return teamTwoPieces;

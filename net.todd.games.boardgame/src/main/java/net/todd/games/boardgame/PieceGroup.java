@@ -14,7 +14,7 @@ import javax.vecmath.Vector3f;
 import com.sun.j3d.utils.behaviors.interpolators.KBKeyFrame;
 import com.sun.j3d.utils.behaviors.interpolators.KBRotPosScaleSplinePathInterpolator;
 
-public class PieceGroup extends BranchGroup implements IPiece {
+public class PieceGroup extends BranchGroup implements IPieceGroup {
 	private KBRotPosScaleSplinePathInterpolator linearInterpolator;
 	private KBKeyFrame[] linearKeyFrames;
 	private final Color3f color;

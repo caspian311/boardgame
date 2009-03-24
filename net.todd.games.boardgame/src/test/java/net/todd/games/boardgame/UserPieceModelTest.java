@@ -107,6 +107,30 @@ public class UserPieceModelTest {
 		assertEquals(new Vector3f(new float[] { 1f, 5f, 3f }), currentPieceLocation);
 	}
 
+	@Test
+	public void testTeamOneIsTeamOne() {
+		gameGridModel.teamOneStartingPositions.add(new Vector3f());
+		gameGridModel.teamOneStartingPositions.add(new Vector3f());
+		UserPiecesModel userPieceModel = new UserPiecesModel(gameGridModel);
+
+		List<PieceInfo> allPieces = userPieceModel.getAllTeamOnePieces();
+		for (PieceInfo pieceInfo : allPieces) {
+			assertEquals(Team.ONE, pieceInfo.getTeam());
+		}
+	}
+
+	@Test
+	public void testTeamTwoIsTeamTwo() {
+		gameGridModel.teamTwoStartingPositions.add(new Vector3f());
+		gameGridModel.teamTwoStartingPositions.add(new Vector3f());
+		UserPiecesModel userPieceModel = new UserPiecesModel(gameGridModel);
+
+		List<PieceInfo> allPieces = userPieceModel.getAllTeamTwoPieces();
+		for (PieceInfo pieceInfo : allPieces) {
+			assertEquals(Team.TWO, pieceInfo.getTeam());
+		}
+	}
+
 	private static class GameGridModelStub implements IGameGridModel {
 		Vector3f selectedPosition;
 		public ListenerManager positionSelectedListener = new ListenerManager();
