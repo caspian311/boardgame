@@ -1,9 +1,8 @@
 package net.todd.games.boardgame;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-import javax.vecmath.Color3f;
 import javax.vecmath.Vector3f;
 
 import net.todd.common.uitools.IListener;
@@ -11,17 +10,17 @@ import net.todd.common.uitools.ListenerManager;
 
 public class UserPiecesModel implements IUserPiecesModel {
 	private static final float PIECE_HEIGHT = 10f;
-	private final ListenerManager modelListenerManager = new ListenerManager();
-	private final IGameGridModel gameGridModel;
-	private Vector3f currentPosition;
+	private final ListenerManager moveListenerManager = new ListenerManager();
+	private Vector3f targetLocation;
+	private final GamePieceData gamePieceData;
 
-	public UserPiecesModel(final IGameGridModel gameGridModel) {
-		this.gameGridModel = gameGridModel;
+	public UserPiecesModel(GamePieceData gamePieceData, final IGameGridModel gameGridModel) {
+		this.gamePieceData = gamePieceData;
 		gameGridModel.addPositionSelectedListener(new IListener() {
 			public void fireEvent() {
-				currentPosition = gameGridModel.getSelectedPosition();
-				adjustPositionForHeight(currentPosition);
-				modelListenerManager.notifyListeners();
+				targetLocation = gameGridModel.getSelectedPosition();
+				adjustPositionForHeight(targetLocation);
+				moveListenerManager.notifyListeners();
 			}
 		});
 	}
@@ -32,36 +31,36 @@ public class UserPiecesModel implements IUserPiecesModel {
 		}
 	}
 
-	public void addListener(IListener userModelListener) {
-		modelListenerManager.addListener(userModelListener);
+	public void addMoveListener(IListener moveListener) {
+		moveListenerManager.addListener(moveListener);
 	}
 
-	public Vector3f getCurrentPosition() {
-		return currentPosition;
+	public Vector3f getMoveToLocation() {
+		return targetLocation;
 	}
 
 	public List<PieceInfo> getAllTeamOnePieces() {
-		return convertToPieceInfo(gameGridModel.getTeamOneStartingGridPositions(),
-				GameColors.TEAM_ONE_COLOR, Team.ONE);
+		List<PieceInfo> adjustPiecesForHeight = adjustPiecesForHeight(gamePieceData
+				.getTeamOnePieces());
+		for (PieceInfo pieceInfo : adjustPiecesForHeight) {
+			pieceInfo.setId(UUID.randomUUID().toString());
+		}
+		return adjustPiecesForHeight;
+	}
+
+	private List<PieceInfo> adjustPiecesForHeight(List<PieceInfo> teamOnePieces) {
+		for (PieceInfo pieceInfo : teamOnePieces) {
+			adjustPositionForHeight(pieceInfo.getPosition());
+		}
+		return teamOnePieces;
 	}
 
 	public List<PieceInfo> getAllTeamTwoPieces() {
-		return convertToPieceInfo(gameGridModel.getTeamTwoStartingGridPositions(),
-				GameColors.TEAM_TWO_COLOR, Team.TWO);
-	}
-
-	private List<PieceInfo> convertToPieceInfo(List<Vector3f> positions, Color3f teamColor,
-			Team team) {
-		List<PieceInfo> teamTwoPieces = new ArrayList<PieceInfo>();
-		for (Vector3f position : positions) {
-			adjustPositionForHeight(position);
-
-			PieceInfo piece = new PieceInfo();
-			piece.setPosition(position);
-			piece.setColor(teamColor);
-			piece.setTeam(team);
-			teamTwoPieces.add(piece);
+		List<PieceInfo> adjustPiecesForHeight = adjustPiecesForHeight(gamePieceData
+				.getTeamTwoPieces());
+		for (PieceInfo pieceInfo : adjustPiecesForHeight) {
+			pieceInfo.setId(UUID.randomUUID().toString());
 		}
-		return teamTwoPieces;
+		return adjustPiecesForHeight;
 	}
 }

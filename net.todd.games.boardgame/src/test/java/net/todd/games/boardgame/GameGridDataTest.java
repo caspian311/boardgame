@@ -3,10 +3,6 @@ package net.todd.games.boardgame;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.List;
-
-import javax.vecmath.Vector3f;
-
 import org.junit.Test;
 
 public class GameGridDataTest {
@@ -86,31 +82,5 @@ public class GameGridDataTest {
 		ComparisonUtil.compareArrays(new float[] { 35f, 0f, -25f }, tileData[1][7].getPosition());
 		ComparisonUtil.compareArrays(new float[] { -35f, 0f, -15f }, tileData[2][0].getPosition());
 		ComparisonUtil.compareArrays(new float[] { -25f, 0f, -15f }, tileData[2][1].getPosition());
-	}
-
-	@Test
-	public void testCoordinatesForTeamOneStartingPositions() {
-		GameGridData gridData = new GameGridData();
-
-		List<Vector3f> teamOneStartingPositions = gridData.getTeamOneStartingPositions();
-
-		assertEquals(4, teamOneStartingPositions.size());
-		assertEquals(new Vector3f(-15f, 0f, -35f), teamOneStartingPositions.get(0));
-		assertEquals(new Vector3f(-5f, 0f, -35f), teamOneStartingPositions.get(1));
-		assertEquals(new Vector3f(5f, 0f, -35f), teamOneStartingPositions.get(2));
-		assertEquals(new Vector3f(15f, 0f, -35f), teamOneStartingPositions.get(3));
-	}
-
-	@Test
-	public void testCoordinatesForTeamTwoStartingPositions() {
-		GameGridData gridData = new GameGridData();
-
-		List<Vector3f> teamOneStartingPositions = gridData.getTeamTwoStartingPositions();
-
-		assertEquals(4, teamOneStartingPositions.size());
-		assertEquals(new Vector3f(-15f, 0f, 35f), teamOneStartingPositions.get(0));
-		assertEquals(new Vector3f(-5f, 0f, 35f), teamOneStartingPositions.get(1));
-		assertEquals(new Vector3f(5f, 0f, 35f), teamOneStartingPositions.get(2));
-		assertEquals(new Vector3f(15f, 0f, 35f), teamOneStartingPositions.get(3));
 	}
 }

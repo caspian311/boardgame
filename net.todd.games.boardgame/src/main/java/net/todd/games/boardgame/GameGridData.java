@@ -1,9 +1,5 @@
 package net.todd.games.boardgame;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.vecmath.Vector3f;
 
 /**
  * GameGridData contains all the information about the actual grid. Later to be
@@ -58,25 +54,5 @@ public class GameGridData {
 	private float[] getNextColor() {
 		colorIndex++;
 		return colorIndex % 2 == 0 ? white : black;
-	}
-
-	public List<Vector3f> getTeamOneStartingPositions() {
-		List<Vector3f> startingPositions = new ArrayList<Vector3f>();
-		startingPositions.add(new Vector3f(-15f, 0f, -35f));
-		startingPositions.add(new Vector3f(-5f, 0f, -35f));
-		startingPositions.add(new Vector3f(5f, 0f, -35f));
-		startingPositions.add(new Vector3f(15f, 0f, -35f));
-
-		return startingPositions;
-	}
-
-	public List<Vector3f> getTeamTwoStartingPositions() {
-		List<Vector3f> teamTwoStartingPositions = new ArrayList<Vector3f>();
-		teamTwoStartingPositions.add(new Vector3f(-15f, 0f, 35f));
-		teamTwoStartingPositions.add(new Vector3f(-5f, 0f, 35f));
-		teamTwoStartingPositions.add(new Vector3f(5f, 0f, 35f));
-		teamTwoStartingPositions.add(new Vector3f(15f, 0f, 35f));
-
-		return teamTwoStartingPositions;
 	}
 }

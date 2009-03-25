@@ -92,7 +92,7 @@ public class UserPiecePresenterTest {
 		final List<PieceInfo> teamOnePieces = new ArrayList<PieceInfo>();
 		final List<PieceInfo> teamTwoPieces = new ArrayList<PieceInfo>();
 
-		public void addListener(IListener listener) {
+		public void addMoveListener(IListener listener) {
 			userModelListener = listener;
 		}
 
@@ -100,7 +100,7 @@ public class UserPiecePresenterTest {
 			return teamOnePieces;
 		}
 
-		public Vector3f getCurrentPosition() {
+		public Vector3f getMoveToLocation() {
 			return position;
 		}
 

@@ -7,9 +7,9 @@ import javax.vecmath.Vector3f;
 import net.todd.common.uitools.IListener;
 
 public interface IUserPiecesModel {
-	void addListener(IListener userModelListener);
+	void addMoveListener(IListener userModelListener);
 
-	Vector3f getCurrentPosition();
+	Vector3f getMoveToLocation();
 
 	List<PieceInfo> getAllTeamOnePieces();
 

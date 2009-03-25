@@ -4,6 +4,7 @@ import javax.vecmath.Color3f;
 import javax.vecmath.Vector3f;
 
 public class PieceInfo {
+	private String id;
 	private Vector3f position;
 	private Color3f color;
 	private Team team;
@@ -30,5 +31,13 @@ public class PieceInfo {
 
 	public void setTeam(Team team) {
 		this.team = team;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 }

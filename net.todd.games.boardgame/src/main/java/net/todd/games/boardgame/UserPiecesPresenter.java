@@ -9,9 +9,9 @@ public class UserPiecesPresenter {
 			final IUserPiecesModel userPieceModel) {
 		addAllPiecesToView(userPieceView, userPieceModel.getAllTeamOnePieces());
 		addAllPiecesToView(userPieceView, userPieceModel.getAllTeamTwoPieces());
-		userPieceModel.addListener(new IListener() {
+		userPieceModel.addMoveListener(new IListener() {
 			public void fireEvent() {
-				userPieceView.movePieceTo(userPieceModel.getCurrentPosition());
+				userPieceView.movePieceTo(userPieceModel.getMoveToLocation());
 			}
 		});
 	}
