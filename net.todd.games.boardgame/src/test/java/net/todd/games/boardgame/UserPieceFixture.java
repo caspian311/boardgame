@@ -16,7 +16,10 @@ public class UserPieceFixture {
 
 	public static PieceGroup getPiece() {
 		Bounds bounds = new BoundingSphere(new Point3d(0, 0, 0), 100);
-		PieceGroup piece = new PieceGroup(bounds, new Vector3f(new float[] { 0, 0, 0 }), blue);
+		PieceInfo pieceInfo = new PieceInfo();
+		pieceInfo.setColor(blue);
+		pieceInfo.setPosition(new Vector3f(0, 0, 0));
+		PieceGroup piece = new PieceGroup(bounds, pieceInfo);
 		return piece;
 	}
 }

@@ -15,7 +15,7 @@ public class SelectablePiece extends Shape3D {
 
 	public SelectablePiece(IPieceGroup piece) {
 		this.piece = piece;
-		Color3f color = piece.getColor();
+		Color3f color = piece.getPieceInfo().getColor();
 		Material matterial = new Material(BLACK, color, BLACK, SPECULAR, SHININESS);
 		Appearance appearance = new Appearance();
 		appearance.setMaterial(matterial);

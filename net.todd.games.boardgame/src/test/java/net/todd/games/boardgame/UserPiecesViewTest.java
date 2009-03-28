@@ -1,7 +1,10 @@
 package net.todd.games.boardgame;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,67 +23,26 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class UserPiecesViewTest {
+	private IPieceGroup selectedPiece;
+
 	private final Bounds bounds = new BoundingSphere(new Point3d(0, 0, 0), 100);
 	private PickerFactoryStub pickerFactory;
-	private PickerStub teamOnePicker;
-	private PickerStub teamTwoPicker;
 	private BranchGroupStub mainBranchGroup;
 	private BranchGroupFactoryStub branchGroupFactory;
-	private BranchGroupStub teamOneBranchGroup;
-	private BranchGroupStub teamTwoBranchGroup;
 
 	@Before
 	public void setUp() {
-		teamOnePicker = new PickerStub();
-		teamTwoPicker = new PickerStub();
 		pickerFactory = new PickerFactoryStub();
-		pickerFactory.teamOnePicker = teamOnePicker;
-		pickerFactory.teamTwoPicker = teamTwoPicker;
 
 		mainBranchGroup = new BranchGroupStub();
-		teamOneBranchGroup = new BranchGroupStub();
-		teamTwoBranchGroup = new BranchGroupStub();
 		branchGroupFactory = new BranchGroupFactoryStub();
 		branchGroupFactory.mainBranchGroup = mainBranchGroup;
-		branchGroupFactory.teamOneBranchGroup = teamOneBranchGroup;
-		branchGroupFactory.teamTwoBranchGroup = teamTwoBranchGroup;
 	}
 
 	@Test
-	public void testEvenIfYouDontAddPiecesThereAreTwoBranchGroupsForEeachTeam() {
-		UserPiecesView userPiecesView = new UserPiecesView(bounds, pickerFactory,
-				branchGroupFactory);
-
-		assertSame(mainBranchGroup, userPiecesView.getBranchGroup());
-		assertEquals(0, mainBranchGroup.nodeChildren.size());
-		assertEquals(2, mainBranchGroup.bgChildren.size());
-		assertSame(teamOneBranchGroup, mainBranchGroup.bgChildren.get(0));
-		assertSame(teamTwoBranchGroup, mainBranchGroup.bgChildren.get(1));
-	}
-
-	@Test
-	public void testAddingPiecesOfOneTeamAddsItToOnePartOfTheBranchGroup() {
-		UserPiecesView userPiecesView = new UserPiecesView(bounds, pickerFactory,
-				branchGroupFactory);
-
-		PieceInfo pieceInfo1 = new PieceInfo();
-		pieceInfo1.setPosition(new Vector3f(1f, 2f, 3f));
-		pieceInfo1.setColor(new Color3f(1f, 2f, 3f));
-		pieceInfo1.setTeam(Team.ONE);
-
-		PieceInfo pieceInfo2 = new PieceInfo();
-		pieceInfo2.setPosition(new Vector3f(1f, 2f, 3f));
-		pieceInfo2.setColor(new Color3f(1f, 2f, 3f));
-		pieceInfo2.setTeam(Team.ONE);
-
-		userPiecesView.addPiece(pieceInfo1);
-		userPiecesView.addPiece(pieceInfo2);
-
-		assertEquals(2, teamOneBranchGroup.nodeChildren.size());
-	}
-
-	@Test
-	public void testAddingPiecesToBothTeamsAddsItToCorrectTeamBranchGroup() {
+	public void testAddingPiecesToViewAddsItToCorrectBranchGroup() {
+		PickerStub picker = new PickerStub();
+		pickerFactory.picker = picker;
 		UserPiecesView userPiecesView = new UserPiecesView(bounds, pickerFactory,
 				branchGroupFactory);
 
@@ -103,123 +65,62 @@ public class UserPiecesViewTest {
 		userPiecesView.addPiece(pieceInfo2);
 		userPiecesView.addPiece(pieceInfo3);
 
-		assertEquals(1, teamOneBranchGroup.nodeChildren.size());
-		assertEquals(2, teamTwoBranchGroup.nodeChildren.size());
+		assertEquals(3, mainBranchGroup.nodeChildren.size());
 	}
 
 	@Test
-	public void testAPickerIsGivenToEachTeam() {
-		new UserPiecesView(bounds, pickerFactory, branchGroupFactory);
-		assertSame(teamOneBranchGroup, teamOnePicker.associatedBranchGroup);
-		assertSame(teamTwoBranchGroup, teamTwoPicker.associatedBranchGroup);
+	public void testListenersToViewAreNotifiedWhenSomethingIsPicked() {
+		ListenerStub listener = new ListenerStub();
+		PickerStub picker = new PickerStub();
+		pickerFactory.picker = picker;
+		UserPiecesView userPiecesView = new UserPiecesView(bounds, pickerFactory,
+				branchGroupFactory);
+
+		picker.listener.fireEvent();
+
+		assertFalse(listener.eventFired);
+
+		userPiecesView.addPieceSelectedListener(listener);
+
+		picker.listener.fireEvent();
+
+		assertTrue(listener.eventFired);
 	}
 
 	@Test
-	public void testTeamTwoCannotMoveUntilTeamOneMovesFirst() {
-		UserPiecesView view = new UserPiecesView(bounds, pickerFactory, branchGroupFactory);
+	public void testViewGetsSelectedPieceBeforeNotifyingListeners() {
+		PickerStub picker = new PickerStub();
+		PieceInfo pieceInfo = new PieceInfo();
+		pieceInfo.setPosition(new Vector3f());
+		pieceInfo.setColor(new Color3f());
+		picker.selectedNode = new SelectablePiece(new PieceGroupMock(pieceInfo));
+		pickerFactory.picker = picker;
+		final UserPiecesView userPiecesView = new UserPiecesView(bounds, pickerFactory,
+				branchGroupFactory);
+		userPiecesView.addPieceSelectedListener(new IListener() {
+			public void fireEvent() {
+				selectedPiece = userPiecesView.getSelectedPiece();
+			}
+		});
 
-		PieceGroupStub pieceGroup1 = new PieceGroupStub();
-		teamOnePicker.selectedNode = new SelectablePiece(pieceGroup1);
+		assertNull(selectedPiece);
 
-		PieceGroupStub pieceGroup2 = new PieceGroupStub();
-		teamTwoPicker.selectedNode = new SelectablePiece(pieceGroup2);
+		picker.listener.fireEvent();
 
-		teamOnePicker.listener.fireEvent();
-		teamTwoPicker.listener.fireEvent();
-
-		assertEquals(0, pieceGroup1.movePieceToCallCount);
-		assertEquals(0, pieceGroup2.movePieceToCallCount);
-
-		view.movePieceTo(new Vector3f());
-
-		assertEquals(1, pieceGroup1.movePieceToCallCount);
-		assertEquals(0, pieceGroup2.movePieceToCallCount);
-	}
-
-	@Test
-	public void testTeamTwoCanMoveAfterTeamOnesMoves() {
-		UserPiecesView view = new UserPiecesView(bounds, pickerFactory, branchGroupFactory);
-
-		PieceGroupStub pieceGroup1 = new PieceGroupStub();
-		teamOnePicker.selectedNode = new SelectablePiece(pieceGroup1);
-
-		PieceGroupStub pieceGroup2 = new PieceGroupStub();
-		teamTwoPicker.selectedNode = new SelectablePiece(pieceGroup2);
-
-		teamOnePicker.listener.fireEvent();
-
-		assertEquals(0, pieceGroup1.movePieceToCallCount);
-		assertEquals(0, pieceGroup2.movePieceToCallCount);
-
-		view.movePieceTo(new Vector3f());
-
-		assertEquals(1, pieceGroup1.movePieceToCallCount);
-		assertEquals(0, pieceGroup2.movePieceToCallCount);
-
-		teamTwoPicker.listener.fireEvent();
-		view.movePieceTo(new Vector3f());
-
-		assertEquals(1, pieceGroup1.movePieceToCallCount);
-		assertEquals(1, pieceGroup2.movePieceToCallCount);
-	}
-
-	@Test
-	public void testTeamOneAndTwoAlternateMoves() {
-		UserPiecesView view = new UserPiecesView(bounds, pickerFactory, branchGroupFactory);
-
-		PieceGroupStub pieceGroup1 = new PieceGroupStub();
-		teamOnePicker.selectedNode = new SelectablePiece(pieceGroup1);
-
-		PieceGroupStub pieceGroup2 = new PieceGroupStub();
-		teamTwoPicker.selectedNode = new SelectablePiece(pieceGroup2);
-
-		teamOnePicker.listener.fireEvent();
-		view.movePieceTo(new Vector3f());
-
-		assertEquals(1, pieceGroup1.movePieceToCallCount);
-		assertEquals(0, pieceGroup2.movePieceToCallCount);
-
-		teamTwoPicker.listener.fireEvent();
-		view.movePieceTo(new Vector3f());
-
-		assertEquals(1, pieceGroup1.movePieceToCallCount);
-		assertEquals(1, pieceGroup2.movePieceToCallCount);
-
-		teamOnePicker.listener.fireEvent();
-		view.movePieceTo(new Vector3f());
-
-		assertEquals(2, pieceGroup1.movePieceToCallCount);
-		assertEquals(1, pieceGroup2.movePieceToCallCount);
-
-		teamTwoPicker.listener.fireEvent();
-		view.movePieceTo(new Vector3f());
-
-		assertEquals(2, pieceGroup1.movePieceToCallCount);
-		assertEquals(2, pieceGroup2.movePieceToCallCount);
+		assertSame(selectedPiece, picker.selectedNode.getPiece());
 	}
 
 	private static class PickerFactoryStub implements IPickerFactory {
-		PickerStub teamTwoPicker;
-		PickerStub teamOnePicker;
-		private int callCount;
+		PickerStub picker;
 
 		public IPicker createPicker(IBranchGroup branchGroup) {
-			callCount++;
-			PickerStub picker = null;
-			if (callCount == 1) {
-				picker = teamOnePicker;
-			} else if (callCount == 2) {
-				picker = teamTwoPicker;
-			}
-			picker.associatedBranchGroup = branchGroup;
 			return picker;
 		}
 	}
 
 	private static class PickerStub implements IPicker {
 		IListener listener;
-		Node selectedNode;
-		IBranchGroup associatedBranchGroup;
+		SelectablePiece selectedNode;
 
 		public void addListener(IListener listener) {
 			this.listener = listener;
@@ -236,21 +137,9 @@ public class UserPiecesViewTest {
 
 	private static class BranchGroupFactoryStub implements IBranchGroupFactory {
 		IBranchGroup mainBranchGroup;
-		IBranchGroup teamOneBranchGroup;
-		IBranchGroup teamTwoBranchGroup;
-		private int callCount;
 
 		public IBranchGroup createBranchGroup() {
-			IBranchGroup branchGroup = null;
-			callCount++;
-			if (callCount == 1) {
-				branchGroup = mainBranchGroup;
-			} else if (callCount == 2) {
-				branchGroup = teamOneBranchGroup;
-			} else if (callCount == 3) {
-				branchGroup = teamTwoBranchGroup;
-			}
-			return branchGroup;
+			return mainBranchGroup;
 		}
 	}
 
@@ -275,15 +164,22 @@ public class UserPiecesViewTest {
 		}
 	}
 
-	private static class PieceGroupStub implements IPieceGroup {
-		int movePieceToCallCount;
+	private static class ListenerStub implements IListener {
+		boolean eventFired;
 
-		public void movePieceTo(Vector3f position) {
-			++movePieceToCallCount;
+		public void fireEvent() {
+			eventFired = true;
+		}
+	}
+
+	private static class PieceGroupMock extends PieceGroup {
+		public PieceGroupMock(PieceInfo pieceInfo) {
+			super(null, pieceInfo);
 		}
 
-		public Color3f getColor() {
-			return new Color3f();
+		@Override
+		public void moveTo(BranchGroup branchGroup) {
+			// do nothing
 		}
 	}
 }

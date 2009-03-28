@@ -17,14 +17,14 @@ import com.sun.j3d.utils.behaviors.interpolators.KBRotPosScaleSplinePathInterpol
 
 public class PieceGroup extends BranchGroup implements IPieceGroup {
 	private KBKeyFrame[] linearKeyFrames;
-	private final Color3f color;
 	private final TransformGroup userPieceTransformGroup;
 	private final Bounds bounds;
 	private Vector3f previousPosition;
+	private final PieceInfo pieceInfo;
 
-	public PieceGroup(Bounds bounds, Vector3f startingPoint, Color3f color) {
+	public PieceGroup(Bounds bounds, PieceInfo pieceInfo) {
 		this.bounds = bounds;
-		this.color = color;
+		this.pieceInfo = pieceInfo;
 		userPieceTransformGroup = new TransformGroup(new Transform3D());
 		userPieceTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 		userPieceTransformGroup.setCapability(Group.ALLOW_CHILDREN_EXTEND);
@@ -38,11 +38,15 @@ public class PieceGroup extends BranchGroup implements IPieceGroup {
 		userPieceTransformGroup.addChild(pieceTG);
 
 		addChild(userPieceTransformGroup);
-		movePieceTo(startingPoint);
+		movePieceTo(pieceInfo.getPosition());
 	}
 
 	public Color3f getColor() {
-		return color;
+		return pieceInfo.getColor();
+	}
+
+	public PieceInfo getPieceInfo() {
+		return pieceInfo;
 	}
 
 	public void movePieceTo(final Vector3f position) {

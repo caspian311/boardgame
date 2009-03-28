@@ -2,10 +2,12 @@ package net.todd.games.boardgame;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.vecmath.Color3f;
 import javax.vecmath.Vector3f;
 
 import net.todd.common.uitools.IListener;
@@ -59,26 +61,32 @@ public class UserPiecePresenterTest {
 	}
 
 	@Test
-	public void testWhenModelFiresEventPresenterTellsViewWhereToMovePiece() {
-		PieceInfo pieceInfo1 = PieceFixture.createPieceInfo();
-		model.teamOnePieces.add(pieceInfo1);
-		model.position = new Vector3f(new float[] { 1f, 2f, 3f });
+	public void testWhenPieceSelectedOnViewModelGetsNotified() {
+		PieceGroupStub pieceGroup = new PieceGroupStub();
+		view.selectedPiece = pieceGroup;
 		new UserPiecesPresenter(view, model);
-		assertNull(view.moveToPosition);
-		model.userModelListener.fireEvent();
-		assertEquals(view.moveToPosition, model.position);
+		assertNull(model.selectedPiece);
+
+		view.pieceSelectedListener.fireEvent();
+
+		assertSame(pieceGroup, model.selectedPiece);
 	}
 
 	private static class UserPieceViewStub implements IUserPiecesView {
-		Vector3f moveToPosition;
+		IListener pieceSelectedListener;
+		IPieceGroup selectedPiece;
 		List<Vector3f> startingPositions = new ArrayList<Vector3f>();
 
 		public void addPiece(PieceInfo pieceInfo) {
 			startingPositions.add(pieceInfo.getPosition());
 		}
 
-		public void movePieceTo(Vector3f position) {
-			moveToPosition = position;
+		public void addPieceSelectedListener(IListener listener) {
+			pieceSelectedListener = listener;
+		}
+
+		public IPieceGroup getSelectedPiece() {
+			return selectedPiece;
 		}
 
 		public IBranchGroup getBranchGroup() {
@@ -87,6 +95,7 @@ public class UserPiecePresenterTest {
 	}
 
 	private static class UserPieceModelStub implements IUserPiecesModel {
+		IPieceGroup selectedPiece;
 		IListener userModelListener;
 		Vector3f position;
 		final List<PieceInfo> teamOnePieces = new ArrayList<PieceInfo>();
@@ -106,6 +115,23 @@ public class UserPiecePresenterTest {
 
 		public List<PieceInfo> getAllTeamTwoPieces() {
 			return teamTwoPieces;
+		}
+
+		public void setSelectedPiece(IPieceGroup selectedPieceId) {
+			this.selectedPiece = selectedPieceId;
+		}
+	}
+
+	private static class PieceGroupStub implements IPieceGroup {
+		public Color3f getColor() {
+			return null;
+		}
+
+		public PieceInfo getPieceInfo() {
+			return null;
+		}
+
+		public void movePieceTo(Vector3f position) {
 		}
 	}
 }
