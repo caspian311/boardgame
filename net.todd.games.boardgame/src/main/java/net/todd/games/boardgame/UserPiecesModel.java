@@ -1,10 +1,7 @@
 package net.todd.games.boardgame;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import javax.vecmath.Vector3f;
 
@@ -12,79 +9,34 @@ import net.todd.common.uitools.IListener;
 
 public class UserPiecesModel implements IUserPiecesModel {
 	private static final float PIECE_HEIGHT = 10f;
-	private Vector3f targetLocation;
-	private List<PieceInfo> teamOnePieces;
-	private List<PieceInfo> teamTwoPieces;
+	private final List<PieceInfo> teamOnePieces;
+	private final List<PieceInfo> teamTwoPieces;
 	private IPieceGroup selectedPieceToMove;
-	private final Map<String, PieceInfo> piecesMap = new HashMap<String, PieceInfo>();
-	private Team teamToMove;
 
-	public UserPiecesModel(GamePieceData gamePieceData, final IGameGridModel gameGridModel) {
+	public UserPiecesModel(GamePieceData gamePieceData, final IGameGridModel gameGridModel,
+			final IMoveValidator moveValidator) {
+		teamOnePieces = new ArrayList<PieceInfo>(adjustPiecesForHeight(gamePieceData
+				.getTeamOnePieces()));
+		teamTwoPieces = new ArrayList<PieceInfo>(adjustPiecesForHeight(gamePieceData
+				.getTeamTwoPieces()));
+
 		gameGridModel.addPositionSelectedListener(new IListener() {
 			public void fireEvent() {
-				if (selectedPieceToMove != null) {
-					targetLocation = gameGridModel.getSelectedPosition();
-					moveAction();
+				try {
+					if (selectedPieceToMove != null) {
+						moveValidator.confirmMove(selectedPieceToMove.getPieceInfo(), gameGridModel
+								.getSelectedPosition());
+						moveAction(selectedPieceToMove, gameGridModel.getSelectedPosition());
+					}
+				} catch (ValidMoveException e) {
 				}
 			}
 		});
-
-		populatePiecesMap(gamePieceData);
-		teamToMove = Team.ONE;
 	}
 
-	private void moveAction() {
-		if (teamToMove.equals(selectedPieceToMove.getPieceInfo().getTeam())) {
-			if (!isLocationOccupied(targetLocation)) {
-				adjustPositionForHeight(targetLocation);
-				selectedPieceToMove.movePieceTo(targetLocation);
-				PieceInfo pieceInfo = piecesMap.get(selectedPieceToMove.getPieceInfo().getId());
-				pieceInfo.setPosition(targetLocation);
-				updateTeamToMove();
-			}
-		}
-	}
-
-	private void updateTeamToMove() {
-		if (teamToMove.equals(Team.ONE)) {
-			teamToMove = Team.TWO;
-		} else {
-			teamToMove = Team.ONE;
-		}
-	}
-
-	private void populatePiecesMap(GamePieceData gamePieceData) {
-		teamOnePieces = adjustPiecesForHeightAndGiveId(gamePieceData.getTeamOnePieces());
-		teamTwoPieces = adjustPiecesForHeightAndGiveId(gamePieceData.getTeamTwoPieces());
-
-		for (PieceInfo pieceInfo : teamOnePieces) {
-			piecesMap.put(pieceInfo.getId(), pieceInfo);
-		}
-		for (PieceInfo pieceInfo : teamTwoPieces) {
-			piecesMap.put(pieceInfo.getId(), pieceInfo);
-		}
-	}
-
-	private boolean isLocationOccupied(Vector3f targetLocation) {
-		boolean occupied = false;
-		List<PieceInfo> allPieces = getAllPieces();
-		for (PieceInfo pieceInfo : allPieces) {
-			if (pieceInfo.getPosition().x == targetLocation.x) {
-				if (pieceInfo.getPosition().z == targetLocation.z) {
-					occupied = true;
-					break;
-				}
-			}
-		}
-		return occupied;
-	}
-
-	private List<PieceInfo> getAllPieces() {
-		List<PieceInfo> allPieces = new ArrayList<PieceInfo>();
-
-		allPieces.addAll(piecesMap.values());
-
-		return allPieces;
+	private void moveAction(IPieceGroup selectedPieceToMove, Vector3f targetLocation) {
+		adjustPositionForHeight(targetLocation);
+		selectedPieceToMove.movePieceTo(targetLocation);
 	}
 
 	private void adjustPositionForHeight(Vector3f position) {
@@ -93,12 +45,11 @@ public class UserPiecesModel implements IUserPiecesModel {
 		}
 	}
 
-	private List<PieceInfo> adjustPiecesForHeightAndGiveId(List<PieceInfo> teamOnePieces) {
-		for (PieceInfo pieceInfo : teamOnePieces) {
-			pieceInfo.setId(UUID.randomUUID().toString());
+	private List<PieceInfo> adjustPiecesForHeight(List<PieceInfo> pieces) {
+		for (PieceInfo pieceInfo : pieces) {
 			adjustPositionForHeight(pieceInfo.getPosition());
 		}
-		return teamOnePieces;
+		return pieces;
 	}
 
 	public List<PieceInfo> getAllTeamOnePieces() {

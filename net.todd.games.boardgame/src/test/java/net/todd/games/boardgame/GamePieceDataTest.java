@@ -1,7 +1,10 @@
 package net.todd.games.boardgame;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.vecmath.Vector3f;
@@ -9,6 +12,14 @@ import javax.vecmath.Vector3f;
 import org.junit.Test;
 
 public class GamePieceDataTest {
+	@Test
+	public void testAlwaysReturnSameList() {
+		GamePieceData gridData = new GamePieceData();
+
+		assertSame(gridData.getTeamOnePieces(), gridData.getTeamOnePieces());
+		assertSame(gridData.getTeamTwoPieces(), gridData.getTeamTwoPieces());
+	}
+
 	@Test
 	public void testCoordinatesForTeamOneStartingPositions() {
 		GamePieceData gridData = new GamePieceData();
@@ -72,6 +83,23 @@ public class GamePieceDataTest {
 		List<PieceInfo> allPieces = gamePieceData.getTeamTwoPieces();
 		for (PieceInfo pieceInfo : allPieces) {
 			assertEquals(Team.TWO, pieceInfo.getTeam());
+		}
+	}
+
+	@Test
+	public void testAllAddedPiecesHaveUniqueIdentifiers() {
+		GamePieceData gamePieceData = new GamePieceData();
+		List<String> uniqueIds = new ArrayList<String>();
+
+		List<PieceInfo> allPieces = gamePieceData.getTeamOnePieces();
+		allPieces.addAll(gamePieceData.getTeamTwoPieces());
+		for (PieceInfo pieceInfo : allPieces) {
+			String id = pieceInfo.getId();
+			if (!uniqueIds.contains(id)) {
+				uniqueIds.add(id);
+			} else {
+				fail("ids are not unique");
+			}
 		}
 	}
 }

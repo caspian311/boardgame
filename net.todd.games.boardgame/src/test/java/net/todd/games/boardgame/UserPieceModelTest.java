@@ -2,12 +2,11 @@ package net.todd.games.boardgame;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertSame;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 import javax.vecmath.Color3f;
 import javax.vecmath.Vector3f;
@@ -21,11 +20,13 @@ import org.junit.Test;
 public class UserPieceModelTest {
 	private GameGridModelStub gameGridModel;
 	private GamePieceDataMock gamePieceData;
+	private MoveValidatorStub validator;
 
 	@Before
 	public void setUp() {
 		gameGridModel = new GameGridModelStub();
 		gamePieceData = new GamePieceDataMock();
+		validator = new MoveValidatorStub();
 	}
 
 	@Test
@@ -38,7 +39,8 @@ public class UserPieceModelTest {
 		pieceInfo2.setTeam(Team.TWO);
 		gamePieceData.teamOne.add(pieceInfo1);
 		gamePieceData.teamTwo.add(pieceInfo2);
-		UserPiecesModel userPieceModel = new UserPiecesModel(gamePieceData, gameGridModel);
+		UserPiecesModel userPieceModel = new UserPiecesModel(gamePieceData, gameGridModel,
+				validator);
 
 		List<PieceInfo> allPieces = userPieceModel.getAllTeamOnePieces();
 		allPieces.addAll(userPieceModel.getAllTeamTwoPieces());
@@ -55,7 +57,8 @@ public class UserPieceModelTest {
 		pieceInfo.setPosition(new Vector3f());
 		pieceInfo.setTeam(Team.ONE);
 		gamePieceData.teamOne.add(pieceInfo);
-		final IUserPiecesModel userPieceModel = new UserPiecesModel(gamePieceData, gameGridModel);
+		final IUserPiecesModel userPieceModel = new UserPiecesModel(gamePieceData, gameGridModel,
+				validator);
 
 		PieceGroupStub selectedPiece = new PieceGroupStub();
 		selectedPiece.pieceInfo = pieceInfo;
@@ -74,29 +77,6 @@ public class UserPieceModelTest {
 	}
 
 	@Test
-	public void testAllAddedPiecesHaveUniqueIdentifiers() {
-		for (int i = 0; i < 100; i++) {
-			gamePieceData.teamOne.add(new PieceInfo());
-		}
-		for (int i = 0; i < 100; i++) {
-			gamePieceData.teamTwo.add(new PieceInfo());
-		}
-		UserPiecesModel userPieceModel = new UserPiecesModel(gamePieceData, gameGridModel);
-		List<String> uniqueIds = new ArrayList<String>();
-
-		List<PieceInfo> allPieces = userPieceModel.getAllTeamOnePieces();
-		allPieces.addAll(userPieceModel.getAllTeamTwoPieces());
-		for (PieceInfo pieceInfo : allPieces) {
-			String id = pieceInfo.getId();
-			if (!uniqueIds.contains(id)) {
-				uniqueIds.add(id);
-			} else {
-				fail("ids are not unique");
-			}
-		}
-	}
-
-	@Test
 	public void testModelPullsTeamOneInfoFromGamePieceData() {
 		PieceInfo pieceInfo1 = new PieceInfo();
 		pieceInfo1.setPosition(new Vector3f(1, 2, 3));
@@ -104,7 +84,7 @@ public class UserPieceModelTest {
 		pieceInfo2.setPosition(new Vector3f(4, 6, 6));
 		gamePieceData.teamOne.add(pieceInfo1);
 		gamePieceData.teamOne.add(pieceInfo2);
-		UserPiecesModel model = new UserPiecesModel(gamePieceData, gameGridModel);
+		UserPiecesModel model = new UserPiecesModel(gamePieceData, gameGridModel, validator);
 
 		List<PieceInfo> teamOne = model.getAllTeamOnePieces();
 
@@ -121,7 +101,7 @@ public class UserPieceModelTest {
 		pieceInfo2.setPosition(new Vector3f(2f, 4f, 1f));
 		gamePieceData.teamTwo.add(pieceInfo1);
 		gamePieceData.teamTwo.add(pieceInfo2);
-		UserPiecesModel model = new UserPiecesModel(gamePieceData, gameGridModel);
+		UserPiecesModel model = new UserPiecesModel(gamePieceData, gameGridModel, validator);
 
 		List<PieceInfo> teamTwo = model.getAllTeamTwoPieces();
 
@@ -131,21 +111,17 @@ public class UserPieceModelTest {
 	}
 
 	@Test
-	public void testWillNotBlowupIfNoPieceIsSelectedAndGridSaysToMove() {
-		new UserPiecesModel(gamePieceData, gameGridModel);
-
-		gameGridModel.selectedPosition = new Vector3f(1f, 2f, 4f);
-		gameGridModel.positionSelectedListener.notifyListeners();
-	}
-
-	@Test
-	public void testIfMoveFailsBecauseSpotIsOccupiedSelectingADifferentGridLocationWillAllowTheMove() {
+	public void testModelDoesNotMoveIfValidatorFailsButWillMoveOnceValidatorPasses() {
 		PieceInfo pieceInfo = new PieceInfo();
 		pieceInfo.setId("something");
 		pieceInfo.setPosition(new Vector3f(1f, 2f, 4f));
 		pieceInfo.setTeam(Team.ONE);
 		gamePieceData.teamOne.add(pieceInfo);
-		UserPiecesModel userPieceModel = new UserPiecesModel(gamePieceData, gameGridModel);
+
+		validator.shouldFail = true;
+
+		UserPiecesModel userPieceModel = new UserPiecesModel(gamePieceData, gameGridModel,
+				validator);
 
 		PieceGroupStub selectedPiece = new PieceGroupStub();
 		selectedPiece.pieceInfo = pieceInfo;
@@ -156,134 +132,42 @@ public class UserPieceModelTest {
 
 		assertEquals(0, selectedPiece.movePieceToCallCount);
 
-		gameGridModel.selectedPosition = new Vector3f(1f, 2f, 5f);
+		validator.shouldFail = false;
+
+		gameGridModel.selectedPosition = new Vector3f(1f, 2f, 4f);
 		gameGridModel.positionSelectedListener.notifyListeners();
 
 		assertEquals(1, selectedPiece.movePieceToCallCount);
 	}
 
 	@Test
-	public void testWillNotMovePieceIfMovingToAPlaceWhereAnotherPieceIs() {
-		PieceInfo pieceInfo1 = new PieceInfo();
-		pieceInfo1.setId(UUID.randomUUID().toString());
-		pieceInfo1.setPosition(new Vector3f(1f, 2f, 3f));
-		pieceInfo1.setTeam(Team.ONE);
-		PieceInfo pieceInfo2 = new PieceInfo();
-		pieceInfo2.setId(UUID.randomUUID().toString());
-		pieceInfo2.setPosition(new Vector3f(1f, 2f, 4f));
-		pieceInfo2.setTeam(Team.ONE);
-		gamePieceData.teamOne.add(pieceInfo1);
-		gamePieceData.teamTwo.add(pieceInfo2);
-		UserPiecesModel userPieceModel = new UserPiecesModel(gamePieceData, gameGridModel);
+	public void testModelCallsValidatorWithPieceInfoFromSelectedPieceAndTargetLocationFromGridModel() {
+		PieceInfo pieceInfo = new PieceInfo();
+		pieceInfo.setId("something");
+		pieceInfo.setPosition(new Vector3f(1f, 2f, 4f));
+		pieceInfo.setTeam(Team.ONE);
+		gamePieceData.teamOne.add(pieceInfo);
+
+		UserPiecesModel userPieceModel = new UserPiecesModel(gamePieceData, gameGridModel,
+				validator);
 
 		PieceGroupStub selectedPiece = new PieceGroupStub();
-		selectedPiece.pieceInfo = pieceInfo1;
+		selectedPiece.pieceInfo = pieceInfo;
 		userPieceModel.setSelectedPiece(selectedPiece);
 
-		gameGridModel.selectedPosition = new Vector3f(5f, 5f, 5f);
+		gameGridModel.selectedPosition = new Vector3f(1f, 2f, 4f);
 		gameGridModel.positionSelectedListener.notifyListeners();
 
-		assertEquals(new Vector3f(5f, 5f, 5f), selectedPiece.movedToPosition);
-		assertEquals(1, selectedPiece.movePieceToCallCount);
-
-		selectedPiece.pieceInfo = pieceInfo2;
-		userPieceModel.setSelectedPiece(selectedPiece);
-
-		gameGridModel.selectedPosition = new Vector3f(5f, 5f, 5f);
-		gameGridModel.positionSelectedListener.notifyListeners();
-
-		assertEquals(1, selectedPiece.movePieceToCallCount);
+		assertSame(pieceInfo, validator.pieceInfo);
+		assertSame(gameGridModel.selectedPosition, validator.targetLocation);
 	}
 
 	@Test
-	public void testAPieceCannotMoveToSameLocationThatItAlreadyOccupied() {
-		PieceInfo pieceInfo1 = new PieceInfo();
-		pieceInfo1.setId(UUID.randomUUID().toString());
-		pieceInfo1.setPosition(new Vector3f(1f, 2f, 3f));
-		pieceInfo1.setTeam(Team.ONE);
-		PieceInfo pieceInfo2 = new PieceInfo();
-		pieceInfo2.setId(UUID.randomUUID().toString());
-		pieceInfo2.setPosition(new Vector3f(1f, 2f, 4f));
-		pieceInfo2.setTeam(Team.ONE);
-		gamePieceData.teamOne.add(pieceInfo1);
-		gamePieceData.teamOne.add(pieceInfo2);
-		UserPiecesModel userPieceModel = new UserPiecesModel(gamePieceData, gameGridModel);
+	public void testNothingBlowsUpIfThereIsNothingSelectedAndTheGridFiresEvent() {
+		new UserPiecesModel(gamePieceData, gameGridModel, validator);
 
-		PieceGroupStub selectedPiece = new PieceGroupStub();
-		selectedPiece.pieceInfo = pieceInfo1;
-		userPieceModel.setSelectedPiece(selectedPiece);
-
-		gameGridModel.selectedPosition = new Vector3f(5f, 5f, 5f);
+		gameGridModel.selectedPosition = new Vector3f(1f, 2f, 4f);
 		gameGridModel.positionSelectedListener.notifyListeners();
-
-		assertEquals(new Vector3f(5f, 5f, 5f), selectedPiece.movedToPosition);
-		assertEquals(1, selectedPiece.movePieceToCallCount);
-
-		userPieceModel.setSelectedPiece(selectedPiece);
-
-		gameGridModel.selectedPosition = new Vector3f(5f, 5f, 5f);
-		gameGridModel.positionSelectedListener.notifyListeners();
-
-		assertEquals(new Vector3f(5f, 5f, 5f), selectedPiece.movedToPosition);
-		assertEquals(1, selectedPiece.movePieceToCallCount);
-	}
-
-	@Test
-	public void testMovesAlternateBetweenTeamsAndTeamOneIsFirstToMove() {
-		PieceInfo teamOnePieceInfo = new PieceInfo();
-		teamOnePieceInfo.setId(UUID.randomUUID().toString());
-		teamOnePieceInfo.setPosition(new Vector3f(1f, 2f, 3f));
-		teamOnePieceInfo.setTeam(Team.ONE);
-		PieceInfo teamTwoPieceInfo = new PieceInfo();
-		teamTwoPieceInfo.setId(UUID.randomUUID().toString());
-		teamTwoPieceInfo.setPosition(new Vector3f(1f, 2f, 4f));
-		teamTwoPieceInfo.setTeam(Team.TWO);
-		gamePieceData.teamOne.add(teamOnePieceInfo);
-		gamePieceData.teamTwo.add(teamTwoPieceInfo);
-		UserPiecesModel userPieceModel = new UserPiecesModel(gamePieceData, gameGridModel);
-
-		PieceGroupStub selectedPiece = new PieceGroupStub();
-		selectedPiece.pieceInfo = teamTwoPieceInfo;
-		userPieceModel.setSelectedPiece(selectedPiece);
-		gameGridModel.selectedPosition = new Vector3f(5f, 5f, 5f);
-		gameGridModel.positionSelectedListener.notifyListeners();
-
-		assertEquals(0, selectedPiece.movePieceToCallCount);
-
-		selectedPiece.pieceInfo = teamOnePieceInfo;
-		userPieceModel.setSelectedPiece(selectedPiece);
-		gameGridModel.selectedPosition = new Vector3f(5f, 5f, 5f);
-		gameGridModel.positionSelectedListener.notifyListeners();
-
-		assertEquals(1, selectedPiece.movePieceToCallCount);
-
-		selectedPiece.pieceInfo = teamOnePieceInfo;
-		userPieceModel.setSelectedPiece(selectedPiece);
-		gameGridModel.selectedPosition = new Vector3f(1f, 1f, 1f);
-		gameGridModel.positionSelectedListener.notifyListeners();
-
-		assertEquals(1, selectedPiece.movePieceToCallCount);
-
-		selectedPiece.pieceInfo = teamTwoPieceInfo;
-		userPieceModel.setSelectedPiece(selectedPiece);
-		gameGridModel.selectedPosition = new Vector3f(1f, 1f, 1f);
-		gameGridModel.positionSelectedListener.notifyListeners();
-
-		assertEquals(2, selectedPiece.movePieceToCallCount);
-
-		selectedPiece.pieceInfo = teamTwoPieceInfo;
-		userPieceModel.setSelectedPiece(selectedPiece);
-		gameGridModel.selectedPosition = new Vector3f(2f, 2f, 2f);
-		gameGridModel.positionSelectedListener.notifyListeners();
-
-		assertEquals(2, selectedPiece.movePieceToCallCount);
-
-		selectedPiece.pieceInfo = teamOnePieceInfo;
-		userPieceModel.setSelectedPiece(selectedPiece);
-		gameGridModel.selectedPosition = new Vector3f(2f, 2f, 2f);
-		gameGridModel.positionSelectedListener.notifyListeners();
-
-		assertEquals(3, selectedPiece.movePieceToCallCount);
 	}
 
 	private static class GameGridModelStub implements IGameGridModel {
@@ -344,6 +228,21 @@ public class UserPieceModelTest {
 		public void movePieceTo(Vector3f position) {
 			++movePieceToCallCount;
 			movedToPosition = position;
+		}
+	}
+
+	private static class MoveValidatorStub implements IMoveValidator {
+		boolean shouldFail;
+		PieceInfo pieceInfo;
+		Vector3f targetLocation;
+
+		public void confirmMove(PieceInfo pieceInfo, Vector3f targetLocation)
+				throws ValidMoveException {
+			this.pieceInfo = pieceInfo;
+			this.targetLocation = targetLocation;
+			if (shouldFail) {
+				throw new ValidMoveException();
+			}
 		}
 	}
 }
