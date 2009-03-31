@@ -138,6 +138,43 @@ public class MoveValidatorTest {
 		}
 	}
 
+	@Test
+	public void testPieceCanOnlyMoveUpToThreeSquaresAway() {
+		PieceInfo pieceInfo1 = new PieceInfo();
+		pieceInfo1.setId(UUID.randomUUID().toString());
+		pieceInfo1.setPosition(new Vector3f(0f, 5f, 0f));
+		pieceInfo1.setTeam(Team.ONE);
+		gamePieceData.teamOne.add(pieceInfo1);
+
+		MoveValidator validator = new MoveValidator(gamePieceData);
+
+		try {
+			validator.confirmMove(pieceInfo1, new Vector3f(31f, 5f, 0f));
+			fail("location too far away");
+		} catch (ValidMoveException e) {
+		}
+
+		try {
+			validator.confirmMove(pieceInfo1, new Vector3f(30f, 5f, 0f));
+		} catch (ValidMoveException e) {
+			fail("should not have failed");
+		}
+
+		validator = new MoveValidator(gamePieceData);
+
+		try {
+			validator.confirmMove(pieceInfo1, new Vector3f(30f, 5f, 31f));
+			fail("location too far away");
+		} catch (ValidMoveException e) {
+		}
+
+		try {
+			validator.confirmMove(pieceInfo1, new Vector3f(30f, 5f, 30f));
+		} catch (ValidMoveException e) {
+			fail("should not have failed");
+		}
+	}
+
 	private static class GamePieceDataMock extends GamePieceData {
 		List<PieceInfo> teamTwo = new ArrayList<PieceInfo>();
 		List<PieceInfo> teamOne = new ArrayList<PieceInfo>();

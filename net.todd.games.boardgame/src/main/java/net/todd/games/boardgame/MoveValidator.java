@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
 public class MoveValidator implements IMoveValidator {
@@ -33,7 +34,17 @@ public class MoveValidator implements IMoveValidator {
 		if (!isLocationOpen(targetLocation)) {
 			throw new ValidMoveException();
 		}
+		if (!isLocationCloseEnough(pieceInfo, targetLocation)) {
+			throw new ValidMoveException();
+		}
 		updatePieceWithMove(pieceInfo, targetLocation);
+	}
+
+	private boolean isLocationCloseEnough(PieceInfo pieceInfo, Vector3f targetLocation) {
+		Vector3f currentLocation = pieceInfo.getPosition();
+		float distance = new Point3f(currentLocation.x, currentLocation.y, currentLocation.z)
+				.distance(new Point3f(targetLocation.x, targetLocation.y, targetLocation.z));
+		return distance <= GameGridData.TILE_SIZE * 3;
 	}
 
 	private void updatePieceWithMove(PieceInfo pieceInfo, Vector3f targetLocation) {

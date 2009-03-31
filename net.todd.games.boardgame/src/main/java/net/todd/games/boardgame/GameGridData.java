@@ -1,6 +1,5 @@
 package net.todd.games.boardgame;
 
-
 /**
  * GameGridData contains all the information about the actual grid. Later to be
  * made abstract and have subclasses that create chess grid and others
@@ -8,7 +7,7 @@ package net.todd.games.boardgame;
 public class GameGridData {
 	private final TileData[][] tileData;
 
-	private static final float TILE_SIZE = 10f;
+	public static final float TILE_SIZE = 10f;
 	static final float[] white = new float[] { 1f, 1f, 1f };
 	static final float[] black = new float[] { 0f, 0f, 0f };
 

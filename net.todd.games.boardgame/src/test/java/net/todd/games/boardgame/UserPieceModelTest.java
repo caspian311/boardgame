@@ -141,7 +141,7 @@ public class UserPieceModelTest {
 	}
 
 	@Test
-	public void testModelCallsValidatorWithPieceInfoFromSelectedPieceAndTargetLocationFromGridModel() {
+	public void testModelCallsValidatorWithPieceInfoFromSelectedPieceAndTargetLocationFromGridModelWithAdjustedHeight() {
 		PieceInfo pieceInfo = new PieceInfo();
 		pieceInfo.setId("something");
 		pieceInfo.setPosition(new Vector3f(1f, 2f, 4f));
@@ -159,7 +159,7 @@ public class UserPieceModelTest {
 		gameGridModel.positionSelectedListener.notifyListeners();
 
 		assertSame(pieceInfo, validator.pieceInfo);
-		assertSame(gameGridModel.selectedPosition, validator.targetLocation);
+		assertEquals(new Vector3f(1f, 5f, 4f), validator.targetLocation);
 	}
 
 	@Test
@@ -239,7 +239,7 @@ public class UserPieceModelTest {
 		public void confirmMove(PieceInfo pieceInfo, Vector3f targetLocation)
 				throws ValidMoveException {
 			this.pieceInfo = pieceInfo;
-			this.targetLocation = targetLocation;
+			this.targetLocation = new Vector3f(targetLocation);
 			if (shouldFail) {
 				throw new ValidMoveException();
 			}

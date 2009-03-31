@@ -24,9 +24,11 @@ public class UserPiecesModel implements IUserPiecesModel {
 			public void fireEvent() {
 				try {
 					if (selectedPieceToMove != null) {
-						moveValidator.confirmMove(selectedPieceToMove.getPieceInfo(), gameGridModel
-								.getSelectedPosition());
-						moveAction(selectedPieceToMove, gameGridModel.getSelectedPosition());
+						Vector3f targetLocation = gameGridModel.getSelectedPosition();
+						adjustPositionForHeight(targetLocation);
+						moveValidator.confirmMove(selectedPieceToMove.getPieceInfo(),
+								targetLocation);
+						moveAction(selectedPieceToMove, targetLocation);
 					}
 				} catch (ValidMoveException e) {
 				}
@@ -35,7 +37,6 @@ public class UserPiecesModel implements IUserPiecesModel {
 	}
 
 	private void moveAction(IPieceGroup selectedPieceToMove, Vector3f targetLocation) {
-		adjustPositionForHeight(targetLocation);
 		selectedPieceToMove.movePieceTo(targetLocation);
 	}
 
