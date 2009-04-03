@@ -4,6 +4,8 @@ import javax.media.j3d.BranchGroup;
 
 public class BranchGroupFactory implements IBranchGroupFactory {
 	public BranchGroupAdapter createBranchGroup() {
-		return new BranchGroupAdapter(new BranchGroup());
+		BranchGroup branchGroup = new BranchGroup();
+		branchGroup.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
+		return new BranchGroupAdapter(branchGroup);
 	}
 }

@@ -102,4 +102,15 @@ public class GamePieceDataTest {
 			}
 		}
 	}
+
+	@Test
+	public void testAllPiecesHaveASpeedOf2() {
+		GamePieceData gamePieceData = new GamePieceData();
+
+		List<PieceInfo> allPieces = gamePieceData.getTeamOnePieces();
+		allPieces.addAll(gamePieceData.getTeamTwoPieces());
+		for (PieceInfo pieceInfo : allPieces) {
+			assertEquals(2f, pieceInfo.getSpeed());
+		}
+	}
 }

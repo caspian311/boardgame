@@ -12,7 +12,7 @@ public class UserPiecesFactory implements IUserPiecesFactory {
 
 	public IBranchGroup constructUserPieces(IPickerFactory pickerFactory) {
 		IGameGridModel gameGridModel = GameGridModelProvider.getModel();
-		GamePieceData gamePieceData = new GamePieceData();
+		IGamePieceData gamePieceData = new GamePieceData();
 		IMoveValidator moveValidator = new MoveValidator(gamePieceData);
 		IUserPiecesModel userPiecesModel = new UserPiecesModel(gamePieceData, gameGridModel,
 				moveValidator);

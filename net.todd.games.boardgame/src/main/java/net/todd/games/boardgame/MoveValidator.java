@@ -11,7 +11,7 @@ public class MoveValidator implements IMoveValidator {
 	private Team teamToMove;
 	private final Map<String, PieceInfo> allPieces = new HashMap<String, PieceInfo>();
 
-	public MoveValidator(GamePieceData gamePieceData) {
+	public MoveValidator(IGamePieceData gamePieceData) {
 		teamToMove = Team.ONE;
 		List<PieceInfo> teamOnePieces = gamePieceData.getTeamOnePieces();
 		for (PieceInfo pieceInfo : teamOnePieces) {
@@ -44,7 +44,7 @@ public class MoveValidator implements IMoveValidator {
 		Vector3f currentLocation = pieceInfo.getPosition();
 		float distance = new Point3f(currentLocation.x, currentLocation.y, currentLocation.z)
 				.distance(new Point3f(targetLocation.x, targetLocation.y, targetLocation.z));
-		return distance <= GameGridData.TILE_SIZE * 3;
+		return distance <= GameGridData.TILE_SIZE * pieceInfo.getSpeed();
 	}
 
 	private void updatePieceWithMove(PieceInfo pieceInfo, Vector3f targetLocation) {

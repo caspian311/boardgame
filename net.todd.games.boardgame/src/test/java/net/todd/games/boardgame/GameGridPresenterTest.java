@@ -2,6 +2,7 @@ package net.todd.games.boardgame;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 import java.util.List;
 
@@ -39,13 +40,26 @@ public class GameGridPresenterTest {
 		view.tileData.setPosition(new float[] { 1f, 2f, 3f });
 
 		new GameGridPresenter(view, model);
-		assertNull(model.selectedPosition);
+		assertNull(model.selectedTile);
 		view.listener.fireEvent();
-		ComparisonUtil.compareArrays(view.tileData.getPosition(), model.selectedPosition
-				.getPosition());
+
+		ComparisonUtil.compareArrays(view.tileData.getPosition(), model.selectedTile.getPosition());
+	}
+
+	@Test
+	public void testPresenterListensForTiesToHighlightFromModelAndNotifiesView() {
+		model.tilesToHighlight = new TileData[] { new TileData(), new TileData() };
+		new GameGridPresenter(view, model);
+
+		assertNull(view.tilesToHighlight);
+
+		model.listener.fireEvent();
+
+		assertSame(model.tilesToHighlight, view.tilesToHighlight);
 	}
 
 	public class GameGridViewStub implements IGameGridView {
+		TileData[] tilesToHighlight;
 		private TileData[][] data;
 		private IListener listener;
 		private TileData tileData;
@@ -65,11 +79,17 @@ public class GameGridPresenterTest {
 		public void constructGrid(TileData[][] data) {
 			this.data = data;
 		}
+
+		public void highlightTiles(TileData[] tiles) {
+			tilesToHighlight = tiles;
+		}
 	}
 
 	private static class GameGridModelStub implements IGameGridModel {
-		private TileData selectedPosition;
-		private TileData[][] data;
+		IListener listener;
+		TileData[] tilesToHighlight;
+		TileData selectedTile;
+		TileData[][] data;
 
 		public TileData[][] getTileData() {
 			return data;
@@ -79,19 +99,31 @@ public class GameGridPresenterTest {
 			throw new UnsupportedOperationException();
 		}
 
-		public void addPositionSelectedListener(IListener listener) {
+		public void addTileSelectedListener(IListener listener) {
 			throw new UnsupportedOperationException();
 		}
 
-		public Vector3f getSelectedPosition() {
+		public Vector3f getSelectedTileLocation() {
 			throw new UnsupportedOperationException();
 		}
 
 		public void setSelectedTile(TileData position) {
-			selectedPosition = position;
+			selectedTile = position;
+		}
+
+		public TileData[] getTilesToHighlight() {
+			return tilesToHighlight;
+		}
+
+		public void addUserPieceSelectedListener(IListener listener) {
+			this.listener = listener;
 		}
 
 		public List<Vector3f> getTeamTwoStartingGridPositions() {
+			throw new UnsupportedOperationException();
+		}
+
+		public void setSelectedUserPiece(PieceInfo pieceInfo) {
 			throw new UnsupportedOperationException();
 		}
 	}

@@ -5,7 +5,8 @@ public class GameGridModelProvider {
 
 	public static IGameGridModel getModel() {
 		if (model == null) {
-			model = new GameGridModel(new GameGridData());
+			IGameGridData gameGridData = new GameGridData();
+			model = new GameGridModel(gameGridData, new TileHighlighterCalculator(gameGridData));
 		}
 		return model;
 	}

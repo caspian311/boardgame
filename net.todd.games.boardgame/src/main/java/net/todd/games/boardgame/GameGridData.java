@@ -4,7 +4,7 @@ package net.todd.games.boardgame;
  * GameGridData contains all the information about the actual grid. Later to be
  * made abstract and have subclasses that create chess grid and others
  */
-public class GameGridData {
+public class GameGridData implements IGameGridData {
 	private final TileData[][] tileData;
 
 	public static final float TILE_SIZE = 10f;

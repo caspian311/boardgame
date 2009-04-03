@@ -7,9 +7,15 @@ import net.todd.common.uitools.IListener;
 public interface IGameGridModel {
 	TileData[][] getTileData();
 
-	void addPositionSelectedListener(IListener listener);
+	void addTileSelectedListener(IListener listener);
 
-	Vector3f getSelectedPosition();
+	Vector3f getSelectedTileLocation();
 
 	void setSelectedTile(TileData tileData);
+
+	void setSelectedUserPiece(PieceInfo pieceInfo);
+
+	void addUserPieceSelectedListener(IListener listener);
+
+	TileData[] getTilesToHighlight();
 }

@@ -12,7 +12,10 @@ public class GameGridView implements IGameGridView {
 
 	private final ListenerManager tileSelectedListeners = new ListenerManager();
 
+	private final IBranchGroupFactory branchGroupFactory;
+
 	public GameGridView(IPickerFactory pickerFactory, IBranchGroupFactory branchGroupFactory) {
+		this.branchGroupFactory = branchGroupFactory;
 		board = branchGroupFactory.createBranchGroup();
 
 		final IPicker picker = pickerFactory.createPicker(board);
@@ -47,5 +50,16 @@ public class GameGridView implements IGameGridView {
 
 	public void addTileSelectedListener(IListener listener) {
 		tileSelectedListeners.addListener(listener);
+	}
+
+	public void highlightTiles(TileData[] tiles) {
+		IBranchGroup branchGroup = branchGroupFactory.createBranchGroup();
+		for (TileData tileData : tiles) {
+			tileData.getPosition()[1] += 0.5f;
+			tileData.setColor(new float[] { 1f, 0f, 0f });
+			branchGroup.addChild(new Tile(tileData));
+		}
+
+		board.addChild(branchGroup);
 	}
 }

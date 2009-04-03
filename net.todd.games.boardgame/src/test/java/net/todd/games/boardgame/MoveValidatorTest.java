@@ -24,10 +24,12 @@ public class MoveValidatorTest {
 		PieceInfo pieceInfo1 = new PieceInfo();
 		pieceInfo1.setId(UUID.randomUUID().toString());
 		pieceInfo1.setPosition(new Vector3f(1f, 2f, 3f));
+		pieceInfo1.setSpeed(5);
 		pieceInfo1.setTeam(Team.ONE);
 		PieceInfo pieceInfo2 = new PieceInfo();
 		pieceInfo2.setId(UUID.randomUUID().toString());
 		pieceInfo2.setPosition(new Vector3f(1f, 2f, 4f));
+		pieceInfo2.setSpeed(5);
 		pieceInfo2.setTeam(Team.TWO);
 		gamePieceData.teamOne.add(pieceInfo1);
 		gamePieceData.teamTwo.add(pieceInfo2);
@@ -92,10 +94,12 @@ public class MoveValidatorTest {
 		teamOnePieceInfo.setId(UUID.randomUUID().toString());
 		teamOnePieceInfo.setPosition(new Vector3f(1f, 2f, 3f));
 		teamOnePieceInfo.setTeam(Team.ONE);
+		teamOnePieceInfo.setSpeed(5);
 		PieceInfo teamTwoPieceInfo = new PieceInfo();
 		teamTwoPieceInfo.setId(UUID.randomUUID().toString());
 		teamTwoPieceInfo.setPosition(new Vector3f(1f, 2f, 4f));
 		teamTwoPieceInfo.setTeam(Team.TWO);
+		teamTwoPieceInfo.setSpeed(5);
 		gamePieceData.teamOne.add(teamOnePieceInfo);
 		gamePieceData.teamTwo.add(teamTwoPieceInfo);
 
@@ -139,23 +143,25 @@ public class MoveValidatorTest {
 	}
 
 	@Test
-	public void testPieceCanOnlyMoveUpToThreeSquaresAway() {
+	public void testPieceCanOnlyMoveADistanceEqualsToItsSpeedTimesTheTileSize() {
 		PieceInfo pieceInfo1 = new PieceInfo();
-		pieceInfo1.setId(UUID.randomUUID().toString());
 		pieceInfo1.setPosition(new Vector3f(0f, 5f, 0f));
+		pieceInfo1.setSpeed(3);
 		pieceInfo1.setTeam(Team.ONE);
 		gamePieceData.teamOne.add(pieceInfo1);
 
 		MoveValidator validator = new MoveValidator(gamePieceData);
 
+		float maxDistance = pieceInfo1.getSpeed() * GameGridData.TILE_SIZE;
+
 		try {
-			validator.confirmMove(pieceInfo1, new Vector3f(31f, 5f, 0f));
+			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance + 1f, 5f, 0f));
 			fail("location too far away");
 		} catch (ValidMoveException e) {
 		}
 
 		try {
-			validator.confirmMove(pieceInfo1, new Vector3f(30f, 5f, 0f));
+			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f, 0f));
 		} catch (ValidMoveException e) {
 			fail("should not have failed");
 		}
@@ -163,13 +169,52 @@ public class MoveValidatorTest {
 		validator = new MoveValidator(gamePieceData);
 
 		try {
-			validator.confirmMove(pieceInfo1, new Vector3f(30f, 5f, 31f));
+			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f, maxDistance + 1f));
 			fail("location too far away");
 		} catch (ValidMoveException e) {
 		}
 
 		try {
-			validator.confirmMove(pieceInfo1, new Vector3f(30f, 5f, 30f));
+			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f, maxDistance));
+		} catch (ValidMoveException e) {
+			fail("should not have failed");
+		}
+	}
+
+	@Test
+	public void testWithADifferentSpeedPieceCanOnlyMoveADistanceEqualsToItsSpeedTimesTheTileSize() {
+		PieceInfo pieceInfo1 = new PieceInfo();
+		pieceInfo1.setPosition(new Vector3f(0f, 5f, 0f));
+		pieceInfo1.setSpeed(2);
+		pieceInfo1.setTeam(Team.ONE);
+		gamePieceData.teamOne.add(pieceInfo1);
+
+		MoveValidator validator = new MoveValidator(gamePieceData);
+
+		float maxDistance = pieceInfo1.getSpeed() * GameGridData.TILE_SIZE;
+
+		try {
+			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance + 1f, 5f, 0f));
+			fail("location too far away");
+		} catch (ValidMoveException e) {
+		}
+
+		try {
+			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f, 0f));
+		} catch (ValidMoveException e) {
+			fail("should not have failed");
+		}
+
+		validator = new MoveValidator(gamePieceData);
+
+		try {
+			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f, maxDistance + 1f));
+			fail("location too far away");
+		} catch (ValidMoveException e) {
+		}
+
+		try {
+			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f, maxDistance));
 		} catch (ValidMoveException e) {
 			fail("should not have failed");
 		}

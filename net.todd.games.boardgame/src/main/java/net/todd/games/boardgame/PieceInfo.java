@@ -8,6 +8,7 @@ public class PieceInfo {
 	private Vector3f position;
 	private Color3f color;
 	private Team team;
+	private float speed;
 
 	public Vector3f getPosition() {
 		return position;
@@ -39,5 +40,13 @@ public class PieceInfo {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public float getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(float speed) {
+		this.speed = speed;
 	}
 }

@@ -12,19 +12,21 @@ public class UserPiecesModel implements IUserPiecesModel {
 	private final List<PieceInfo> teamOnePieces;
 	private final List<PieceInfo> teamTwoPieces;
 	private IPieceGroup selectedPieceToMove;
+	private final IGameGridModel gameGridModel;
 
-	public UserPiecesModel(GamePieceData gamePieceData, final IGameGridModel gameGridModel,
+	public UserPiecesModel(IGamePieceData gamePieceData, final IGameGridModel gameGridModel,
 			final IMoveValidator moveValidator) {
+		this.gameGridModel = gameGridModel;
 		teamOnePieces = new ArrayList<PieceInfo>(adjustPiecesForHeight(gamePieceData
 				.getTeamOnePieces()));
 		teamTwoPieces = new ArrayList<PieceInfo>(adjustPiecesForHeight(gamePieceData
 				.getTeamTwoPieces()));
 
-		gameGridModel.addPositionSelectedListener(new IListener() {
+		gameGridModel.addTileSelectedListener(new IListener() {
 			public void fireEvent() {
 				try {
 					if (selectedPieceToMove != null) {
-						Vector3f targetLocation = gameGridModel.getSelectedPosition();
+						Vector3f targetLocation = gameGridModel.getSelectedTileLocation();
 						adjustPositionForHeight(targetLocation);
 						moveValidator.confirmMove(selectedPieceToMove.getPieceInfo(),
 								targetLocation);
@@ -63,5 +65,6 @@ public class UserPiecesModel implements IUserPiecesModel {
 
 	public void setSelectedPiece(IPieceGroup selectedPiece) {
 		this.selectedPieceToMove = selectedPiece;
+		gameGridModel.setSelectedUserPiece(selectedPiece.getPieceInfo());
 	}
 }

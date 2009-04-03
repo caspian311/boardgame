@@ -2,6 +2,8 @@ package net.todd.games.boardgame;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import javax.vecmath.Vector3f;
@@ -13,6 +15,7 @@ import org.junit.Test;
 
 public class GameGridModelTest {
 	private Vector3f positionSelected;
+	private TileData[] selectedTilesToHighlight;
 
 	@Before
 	public void setUp() {
@@ -22,19 +25,19 @@ public class GameGridModelTest {
 	@Test
 	public void testGetTileDataPullsFromGridData() {
 		TileData[][] tileData = new TileData[][] {};
-		GameGridDataMock gameGridData = new GameGridDataMock();
+		GameGridDataStub gameGridData = new GameGridDataStub();
 		gameGridData.tileData = tileData;
-		GameGridModel model = new GameGridModel(gameGridData);
+		GameGridModel model = new GameGridModel(gameGridData, null);
 		ComparisonUtil.compareDoubleArrays(tileData, model.getTileData());
 	}
 
 	@Test
 	public void testModelNotifiesListenersWhenAGridPositionIsSelected() {
-		GameGridModel model = new GameGridModel(null);
-		PositionSelectedListenerStub listenerStub1 = new PositionSelectedListenerStub();
-		PositionSelectedListenerStub listenerStub2 = new PositionSelectedListenerStub();
-		model.addPositionSelectedListener(listenerStub1);
-		model.addPositionSelectedListener(listenerStub2);
+		GameGridModel model = new GameGridModel(null, null);
+		ListenerStub listenerStub1 = new ListenerStub();
+		ListenerStub listenerStub2 = new ListenerStub();
+		model.addTileSelectedListener(listenerStub1);
+		model.addTileSelectedListener(listenerStub2);
 
 		assertFalse(listenerStub1.eventFired);
 		assertFalse(listenerStub2.eventFired);
@@ -49,10 +52,10 @@ public class GameGridModelTest {
 
 	@Test
 	public void testModelMakesSelectedPositionInformationAvailableBeforeNotifyingListeners() {
-		final GameGridModel model = new GameGridModel(null);
-		model.addPositionSelectedListener(new IListener() {
+		final GameGridModel model = new GameGridModel(null, null);
+		model.addTileSelectedListener(new IListener() {
 			public void fireEvent() {
-				positionSelected = model.getSelectedPosition();
+				positionSelected = model.getSelectedTileLocation();
 			}
 		});
 
@@ -62,20 +65,82 @@ public class GameGridModelTest {
 		assertEquals(new Vector3f(tileData.getPosition()), positionSelected);
 	}
 
-	private static class GameGridDataMock extends GameGridData {
+	@Test
+	public void testSettingSelectedUserPieceNotifiesAllListeners() {
+		GameGridModel model = new GameGridModel(null, null);
+		ListenerStub listener1 = new ListenerStub();
+		ListenerStub listener2 = new ListenerStub();
+		model.addUserPieceSelectedListener(listener1);
+		model.addUserPieceSelectedListener(listener2);
+
+		assertFalse(listener1.eventFired);
+		assertFalse(listener2.eventFired);
+
+		model.setSelectedUserPiece(null);
+
+		assertTrue(listener1.eventFired);
+		assertTrue(listener2.eventFired);
+	}
+
+	@Test
+	public void testModelFindsAllAvailableMovesForPieceBasedOnGivenSelectedUserPiece() {
+		TileHighlighterCalculatorStub tileHighlighterCalculator = new TileHighlighterCalculatorStub();
+
+		GameGridDataStub gameGridData = new GameGridDataStub();
+		TileData tileData1 = new TileData();
+		TileData tileData2 = new TileData();
+		TileData tileData3 = new TileData();
+		TileData tileData4 = new TileData();
+		TileData tileData5 = new TileData();
+		TileData tileData6 = new TileData();
+		gameGridData.tileData = new TileData[][] { { tileData1, tileData2, tileData3 },
+				{ tileData4, tileData5, tileData6, } };
+
+		tileHighlighterCalculator.tilesToHighlight = new TileData[] { tileData3, tileData4,
+				tileData5 };
+
+		PieceInfo pieceInfo = new PieceInfo();
+		final GameGridModel model = new GameGridModel(gameGridData, tileHighlighterCalculator);
+		model.addUserPieceSelectedListener(new IListener() {
+			public void fireEvent() {
+				selectedTilesToHighlight = model.getTilesToHighlight();
+			}
+		});
+
+		assertNull(tileHighlighterCalculator.givenPieceInfo);
+		assertNull(selectedTilesToHighlight);
+
+		model.setSelectedUserPiece(pieceInfo);
+
+		assertSame(pieceInfo, tileHighlighterCalculator.givenPieceInfo);
+		for (int i = 0; i < tileHighlighterCalculator.tilesToHighlight.length; i++) {
+			assertSame(tileHighlighterCalculator.tilesToHighlight[i], selectedTilesToHighlight[i]);
+		}
+	}
+
+	private static class GameGridDataStub implements IGameGridData {
 		TileData[][] tileData;
 
-		@Override
 		public TileData[][] getTileData() {
 			return tileData;
 		}
 	}
 
-	private static class PositionSelectedListenerStub implements IListener {
-		private boolean eventFired;
+	private static class ListenerStub implements IListener {
+		boolean eventFired;
 
 		public void fireEvent() {
 			eventFired = true;
+		}
+	}
+
+	private static class TileHighlighterCalculatorStub implements ITileHighlighterCalculator {
+		TileData[] tilesToHighlight;
+		PieceInfo givenPieceInfo;
+
+		public TileData[] calculateTilesToHighlight(PieceInfo pieceInfo) {
+			this.givenPieceInfo = pieceInfo;
+			return tilesToHighlight;
 		}
 	}
 }

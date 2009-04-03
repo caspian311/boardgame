@@ -19,13 +19,13 @@ import org.junit.Test;
 
 public class UserPieceModelTest {
 	private GameGridModelStub gameGridModel;
-	private GamePieceDataMock gamePieceData;
+	private GamePieceDataStub gamePieceData;
 	private MoveValidatorStub validator;
 
 	@Before
 	public void setUp() {
 		gameGridModel = new GameGridModelStub();
-		gamePieceData = new GamePieceDataMock();
+		gamePieceData = new GamePieceDataStub();
 		validator = new MoveValidatorStub();
 	}
 
@@ -170,7 +170,22 @@ public class UserPieceModelTest {
 		gameGridModel.positionSelectedListener.notifyListeners();
 	}
 
+	@Test
+	public void testWhenPieceSelectedGameGridModelIsGivenThePieceInfo() {
+		PieceInfo pieceInfo = new PieceInfo();
+		PieceGroupStub selectedPiece = new PieceGroupStub();
+		selectedPiece.pieceInfo = pieceInfo;
+
+		UserPiecesModel model = new UserPiecesModel(gamePieceData, gameGridModel, validator);
+		assertNull(gameGridModel.selectedPieceInfo);
+
+		model.setSelectedPiece(selectedPiece);
+
+		assertSame(pieceInfo, gameGridModel.selectedPieceInfo);
+	}
+
 	private static class GameGridModelStub implements IGameGridModel {
+		PieceInfo selectedPieceInfo;
 		Vector3f selectedPosition;
 		ListenerManager positionSelectedListener = new ListenerManager();
 		Color3f teamOneColor;
@@ -184,12 +199,16 @@ public class UserPieceModelTest {
 			return teamTwoColor;
 		}
 
-		public void addPositionSelectedListener(IListener listener) {
+		public void addTileSelectedListener(IListener listener) {
 			positionSelectedListener.addListener(listener);
 		}
 
-		public Vector3f getSelectedPosition() {
+		public Vector3f getSelectedTileLocation() {
 			return selectedPosition;
+		}
+
+		public void setSelectedUserPiece(PieceInfo pieceInfo) {
+			selectedPieceInfo = pieceInfo;
 		}
 
 		public TileData[][] getTileData() {
@@ -199,18 +218,24 @@ public class UserPieceModelTest {
 		public void setSelectedTile(TileData position) {
 			throw new UnsupportedOperationException();
 		}
+
+		public void addUserPieceSelectedListener(IListener listener) {
+			throw new UnsupportedOperationException();
+		}
+
+		public TileData[] getTilesToHighlight() {
+			throw new UnsupportedOperationException();
+		}
 	}
 
-	private static class GamePieceDataMock extends GamePieceData {
+	private static class GamePieceDataStub implements IGamePieceData {
 		List<PieceInfo> teamTwo = new ArrayList<PieceInfo>();
 		List<PieceInfo> teamOne = new ArrayList<PieceInfo>();
 
-		@Override
 		public List<PieceInfo> getTeamOnePieces() {
 			return teamOne;
 		}
 
-		@Override
 		public List<PieceInfo> getTeamTwoPieces() {
 			return teamTwo;
 		}

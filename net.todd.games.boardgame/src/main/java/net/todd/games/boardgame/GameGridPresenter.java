@@ -10,5 +10,11 @@ public class GameGridPresenter {
 				boardModel.setSelectedTile(boardView.getSelectedTile());
 			}
 		});
+
+		boardModel.addUserPieceSelectedListener(new IListener() {
+			public void fireEvent() {
+				boardView.highlightTiles(boardModel.getTilesToHighlight());
+			}
+		});
 	}
 }
