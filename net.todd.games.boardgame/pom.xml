@@ -6,8 +6,13 @@
 	<name>Board Game</name>
 	<version>0.0.1-SNAPSHOT</version>
 	<description>This is my board game</description>
+	<parent>
+		<groupId>net.todd</groupId>
+		<artifactId>common-parent-project</artifactId>
+		<version>1.0</version>
+	</parent>
 	<scm>
-		<connection>scm:svn:http://localhost/svn/myproject/games/boardgame/net.todd.games.boardgame</connection>
+		<connection>scm:svn:http://svn.todd.net/svn/games/boardgame/net.todd.games.boardgame</connection>
 	</scm>
 	<dependencies>
 		<dependency>
