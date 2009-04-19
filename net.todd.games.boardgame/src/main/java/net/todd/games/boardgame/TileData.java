@@ -8,6 +8,7 @@ public class TileData {
 	private float size;
 	private float[] color;
 	private float[] position;
+	private boolean isTransparent;
 
 	public float getSize() {
 		return size;
@@ -31,5 +32,13 @@ public class TileData {
 
 	public void setPosition(float[] position) {
 		this.position = position;
+	}
+
+	public void setTransparent(boolean isTransparent) {
+		this.isTransparent = isTransparent;
+	}
+
+	public boolean isTranparent() {
+		return isTransparent;
 	}
 }

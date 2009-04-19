@@ -53,6 +53,10 @@ public class PieceGeneratorTest {
 		public BranchGroup getInternal() {
 			throw new UnsupportedOperationException();
 		}
+
+		public void removeAllChildren() {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	private static class UserPiecesFactoryStub implements IUserPiecesFactory {

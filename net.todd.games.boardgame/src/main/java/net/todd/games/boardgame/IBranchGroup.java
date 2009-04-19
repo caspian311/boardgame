@@ -11,4 +11,6 @@ public interface IBranchGroup {
 	void addChild(IBranchGroup child);
 
 	BranchGroup getInternal();
+
+	void removeAllChildren();
 }

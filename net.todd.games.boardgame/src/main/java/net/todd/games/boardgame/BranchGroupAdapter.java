@@ -25,4 +25,8 @@ public class BranchGroupAdapter implements IBranchGroup {
 	public BranchGroup getInternal() {
 		return branchGroup;
 	}
+
+	public void removeAllChildren() {
+		branchGroup.removeAllChildren();
+	}
 }

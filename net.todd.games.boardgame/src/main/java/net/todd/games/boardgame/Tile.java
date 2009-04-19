@@ -7,6 +7,7 @@ import javax.media.j3d.Material;
 import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.QuadArray;
 import javax.media.j3d.Shape3D;
+import javax.media.j3d.TransparencyAttributes;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3f;
 
@@ -23,6 +24,7 @@ public class Tile extends Shape3D implements ITile {
 	private final float centerZ;
 	private final Color3f tileColor;
 	private final TileData tileData;
+	private final boolean isTransparent;
 
 	public Tile(TileData datum) {
 		this.tileData = datum;
@@ -31,6 +33,7 @@ public class Tile extends Shape3D implements ITile {
 		this.centerZ = datum.getPosition()[2];
 		this.size = datum.getSize();
 		this.tileColor = new Color3f(datum.getColor());
+		this.isTransparent = datum.isTranparent();
 		setGeometry(getMyGeometry());
 		setAppearance(getMyAppearance());
 		setPickable(true);
@@ -44,6 +47,12 @@ public class Tile extends Shape3D implements ITile {
 
 		appearance.setPolygonAttributes(polygonAttributes);
 		appearance.setMaterial(new Material(black, tileColor, black, specular, 128.0f));
+		if (isTransparent) {
+			TransparencyAttributes transparencyAttributes = new TransparencyAttributes();
+			transparencyAttributes.setTransparencyMode(TransparencyAttributes.BLENDED);
+			transparencyAttributes.setTransparency(0.5f);
+			appearance.setTransparencyAttributes(transparencyAttributes);
+		}
 
 		return appearance;
 	}

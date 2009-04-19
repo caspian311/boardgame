@@ -94,6 +94,10 @@ public class GameLauncherTest {
 		public BranchGroup getInternal() {
 			return null;
 		}
+
+		public void removeAllChildren() {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	private class GameEngineFactoryStub implements IGameEngineFactory {

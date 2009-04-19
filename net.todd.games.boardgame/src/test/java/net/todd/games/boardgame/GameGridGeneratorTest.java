@@ -111,6 +111,10 @@ public class GameGridGeneratorTest {
 		public void addChild(IBranchGroup child) {
 			this.addedGroup.add(child);
 		}
+
+		public void removeAllChildren() {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	private static class PickerFactoryStub implements IPickerFactory {
@@ -154,6 +158,10 @@ public class GameGridGeneratorTest {
 				}
 
 				public void addChild(IBranchGroup child) {
+					throw new UnsupportedOperationException();
+				}
+
+				public void removeAllChildren() {
 					throw new UnsupportedOperationException();
 				}
 			};

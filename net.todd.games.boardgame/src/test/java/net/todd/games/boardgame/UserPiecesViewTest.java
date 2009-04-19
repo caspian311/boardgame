@@ -162,6 +162,10 @@ public class UserPiecesViewTest {
 		public BranchGroup getInternal() {
 			throw new UnsupportedOperationException();
 		}
+
+		public void removeAllChildren() {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	private static class ListenerStub implements IListener {

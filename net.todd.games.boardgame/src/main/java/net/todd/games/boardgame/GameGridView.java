@@ -6,17 +6,19 @@ import net.todd.common.uitools.IListener;
 import net.todd.common.uitools.ListenerManager;
 
 public class GameGridView implements IGameGridView {
-	private final IBranchGroup board;
-
-	private TileData selectedTile;
-
 	private final ListenerManager tileSelectedListeners = new ListenerManager();
 
+	private final IBranchGroup board;
+	private final IBranchGroup highlightingBranchGroup;
 	private final IBranchGroupFactory branchGroupFactory;
+	
+	private TileData selectedTile;
 
 	public GameGridView(IPickerFactory pickerFactory, IBranchGroupFactory branchGroupFactory) {
 		this.branchGroupFactory = branchGroupFactory;
 		board = branchGroupFactory.createBranchGroup();
+		highlightingBranchGroup = branchGroupFactory.createBranchGroup();
+		board.addChild(highlightingBranchGroup);
 
 		final IPicker picker = pickerFactory.createPicker(board);
 		picker.addListener(new IListener() {
@@ -53,13 +55,16 @@ public class GameGridView implements IGameGridView {
 	}
 
 	public void highlightTiles(TileData[] tiles) {
-		IBranchGroup branchGroup = branchGroupFactory.createBranchGroup();
+		highlightingBranchGroup.removeAllChildren();
+		IBranchGroup highlightedStuff = branchGroupFactory.createBranchGroup();
+		
 		for (TileData tileData : tiles) {
 			tileData.getPosition()[1] += 0.5f;
-			tileData.setColor(new float[] { 1f, 0f, 0f });
-			branchGroup.addChild(new Tile(tileData));
+			tileData.setColor(new float[] { 0f, 0.2f, 0.8f });
+			tileData.setTransparent(true);
+			highlightedStuff.addChild(new Tile(tileData));
 		}
 
-		board.addChild(branchGroup);
+		highlightingBranchGroup.addChild(highlightedStuff);
 	}
 }

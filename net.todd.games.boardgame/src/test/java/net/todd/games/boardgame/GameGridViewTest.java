@@ -143,5 +143,9 @@ public class GameGridViewTest {
 		public BranchGroup getInternal() {
 			throw new UnsupportedOperationException();
 		}
+
+		public void removeAllChildren() {
+			throw new UnsupportedOperationException();
+		}
 	}
 }
