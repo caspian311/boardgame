@@ -133,7 +133,7 @@ public class GameGridViewTest {
 		}
 
 		public void addChild(IBranchGroup child) {
-			throw new UnsupportedOperationException();
+			// throw new UnsupportedOperationException();
 		}
 
 		public void compile() {
