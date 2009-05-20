@@ -8,4 +8,12 @@ public class GameGridFactory implements IGameGridFactory {
 		IBranchGroup bg = boardView.getBranchGroup();
 		return bg;
 	}
+
+	public IBranchGroup constructHighlightedGrid() {
+		IBranchGroupFactory branchGroupFactory = new BranchGroupFactory();
+		IHighlightedGridView highlightedGridView = new HighlightedGridView(branchGroupFactory);
+		IGameGridModel gameGridModel = GameGridModelProvider.getModel();
+		new HighlightGridPresenter(highlightedGridView, gameGridModel);
+		return highlightedGridView.getBranchGroup();
+	}
 }

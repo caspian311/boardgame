@@ -10,6 +10,4 @@ public interface IGameGridView {
 	void addTileSelectedListener(IListener listener);
 
 	void constructGrid(TileData[][] tileData);
-
-	void highlightTiles(TileData[] tiles);
 }

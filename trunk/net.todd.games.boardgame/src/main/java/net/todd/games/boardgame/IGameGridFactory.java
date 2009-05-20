@@ -1,7 +1,7 @@
 package net.todd.games.boardgame;
 
 public interface IGameGridFactory {
+	IBranchGroup constructGameGrid(IPickerFactory pickerFactory);
 
-	public abstract IBranchGroup constructGameGrid(IPickerFactory pickerFactory);
-
+	IBranchGroup constructHighlightedGrid();
 }

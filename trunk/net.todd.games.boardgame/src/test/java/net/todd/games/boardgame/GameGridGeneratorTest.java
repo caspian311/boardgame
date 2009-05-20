@@ -77,7 +77,7 @@ public class GameGridGeneratorTest {
 	}
 
 	@Test
-	public void testCreateGameGridAddsOnlyOneChild() {
+	public void testCreateGameGridAddsGameGridToBranchGroup() {
 		GameGridGenerator gridGenerator = new GameGridGenerator(branchGroup);
 
 		assertEquals(0, branchGroup.addedGroup.size());
@@ -88,8 +88,23 @@ public class GameGridGeneratorTest {
 		pickerFactory.picker = picker;
 		gridGenerator.createGameGrid(pickerFactory, gameGridFactory);
 
-		assertEquals(1, branchGroup.addedGroup.size());
 		assertTrue(gameGridFactory.gameGridconstructed);
+		assertTrue(branchGroup.addedGroup.size() > 0);
+	}
+
+	@Test
+	public void testCreateGameGridAlsoCreatesHighlightedGrid() {
+		GameGridGenerator gridGenerator = new GameGridGenerator(branchGroup);
+
+		PickerFactoryStub pickerFactory = new PickerFactoryStub();
+		PickerStub picker = new PickerStub();
+		pickerFactory.picker = picker;
+
+		assertFalse(gameGridFactory.highlightedGridContructed);
+		gridGenerator.createGameGrid(pickerFactory, gameGridFactory);
+		assertTrue(gameGridFactory.highlightedGridContructed);
+
+		assertEquals(2, branchGroup.addedGroup.size());
 	}
 
 	private static class BranchGroupStub implements IBranchGroup {
@@ -141,9 +156,35 @@ public class GameGridGeneratorTest {
 
 	private static class GameGridFactoryStub implements IGameGridFactory {
 		boolean gameGridconstructed;
+		private boolean highlightedGridContructed;
 
 		public IBranchGroup constructGameGrid(IPickerFactory picker) {
 			gameGridconstructed = true;
+			return new IBranchGroup() {
+				public void addChild(Node node) {
+					throw new UnsupportedOperationException();
+				}
+
+				public void compile() {
+					throw new UnsupportedOperationException();
+				}
+
+				public BranchGroup getInternal() {
+					throw new UnsupportedOperationException();
+				}
+
+				public void addChild(IBranchGroup child) {
+					throw new UnsupportedOperationException();
+				}
+
+				public void removeAllChildren() {
+					throw new UnsupportedOperationException();
+				}
+			};
+		}
+
+		public IBranchGroup constructHighlightedGrid() {
+			highlightedGridContructed = true;
 			return new IBranchGroup() {
 				public void addChild(Node node) {
 					throw new UnsupportedOperationException();

@@ -2,9 +2,6 @@ package net.todd.games.boardgame;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-
-import java.util.List;
 
 import javax.vecmath.Vector3f;
 
@@ -46,18 +43,6 @@ public class GameGridPresenterTest {
 		ComparisonUtil.compareArrays(view.tileData.getPosition(), model.selectedTile.getPosition());
 	}
 
-	@Test
-	public void testPresenterListensForTiesToHighlightFromModelAndNotifiesView() {
-		model.tilesToHighlight = new TileData[] { new TileData(), new TileData() };
-		new GameGridPresenter(view, model);
-
-		assertNull(view.tilesToHighlight);
-
-		model.listener.fireEvent();
-
-		assertSame(model.tilesToHighlight, view.tilesToHighlight);
-	}
-
 	public class GameGridViewStub implements IGameGridView {
 		TileData[] tilesToHighlight;
 		private TileData[][] data;
@@ -79,10 +64,6 @@ public class GameGridPresenterTest {
 		public void constructGrid(TileData[][] data) {
 			this.data = data;
 		}
-
-		public void highlightTiles(TileData[] tiles) {
-			tilesToHighlight = tiles;
-		}
 	}
 
 	private static class GameGridModelStub implements IGameGridModel {
@@ -93,10 +74,6 @@ public class GameGridPresenterTest {
 
 		public TileData[][] getTileData() {
 			return data;
-		}
-
-		public List<Vector3f> getTeamOneStartingGridPositions() {
-			throw new UnsupportedOperationException();
 		}
 
 		public void addTileSelectedListener(IListener listener) {
@@ -117,10 +94,6 @@ public class GameGridPresenterTest {
 
 		public void addUserPieceSelectedListener(IListener listener) {
 			this.listener = listener;
-		}
-
-		public List<Vector3f> getTeamTwoStartingGridPositions() {
-			throw new UnsupportedOperationException();
 		}
 
 		public void setSelectedUserPiece(PieceInfo pieceInfo) {
