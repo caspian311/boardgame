@@ -266,7 +266,7 @@ public class UserPieceModelTest {
 			this.pieceInfo = pieceInfo;
 			this.targetLocation = new Vector3f(targetLocation);
 			if (shouldFail) {
-				throw new ValidMoveException();
+				throw new ValidMoveException("Epic fail!");
 			}
 		}
 	}

@@ -25,19 +25,26 @@ public class MoveValidator implements IMoveValidator {
 
 	public void confirmMove(PieceInfo pieceInfo, Vector3f targetLocation) throws ValidMoveException {
 		if (pieceInfo == null || targetLocation == null) {
-			throw new ValidMoveException();
+			throw new ValidMoveException(
+					"Either piece doesn't exist or location to move to doesn't exist");
 		}
 
+		validateMove(pieceInfo, targetLocation);
+
+		updatePieceWithMove(pieceInfo, targetLocation);
+	}
+
+	private void validateMove(PieceInfo pieceInfo, Vector3f targetLocation)
+			throws ValidMoveException {
 		if (!isPiecesTurnToPlay(pieceInfo)) {
-			throw new ValidMoveException();
+			throw new ValidMoveException("Not your turn to play");
 		}
 		if (!isLocationOpen(targetLocation)) {
-			throw new ValidMoveException();
+			throw new ValidMoveException("Location selected is not available");
 		}
 		if (!isLocationCloseEnough(pieceInfo, targetLocation)) {
-			throw new ValidMoveException();
+			throw new ValidMoveException("Location selected is too far away");
 		}
-		updatePieceWithMove(pieceInfo, targetLocation);
 	}
 
 	private boolean isLocationCloseEnough(PieceInfo pieceInfo, Vector3f targetLocation) {

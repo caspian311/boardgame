@@ -7,7 +7,12 @@ import javax.vecmath.Vector3f;
 
 import net.todd.common.uitools.IListener;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class UserPiecesModel implements IUserPiecesModel {
+	private static final Log log = LogFactory.getLog(UserPiecesModel.class);
+
 	private static final float PIECE_HEIGHT = 10f;
 	private final List<PieceInfo> teamOnePieces;
 	private final List<PieceInfo> teamTwoPieces;
@@ -33,6 +38,7 @@ public class UserPiecesModel implements IUserPiecesModel {
 						moveAction(selectedPieceToMove, targetLocation);
 					}
 				} catch (ValidMoveException e) {
+					log.info(e.getMessage());
 				}
 			}
 		});
