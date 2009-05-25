@@ -12,10 +12,10 @@ public class GameGridView implements IGameGridView {
 
 	private TileData selectedTile;
 
-	public GameGridView(IPickerFactory pickerFactory, IBranchGroupFactory branchGroupFactory) {
+	public GameGridView(final IPicker picker,
+			IBranchGroupFactory branchGroupFactory) {
 		board = branchGroupFactory.createBranchGroup();
 
-		final IPicker picker = pickerFactory.createPicker(board);
 		picker.addListener(new IListener() {
 			public void fireEvent() {
 				Node selectedNode = picker.getSelectedNode();

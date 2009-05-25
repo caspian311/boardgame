@@ -9,7 +9,7 @@ public class UserPiecesFactory implements IUserPiecesFactory {
 		this.bounds = bounds;
 	}
 
-	public IBranchGroup constructUserPieces(IPickerFactory pickerFactory) {
+	public IBranchGroup constructUserPieces(IPicker picker) {
 		IGameGridModel gameGridModel = GameGridModelProvider.getModel();
 		IGameState gameState = GameStateProvider.getGameState();
 		IMovementRuleCollection moveRuleCollection = MovementRuleCollectionProvider
@@ -18,8 +18,8 @@ public class UserPiecesFactory implements IUserPiecesFactory {
 				moveRuleCollection);
 		IUserPiecesModel userPiecesModel = new UserPiecesModel(gameState,
 				gameGridModel, moveValidator);
-		IUserPiecesView userPiecesView = new UserPiecesView(bounds,
-				pickerFactory, new BranchGroupFactory());
+		IUserPiecesView userPiecesView = new UserPiecesView(bounds, picker,
+				new BranchGroupFactory());
 		new UserPiecesPresenter(userPiecesView, userPiecesModel);
 		IBranchGroup branchGroup = userPiecesView.getBranchGroup();
 		return branchGroup;

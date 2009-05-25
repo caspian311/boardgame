@@ -1,7 +1,7 @@
 package net.todd.games.boardgame;
 
 public interface IGameEngine {
-	void createScene(IPickerFactory picker);
+	void createScene(IPicker picker);
 
 	void createCamera(IUniverse su);
 }

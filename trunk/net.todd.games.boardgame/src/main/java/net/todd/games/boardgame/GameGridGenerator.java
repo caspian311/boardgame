@@ -13,8 +13,8 @@ public class GameGridGenerator implements ISceneGenerator {
 		this.branchGroup = branchGroup;
 	}
 
-	public void createGameGrid(IPickerFactory pickerFactory, IGameGridFactory gameGridFactory) {
-		branchGroup.addChild(gameGridFactory.constructGameGrid(pickerFactory));
+	public void createGameGrid(IPicker picker, IGameGridFactory gameGridFactory) {
+		branchGroup.addChild(gameGridFactory.constructGameGrid(picker));
 		branchGroup.addChild(gameGridFactory.constructHighlightedGrid());
 	}
 
@@ -24,7 +24,8 @@ public class GameGridGenerator implements ISceneGenerator {
 		branchGroup.addChild(ambient);
 
 		Vector3f lightDirection = new Vector3f(0.0f, -1.0f, 0.0f);
-		DirectionalLight direct1 = new DirectionalLight(GameColors.LIGHT_COLOR, lightDirection);
+		DirectionalLight direct1 = new DirectionalLight(GameColors.LIGHT_COLOR,
+				lightDirection);
 		direct1.setInfluencingBounds(bounds);
 		branchGroup.addChild(direct1);
 	}

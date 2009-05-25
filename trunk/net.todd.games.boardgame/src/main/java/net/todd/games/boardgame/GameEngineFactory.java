@@ -6,7 +6,8 @@ public class GameEngineFactory implements IGameEngineFactory {
 		IPieceGenerator pieceGenerator = new PieceGenerator(branchGroup);
 		ICameraGenerator cameraGenerator = new CameraGenerator();
 
-		IGameEngine gameEngine = new GameEngine(gameGridGenerator, pieceGenerator, cameraGenerator);
+		IGameEngine gameEngine = new GameEngine(gameGridGenerator,
+				pieceGenerator, cameraGenerator);
 		return gameEngine;
 	}
 }

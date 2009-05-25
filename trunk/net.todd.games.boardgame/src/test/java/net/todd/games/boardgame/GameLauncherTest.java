@@ -7,6 +7,8 @@ import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.Node;
 
+import net.todd.common.uitools.IListener;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,7 +20,7 @@ public class GameLauncherTest {
 	private BranchGroupFactoryStub branchGroupFactory;
 	private BranchGroupStub branchGroup;
 	private GameEngineFactoryStub gameEngineFactory;
-	private IPickerFactory pickerFactory;
+	private PickerStub picker;
 	private int callCount;
 
 	@Before
@@ -28,7 +30,7 @@ public class GameLauncherTest {
 		branchGroup = new BranchGroupStub();
 		branchGroupFactory.branchGroup = branchGroup;
 		gameEngineFactory = new GameEngineFactoryStub();
-		pickerFactory = new PickerFactoryStub();
+		picker = new PickerStub();
 	}
 
 	@Test
@@ -36,18 +38,23 @@ public class GameLauncherTest {
 		GameLauncher gameLauncher = new GameLauncher() {
 			@Override
 			IPickerFactory getPickerFactory(IUniverse universe) {
-				return pickerFactory;
+				return new IPickerFactory() {
+					public IPicker createPicker(IBranchGroup branchGroup) {
+						return picker;
+					}
+				};
 			}
 		};
 
-		gameLauncher.launchGame(universe, branchGroupFactory, gameEngineFactory);
+		gameLauncher
+				.launchGame(universe, branchGroupFactory, gameEngineFactory);
 
 		assertEquals(1, gameEngineFactory.sceneCallCount);
 		assertEquals(2, gameEngineFactory.cameraCallCount);
 		assertEquals(3, branchGroup.compileCallCount);
 		assertSame(branchGroup, universe.addedBranchGroup);
 		assertSame(universe, gameEngineFactory.universe);
-		assertSame(pickerFactory, gameEngineFactory.gamePickerFactory);
+		assertSame(picker, gameEngineFactory.gamePicker);
 	}
 
 	private static class UniverseStub implements IUniverse {
@@ -101,7 +108,7 @@ public class GameLauncherTest {
 	}
 
 	private class GameEngineFactoryStub implements IGameEngineFactory {
-		IPickerFactory gamePickerFactory;
+		IPicker gamePicker;
 		IUniverse universe;
 		int cameraCallCount;
 		int sceneCallCount;
@@ -113,16 +120,24 @@ public class GameLauncherTest {
 					universe = su;
 				}
 
-				public void createScene(IPickerFactory pickerFactory) {
+				public void createScene(IPicker picker) {
 					sceneCallCount = ++callCount;
-					gamePickerFactory = pickerFactory;
+					gamePicker = picker;
 				}
 			};
 		}
 	}
 
-	private static class PickerFactoryStub implements IPickerFactory {
-		public IPicker createPicker(IBranchGroup branchGroup) {
+	private static class PickerStub implements IPicker {
+		public void addListener(IListener listener) {
+			throw new UnsupportedOperationException();
+		}
+
+		public Node getSelectedNode() {
+			throw new UnsupportedOperationException();
+		}
+
+		public void removeListener(IListener listener) {
 			throw new UnsupportedOperationException();
 		}
 	}

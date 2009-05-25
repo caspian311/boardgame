@@ -7,7 +7,10 @@ import static org.junit.Assert.assertSame;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
 import javax.media.j3d.Canvas3D;
+import javax.media.j3d.Node;
 import javax.vecmath.Point3d;
+
+import net.todd.common.uitools.IListener;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +39,8 @@ public class GameEngineTest {
 
 	@Test
 	public void testCreateSceneCallsAllTheRightMethodsInCorrectOrder() {
-		GameEngine gameEngine = new GameEngine(sceneGenerator, pieceGenerator, cameraGenerator);
+		GameEngine gameEngine = new GameEngine(sceneGenerator, pieceGenerator,
+				cameraGenerator);
 
 		gameEngine.createScene(null);
 
@@ -65,18 +69,20 @@ public class GameEngineTest {
 
 	@Test
 	public void testPickerIsPassedOnToSceneAndPieceGenerators() {
-		GameEngine gameEngine = new GameEngine(sceneGenerator, pieceGenerator, null);
-		IPickerFactory pickerFactory = new PickerFactoryStub();
+		GameEngine gameEngine = new GameEngine(sceneGenerator, pieceGenerator,
+				null);
+		IPicker picker = new PickerStub();
 
-		gameEngine.createScene(pickerFactory);
+		gameEngine.createScene(picker);
 
-		assertSame(pickerFactory, sceneGenerator.pickerFactory);
-		assertSame(pickerFactory, pieceGenerator.pickerFactory);
+		assertSame(picker, sceneGenerator.picker);
+		assertSame(picker, pieceGenerator.picker);
 	}
 
 	@Test
 	public void testBoundsGivenToAllGenerators() {
-		GameEngine gameEngine = new GameEngine(sceneGenerator, pieceGenerator, cameraGenerator);
+		GameEngine gameEngine = new GameEngine(sceneGenerator, pieceGenerator,
+				cameraGenerator);
 
 		assertNull(sceneGenerator.backgroundBounds);
 		assertNull(sceneGenerator.lightingBounds);
@@ -85,7 +91,8 @@ public class GameEngineTest {
 		gameEngine.createScene(null);
 		gameEngine.createCamera(null);
 
-		assertSame(sceneGenerator.backgroundBounds, sceneGenerator.lightingBounds);
+		assertSame(sceneGenerator.backgroundBounds,
+				sceneGenerator.lightingBounds);
 		assertSame(sceneGenerator.lightingBounds, cameraGenerator.bounds);
 	}
 
@@ -100,16 +107,17 @@ public class GameEngineTest {
 	}
 
 	private class PieceGeneratorStub implements IPieceGenerator {
-		IPickerFactory pickerFactory;
+		IPicker picker;
 
-		public void createPieces(IPickerFactory pickerFactory, IUserPiecesFactory userPiecesFactory) {
-			this.pickerFactory = pickerFactory;
+		public void createPieces(IPicker picker,
+				IUserPiecesFactory userPiecesFactory) {
+			this.picker = picker;
 			createPiecesCallCount = ++callCount;
 		}
 	}
 
 	private class SceneGeneratorStub implements ISceneGenerator {
-		IPickerFactory pickerFactory;
+		IPicker picker;
 		Bounds backgroundBounds;
 		Bounds lightingBounds;
 
@@ -118,8 +126,9 @@ public class GameEngineTest {
 			createBackgroundCallCount = ++callCount;
 		}
 
-		public void createGameGrid(IPickerFactory pickerFactory, IGameGridFactory gameGridFactory) {
-			this.pickerFactory = pickerFactory;
+		public void createGameGrid(IPicker picker,
+				IGameGridFactory gameGridFactory) {
+			this.picker = picker;
 			createGameGridCallCount = ++callCount;
 		}
 
@@ -147,8 +156,16 @@ public class GameEngineTest {
 		}
 	}
 
-	private static class PickerFactoryStub implements IPickerFactory {
-		public IPicker createPicker(IBranchGroup branchGroup) {
+	private static class PickerStub implements IPicker {
+		public void addListener(IListener listener) {
+			throw new UnsupportedOperationException();
+		}
+
+		public Node getSelectedNode() {
+			throw new UnsupportedOperationException();
+		}
+
+		public void removeListener(IListener listener) {
 			throw new UnsupportedOperationException();
 		}
 	}

@@ -32,10 +32,8 @@ public class GameGridViewTest {
 	public void testViewNotifiesItsListenersWhenPickerListenerFiresWithATileSelectedNode() {
 		Tile tile = TileFixture.getTile();
 		PickerStub picker = new PickerStub();
-		PickerFactoryStub pickerFactory = new PickerFactoryStub();
-		pickerFactory.picker = picker;
 		picker.selectedNode = tile;
-		GameGridView gameGridView = new GameGridView(pickerFactory, branchGroupFactory);
+		GameGridView gameGridView = new GameGridView(picker, branchGroupFactory);
 		ListenerStub listener1 = new ListenerStub();
 		ListenerStub listener2 = new ListenerStub();
 		gameGridView.addTileSelectedListener(listener1);
@@ -55,9 +53,7 @@ public class GameGridViewTest {
 	@Test
 	public void testViewReturnsBranchCreatedByTheFactory() {
 		PickerStub picker = new PickerStub();
-		PickerFactoryStub pickerFactory = new PickerFactoryStub();
-		pickerFactory.picker = picker;
-		GameGridView gameGridView = new GameGridView(pickerFactory, branchGroupFactory);
+		GameGridView gameGridView = new GameGridView(picker, branchGroupFactory);
 
 		assertSame(branchGroup, gameGridView.getBranchGroup());
 	}
@@ -65,9 +61,7 @@ public class GameGridViewTest {
 	@Test
 	public void testViewConstructsGridGivenTileData() {
 		PickerStub picker = new PickerStub();
-		PickerFactoryStub pickerFactory = new PickerFactoryStub();
-		pickerFactory.picker = picker;
-		GameGridView gameGridView = new GameGridView(pickerFactory, branchGroupFactory);
+		GameGridView gameGridView = new GameGridView(picker, branchGroupFactory);
 		TileData tileDatum1 = TileFixture.getTileData();
 		TileData tileDatum2 = TileFixture.getTileData();
 		TileData tileDatum3 = TileFixture.getTileData();
@@ -78,18 +72,14 @@ public class GameGridViewTest {
 		gameGridView.constructGrid(tileData);
 
 		assertEquals(4, branchGroup.nodes.size());
-		assertEquals(tileDatum1, ((Tile) branchGroup.nodes.get(0)).getTileData());
-		assertEquals(tileDatum2, ((Tile) branchGroup.nodes.get(1)).getTileData());
-		assertEquals(tileDatum3, ((Tile) branchGroup.nodes.get(2)).getTileData());
-		assertEquals(tileDatum4, ((Tile) branchGroup.nodes.get(3)).getTileData());
-	}
-
-	private static class PickerFactoryStub implements IPickerFactory {
-		IPicker picker;
-
-		public IPicker createPicker(IBranchGroup branchGroup) {
-			return picker;
-		}
+		assertEquals(tileDatum1, ((Tile) branchGroup.nodes.get(0))
+				.getTileData());
+		assertEquals(tileDatum2, ((Tile) branchGroup.nodes.get(1))
+				.getTileData());
+		assertEquals(tileDatum3, ((Tile) branchGroup.nodes.get(2))
+				.getTileData());
+		assertEquals(tileDatum4, ((Tile) branchGroup.nodes.get(3))
+				.getTileData());
 	}
 
 	private static class PickerStub implements IPicker {

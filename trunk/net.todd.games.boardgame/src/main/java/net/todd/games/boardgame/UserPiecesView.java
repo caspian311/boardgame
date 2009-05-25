@@ -13,12 +13,11 @@ public class UserPiecesView implements IUserPiecesView {
 
 	private final ListenerManager pieceSelectedListenerManager = new ListenerManager();
 
-	public UserPiecesView(Bounds bounds, IPickerFactory pickerFactory,
+	public UserPiecesView(Bounds bounds, final IPicker piecesPicker,
 			IBranchGroupFactory branchGroupFactory) {
 		this.bounds = bounds;
 		this.allPiecesBranchGroup = branchGroupFactory.createBranchGroup();
 
-		final IPicker piecesPicker = pickerFactory.createPicker(allPiecesBranchGroup);
 		piecesPicker.addListener(new IListener() {
 			public void fireEvent() {
 				Node selectedNode = piecesPicker.getSelectedNode();

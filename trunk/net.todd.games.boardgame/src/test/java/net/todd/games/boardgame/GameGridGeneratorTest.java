@@ -66,7 +66,8 @@ public class GameGridGeneratorTest {
 		light1.getColor(color1);
 		assertEquals(color1, GameColors.LIGHT_COLOR);
 
-		DirectionalLight light2 = (DirectionalLight) branchGroup.addedNodes.get(1);
+		DirectionalLight light2 = (DirectionalLight) branchGroup.addedNodes
+				.get(1);
 		assertEquals(bounds, light2.getInfluencingBounds());
 		Color3f color2 = new Color3f();
 		light2.getColor(color2);
@@ -83,10 +84,8 @@ public class GameGridGeneratorTest {
 		assertEquals(0, branchGroup.addedGroup.size());
 		assertFalse(gameGridFactory.gameGridconstructed);
 
-		PickerFactoryStub pickerFactory = new PickerFactoryStub();
 		PickerStub picker = new PickerStub();
-		pickerFactory.picker = picker;
-		gridGenerator.createGameGrid(pickerFactory, gameGridFactory);
+		gridGenerator.createGameGrid(picker, gameGridFactory);
 
 		assertTrue(gameGridFactory.gameGridconstructed);
 		assertTrue(branchGroup.addedGroup.size() > 0);
@@ -96,12 +95,10 @@ public class GameGridGeneratorTest {
 	public void testCreateGameGridAlsoCreatesHighlightedGrid() {
 		GameGridGenerator gridGenerator = new GameGridGenerator(branchGroup);
 
-		PickerFactoryStub pickerFactory = new PickerFactoryStub();
 		PickerStub picker = new PickerStub();
-		pickerFactory.picker = picker;
 
 		assertFalse(gameGridFactory.highlightedGridContructed);
-		gridGenerator.createGameGrid(pickerFactory, gameGridFactory);
+		gridGenerator.createGameGrid(picker, gameGridFactory);
 		assertTrue(gameGridFactory.highlightedGridContructed);
 
 		assertEquals(2, branchGroup.addedGroup.size());
@@ -132,14 +129,6 @@ public class GameGridGeneratorTest {
 		}
 	}
 
-	private static class PickerFactoryStub implements IPickerFactory {
-		IPicker picker;
-
-		public IPicker createPicker(IBranchGroup branchGroup) {
-			return picker;
-		}
-	}
-
 	private static class PickerStub implements IPicker {
 		public void addListener(IListener listener) {
 			throw new UnsupportedOperationException();
@@ -158,7 +147,7 @@ public class GameGridGeneratorTest {
 		boolean gameGridconstructed;
 		private boolean highlightedGridContructed;
 
-		public IBranchGroup constructGameGrid(IPickerFactory picker) {
+		public IBranchGroup constructGameGrid(IPicker picker) {
 			gameGridconstructed = true;
 			return new IBranchGroup() {
 				public void addChild(Node node) {

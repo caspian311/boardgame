@@ -26,14 +26,11 @@ public class UserPiecesViewTest {
 	private IPieceGroup selectedPiece;
 
 	private final Bounds bounds = new BoundingSphere(new Point3d(0, 0, 0), 100);
-	private PickerFactoryStub pickerFactory;
 	private BranchGroupStub mainBranchGroup;
 	private BranchGroupFactoryStub branchGroupFactory;
 
 	@Before
 	public void setUp() {
-		pickerFactory = new PickerFactoryStub();
-
 		mainBranchGroup = new BranchGroupStub();
 		branchGroupFactory = new BranchGroupFactoryStub();
 		branchGroupFactory.mainBranchGroup = mainBranchGroup;
@@ -42,8 +39,7 @@ public class UserPiecesViewTest {
 	@Test
 	public void testAddingPiecesToViewAddsItToCorrectBranchGroup() {
 		PickerStub picker = new PickerStub();
-		pickerFactory.picker = picker;
-		UserPiecesView userPiecesView = new UserPiecesView(bounds, pickerFactory,
+		UserPiecesView userPiecesView = new UserPiecesView(bounds, picker,
 				branchGroupFactory);
 
 		PieceInfo pieceInfo1 = new PieceInfo();
@@ -72,8 +68,7 @@ public class UserPiecesViewTest {
 	public void testListenersToViewAreNotifiedWhenSomethingIsPicked() {
 		ListenerStub listener = new ListenerStub();
 		PickerStub picker = new PickerStub();
-		pickerFactory.picker = picker;
-		UserPiecesView userPiecesView = new UserPiecesView(bounds, pickerFactory,
+		UserPiecesView userPiecesView = new UserPiecesView(bounds, picker,
 				branchGroupFactory);
 
 		picker.listener.fireEvent();
@@ -94,9 +89,8 @@ public class UserPiecesViewTest {
 		pieceInfo.setPosition(new Vector3f());
 		pieceInfo.setColor(new Color3f());
 		picker.selectedNode = new SelectablePiece(new PieceGroupMock(pieceInfo));
-		pickerFactory.picker = picker;
-		final UserPiecesView userPiecesView = new UserPiecesView(bounds, pickerFactory,
-				branchGroupFactory);
+		final UserPiecesView userPiecesView = new UserPiecesView(bounds,
+				picker, branchGroupFactory);
 		userPiecesView.addPieceSelectedListener(new IListener() {
 			public void fireEvent() {
 				selectedPiece = userPiecesView.getSelectedPiece();
@@ -108,14 +102,6 @@ public class UserPiecesViewTest {
 		picker.listener.fireEvent();
 
 		assertSame(selectedPiece, picker.selectedNode.getPiece());
-	}
-
-	private static class PickerFactoryStub implements IPickerFactory {
-		PickerStub picker;
-
-		public IPicker createPicker(IBranchGroup branchGroup) {
-			return picker;
-		}
 	}
 
 	private static class PickerStub implements IPicker {

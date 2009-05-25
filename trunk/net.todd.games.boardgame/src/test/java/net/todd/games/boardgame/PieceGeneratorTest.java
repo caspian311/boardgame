@@ -5,6 +5,8 @@ import static org.junit.Assert.assertSame;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Node;
 
+import net.todd.common.uitools.IListener;
+
 import org.junit.Test;
 
 public class PieceGeneratorTest {
@@ -13,15 +15,11 @@ public class PieceGeneratorTest {
 		BranchGroupStub branchGroup = new BranchGroupStub();
 		PieceGenerator pieceGenerator = new PieceGenerator(branchGroup);
 		UserPiecesFactoryStub userPiecesFactory = new UserPiecesFactoryStub();
-		IPickerFactory pickerFactory = new IPickerFactory() {
-			public IPicker createPicker(IBranchGroup branchGroup) {
-				throw new UnsupportedOperationException();
-			}
-		};
+		PickerStub picker = new PickerStub();
 
-		pieceGenerator.createPieces(pickerFactory, userPiecesFactory);
+		pieceGenerator.createPieces(picker, userPiecesFactory);
 
-		assertSame(pickerFactory, userPiecesFactory.pickerFactory);
+		assertSame(picker, userPiecesFactory.picker);
 	}
 
 	@Test
@@ -61,11 +59,25 @@ public class PieceGeneratorTest {
 
 	private static class UserPiecesFactoryStub implements IUserPiecesFactory {
 		IBranchGroup branchGroup;
-		IPickerFactory pickerFactory;
+		IPicker picker;
 
-		public IBranchGroup constructUserPieces(IPickerFactory pickerFactory) {
-			this.pickerFactory = pickerFactory;
+		public IBranchGroup constructUserPieces(IPicker picker) {
+			this.picker = picker;
 			return branchGroup;
+		}
+	}
+
+	private static class PickerStub implements IPicker {
+		public void addListener(IListener listener) {
+			throw new UnsupportedOperationException();
+		}
+
+		public Node getSelectedNode() {
+			throw new UnsupportedOperationException();
+		}
+
+		public void removeListener(IListener listener) {
+			throw new UnsupportedOperationException();
 		}
 	}
 }

@@ -12,8 +12,8 @@ public class GameEngine implements IGameEngine {
 	private final IGameGridFactory gameGridFactory;
 	private final IUserPiecesFactory userPiecesFactory;
 
-	public GameEngine(ISceneGenerator sceneGenerator, IPieceGenerator pieceGenerator,
-			ICameraGenerator cameraGenerator) {
+	public GameEngine(ISceneGenerator sceneGenerator,
+			IPieceGenerator pieceGenerator, ICameraGenerator cameraGenerator) {
 		this.sceneGenerator = sceneGenerator;
 		this.pieceGenerator = pieceGenerator;
 		this.cameraGenerator = cameraGenerator;
@@ -23,11 +23,11 @@ public class GameEngine implements IGameEngine {
 		userPiecesFactory = new UserPiecesFactory(bounds);
 	}
 
-	public void createScene(IPickerFactory pickerFactory) {
+	public void createScene(IPicker picker) {
 		sceneGenerator.lightScene(bounds);
-		sceneGenerator.createGameGrid(pickerFactory, gameGridFactory);
+		sceneGenerator.createGameGrid(picker, gameGridFactory);
 		sceneGenerator.createBackground(bounds);
-		pieceGenerator.createPieces(pickerFactory, userPiecesFactory);
+		pieceGenerator.createPieces(picker, userPiecesFactory);
 	}
 
 	public void createCamera(IUniverse su) {
