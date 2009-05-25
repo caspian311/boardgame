@@ -3,6 +3,7 @@ package net.todd.games.boardgame;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,8 +49,16 @@ public class HighlightedGridViewTest {
 				branchGroupFactory);
 
 		int tileSize = new Random().nextInt(100);
+		if (tileSize == 0) {
+			tileSize = 1;
+		}
 		TileData[] tiles = new TileData[tileSize];
-		for (int i = 0; i < tileSize; i++) {
+		tiles[0] = new TileData();
+		tiles[0].setPosition(new float[] { 0f, 0f, 0f });
+		tiles[0].setColor(new float[] { 0f, 0f, 0f });
+		tiles[0].setSize(1f);
+
+		for (int i = 1; i < tileSize; i++) {
 			tiles[i] = new TileData();
 			tiles[i].setPosition(new float[] { 0f, 0f, 0f });
 			tiles[i].setColor(new float[] { 0f, 0f, 0f });
@@ -60,6 +69,8 @@ public class HighlightedGridViewTest {
 		highlightedGridView.highlightTiles(tiles);
 		assertSame(firstBranchGroupStub.group, secondBranchGroupStub);
 		assertEquals(tiles.length, secondBranchGroupStub.allChildren.size());
+
+		assertTrue(secondBranchGroupStub.allChildren.get(0) instanceof Tile);
 	}
 
 	@Test

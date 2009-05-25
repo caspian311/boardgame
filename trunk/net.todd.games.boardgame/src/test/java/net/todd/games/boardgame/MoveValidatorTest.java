@@ -1,5 +1,6 @@
 package net.todd.games.boardgame;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -56,18 +57,27 @@ public class MoveValidatorTest {
 			validator.confirmMove(null, new Vector3f());
 			fail("should have failed");
 		} catch (ValidMoveException e) {
+			assertEquals(
+					"Either piece doesn't exist or location to move to doesn't exist",
+					e.getMessage());
 		}
 
 		try {
 			validator.confirmMove(new PieceInfo(), null);
 			fail("should have failed");
 		} catch (ValidMoveException e) {
+			assertEquals(
+					"Either piece doesn't exist or location to move to doesn't exist",
+					e.getMessage());
 		}
 
 		try {
 			validator.confirmMove(null, null);
 			fail("should have failed");
 		} catch (ValidMoveException e) {
+			assertEquals(
+					"Either piece doesn't exist or location to move to doesn't exist",
+					e.getMessage());
 		}
 	}
 
@@ -85,6 +95,7 @@ public class MoveValidatorTest {
 			validator.confirmMove(pieceInfo1, new Vector3f(1f, 2f, 3f));
 			fail("Cannot move to location that piece already occupies");
 		} catch (ValidMoveException e) {
+			assertEquals("Location selected is not available", e.getMessage());
 		}
 	}
 
@@ -109,6 +120,7 @@ public class MoveValidatorTest {
 			validator.confirmMove(teamTwoPieceInfo, new Vector3f(5f, 5f, 5f));
 			fail("Team two cannot go first");
 		} catch (ValidMoveException e) {
+			assertEquals("Not your turn to play", e.getMessage());
 		}
 
 		try {
@@ -121,6 +133,7 @@ public class MoveValidatorTest {
 			validator.confirmMove(teamOnePieceInfo, new Vector3f(1f, 1f, 1f));
 			fail("Team two must go second");
 		} catch (ValidMoveException e) {
+			assertEquals("Not your turn to play", e.getMessage());
 		}
 
 		try {
@@ -133,6 +146,7 @@ public class MoveValidatorTest {
 			validator.confirmMove(teamTwoPieceInfo, new Vector3f(2f, 2f, 2f));
 			fail("Team one must go third");
 		} catch (ValidMoveException e) {
+			assertEquals("Not your turn to play", e.getMessage());
 		}
 
 		try {
@@ -155,13 +169,16 @@ public class MoveValidatorTest {
 		float maxDistance = pieceInfo1.getSpeed() * GameGridData.TILE_SIZE;
 
 		try {
-			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance + 1f, 5f, 0f));
+			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance + 1f,
+					5f, 0f));
 			fail("location too far away");
 		} catch (ValidMoveException e) {
+			assertEquals("Location selected is too far away", e.getMessage());
 		}
 
 		try {
-			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f, 0f));
+			validator
+					.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f, 0f));
 		} catch (ValidMoveException e) {
 			fail("should not have failed");
 		}
@@ -169,13 +186,16 @@ public class MoveValidatorTest {
 		validator = new MoveValidator(gamePieceData);
 
 		try {
-			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f, maxDistance + 1f));
+			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f,
+					maxDistance + 1f));
 			fail("location too far away");
 		} catch (ValidMoveException e) {
+			assertEquals("Location selected is too far away", e.getMessage());
 		}
 
 		try {
-			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f, maxDistance));
+			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f,
+					maxDistance));
 		} catch (ValidMoveException e) {
 			fail("should not have failed");
 		}
@@ -194,13 +214,16 @@ public class MoveValidatorTest {
 		float maxDistance = pieceInfo1.getSpeed() * GameGridData.TILE_SIZE;
 
 		try {
-			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance + 1f, 5f, 0f));
+			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance + 1f,
+					5f, 0f));
 			fail("location too far away");
 		} catch (ValidMoveException e) {
+			assertEquals("Location selected is too far away", e.getMessage());
 		}
 
 		try {
-			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f, 0f));
+			validator
+					.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f, 0f));
 		} catch (ValidMoveException e) {
 			fail("should not have failed");
 		}
@@ -208,13 +231,16 @@ public class MoveValidatorTest {
 		validator = new MoveValidator(gamePieceData);
 
 		try {
-			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f, maxDistance + 1f));
+			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f,
+					maxDistance + 1f));
 			fail("location too far away");
 		} catch (ValidMoveException e) {
+			assertEquals("Location selected is too far away", e.getMessage());
 		}
 
 		try {
-			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f, maxDistance));
+			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f,
+					maxDistance));
 		} catch (ValidMoveException e) {
 			fail("should not have failed");
 		}
