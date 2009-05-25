@@ -13,45 +13,19 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class MoveValidatorTest {
-	private GamePieceDataMock gamePieceData;
+	private GameStateStub gameState;
+	private MovementRuleCollectionStub movementRuleCollection;
 
 	@Before
 	public void setUp() {
-		gamePieceData = new GamePieceDataMock();
-	}
-
-	@Test
-	public void testWillNotMovePieceIfMovingToAPlaceWhereAnotherPieceIs() {
-		PieceInfo pieceInfo1 = new PieceInfo();
-		pieceInfo1.setId(UUID.randomUUID().toString());
-		pieceInfo1.setPosition(new Vector3f(1f, 2f, 3f));
-		pieceInfo1.setSpeed(5);
-		pieceInfo1.setTeam(Team.ONE);
-		PieceInfo pieceInfo2 = new PieceInfo();
-		pieceInfo2.setId(UUID.randomUUID().toString());
-		pieceInfo2.setPosition(new Vector3f(1f, 2f, 4f));
-		pieceInfo2.setSpeed(5);
-		pieceInfo2.setTeam(Team.TWO);
-		gamePieceData.teamOne.add(pieceInfo1);
-		gamePieceData.teamTwo.add(pieceInfo2);
-		MoveValidator validator = new MoveValidator(gamePieceData);
-
-		try {
-			validator.confirmMove(pieceInfo1, new Vector3f(5f, 5f, 5f));
-		} catch (ValidMoveException e) {
-			fail("Valid move was not accepted");
-		}
-
-		try {
-			validator.confirmMove(pieceInfo2, new Vector3f(5f, 5f, 5f));
-			fail("Invalid move was accepted");
-		} catch (ValidMoveException e) {
-		}
+		gameState = new GameStateStub();
+		movementRuleCollection = new MovementRuleCollectionStub();
 	}
 
 	@Test
 	public void testWillBlowupIfNoPieceOrTargetIsGiven() {
-		MoveValidator validator = new MoveValidator(gamePieceData);
+		MoveValidator validator = new MoveValidator(gameState,
+				movementRuleCollection);
 
 		try {
 			validator.confirmMove(null, new Vector3f());
@@ -82,25 +56,7 @@ public class MoveValidatorTest {
 	}
 
 	@Test
-	public void testAPieceCannotMoveToSameLocationThatItAlreadyOccupied() {
-		PieceInfo pieceInfo1 = new PieceInfo();
-		pieceInfo1.setId(UUID.randomUUID().toString());
-		pieceInfo1.setPosition(new Vector3f(1f, 2f, 3f));
-		pieceInfo1.setTeam(Team.ONE);
-		gamePieceData.teamOne.add(pieceInfo1);
-
-		MoveValidator validator = new MoveValidator(gamePieceData);
-
-		try {
-			validator.confirmMove(pieceInfo1, new Vector3f(1f, 2f, 3f));
-			fail("Cannot move to location that piece already occupies");
-		} catch (ValidMoveException e) {
-			assertEquals("Location selected is not available", e.getMessage());
-		}
-	}
-
-	@Test
-	public void testMovesAlternateBetweenTeamsAndTeamOneIsFirstToMove() {
+	public void testWhichTeamToMoveIsControlledByGameState() {
 		PieceInfo teamOnePieceInfo = new PieceInfo();
 		teamOnePieceInfo.setId(UUID.randomUUID().toString());
 		teamOnePieceInfo.setPosition(new Vector3f(1f, 2f, 3f));
@@ -111,10 +67,13 @@ public class MoveValidatorTest {
 		teamTwoPieceInfo.setPosition(new Vector3f(1f, 2f, 4f));
 		teamTwoPieceInfo.setTeam(Team.TWO);
 		teamTwoPieceInfo.setSpeed(5);
-		gamePieceData.teamOne.add(teamOnePieceInfo);
-		gamePieceData.teamTwo.add(teamTwoPieceInfo);
+		gameState.allPieces.add(teamOnePieceInfo);
+		gameState.allPieces.add(teamTwoPieceInfo);
 
-		MoveValidator validator = new MoveValidator(gamePieceData);
+		MoveValidator validator = new MoveValidator(gameState,
+				movementRuleCollection);
+
+		gameState.teamToMove = Team.ONE;
 
 		try {
 			validator.confirmMove(teamTwoPieceInfo, new Vector3f(5f, 5f, 5f));
@@ -123,141 +82,55 @@ public class MoveValidatorTest {
 			assertEquals("Not your turn to play", e.getMessage());
 		}
 
-		try {
-			validator.confirmMove(teamOnePieceInfo, new Vector3f(5f, 5f, 5f));
-		} catch (ValidMoveException e) {
-			fail("Team one must go first");
-		}
+		gameState.teamToMove = Team.TWO;
 
 		try {
-			validator.confirmMove(teamOnePieceInfo, new Vector3f(1f, 1f, 1f));
-			fail("Team two must go second");
+			validator.confirmMove(teamTwoPieceInfo, new Vector3f(5f, 5f, 5f));
 		} catch (ValidMoveException e) {
-			assertEquals("Not your turn to play", e.getMessage());
+			fail("Should have been a valid move");
 		}
 
-		try {
-			validator.confirmMove(teamTwoPieceInfo, new Vector3f(1f, 1f, 1f));
-		} catch (ValidMoveException e) {
-			fail("Team two must go second");
-		}
+		gameState.teamToMove = Team.ONE;
 
 		try {
-			validator.confirmMove(teamTwoPieceInfo, new Vector3f(2f, 2f, 2f));
-			fail("Team one must go third");
+			validator.confirmMove(teamTwoPieceInfo, new Vector3f(5f, 5f, 5f));
+			fail("Team two cannot go first");
 		} catch (ValidMoveException e) {
 			assertEquals("Not your turn to play", e.getMessage());
 		}
 
+		gameState.teamToMove = Team.TWO;
+
 		try {
-			validator.confirmMove(teamOnePieceInfo, new Vector3f(2f, 2f, 2f));
+			validator.confirmMove(teamTwoPieceInfo, new Vector3f(5f, 5f, 5f));
 		} catch (ValidMoveException e) {
-			fail("Team one must go third");
+			fail("Should have been a valid move");
 		}
 	}
 
-	@Test
-	public void testPieceCanOnlyMoveADistanceEqualsToItsSpeedTimesTheTileSize() {
-		PieceInfo pieceInfo1 = new PieceInfo();
-		pieceInfo1.setPosition(new Vector3f(0f, 5f, 0f));
-		pieceInfo1.setSpeed(3);
-		pieceInfo1.setTeam(Team.ONE);
-		gamePieceData.teamOne.add(pieceInfo1);
+	// TODO test that move validator validates against collection of rules
 
-		MoveValidator validator = new MoveValidator(gamePieceData);
+	private static class GameStateStub implements IGameState {
+		private final List<PieceInfo> allPieces = new ArrayList<PieceInfo>();
+		private Team teamToMove;
 
-		float maxDistance = pieceInfo1.getSpeed() * GameGridData.TILE_SIZE;
-
-		try {
-			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance + 1f,
-					5f, 0f));
-			fail("location too far away");
-		} catch (ValidMoveException e) {
-			assertEquals("Location selected is too far away", e.getMessage());
+		public List<PieceInfo> getAllPieces() {
+			return allPieces;
 		}
 
-		try {
-			validator
-					.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f, 0f));
-		} catch (ValidMoveException e) {
-			fail("should not have failed");
+		public Team getTeamToMove() {
+			return teamToMove;
 		}
 
-		validator = new MoveValidator(gamePieceData);
-
-		try {
-			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f,
-					maxDistance + 1f));
-			fail("location too far away");
-		} catch (ValidMoveException e) {
-			assertEquals("Location selected is too far away", e.getMessage());
-		}
-
-		try {
-			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f,
-					maxDistance));
-		} catch (ValidMoveException e) {
-			fail("should not have failed");
+		public void moveMade(String id, Vector3f targetLocation) {
 		}
 	}
 
-	@Test
-	public void testWithADifferentSpeedPieceCanOnlyMoveADistanceEqualsToItsSpeedTimesTheTileSize() {
-		PieceInfo pieceInfo1 = new PieceInfo();
-		pieceInfo1.setPosition(new Vector3f(0f, 5f, 0f));
-		pieceInfo1.setSpeed(2);
-		pieceInfo1.setTeam(Team.ONE);
-		gamePieceData.teamOne.add(pieceInfo1);
-
-		MoveValidator validator = new MoveValidator(gamePieceData);
-
-		float maxDistance = pieceInfo1.getSpeed() * GameGridData.TILE_SIZE;
-
-		try {
-			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance + 1f,
-					5f, 0f));
-			fail("location too far away");
-		} catch (ValidMoveException e) {
-			assertEquals("Location selected is too far away", e.getMessage());
-		}
-
-		try {
-			validator
-					.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f, 0f));
-		} catch (ValidMoveException e) {
-			fail("should not have failed");
-		}
-
-		validator = new MoveValidator(gamePieceData);
-
-		try {
-			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f,
-					maxDistance + 1f));
-			fail("location too far away");
-		} catch (ValidMoveException e) {
-			assertEquals("Location selected is too far away", e.getMessage());
-		}
-
-		try {
-			validator.confirmMove(pieceInfo1, new Vector3f(maxDistance, 5f,
-					maxDistance));
-		} catch (ValidMoveException e) {
-			fail("should not have failed");
-		}
-	}
-
-	private static class GamePieceDataMock extends GamePieceData {
-		List<PieceInfo> teamTwo = new ArrayList<PieceInfo>();
-		List<PieceInfo> teamOne = new ArrayList<PieceInfo>();
-
-		@Override
-		public List<PieceInfo> getTeamOnePieces() {
-			return teamOne;
-		}
-
-		@Override
-		public List<PieceInfo> getTeamTwoPieces() {
-			return teamTwo;
+	private static class MovementRuleCollectionStub implements
+			IMovementRuleCollection {
+		public void validateMove(PieceInfo pieceToMove, Vector3f targetLocation)
+				throws ValidMoveException {
+			// TODO Auto-generated method stub
 		}
 	}
 }
