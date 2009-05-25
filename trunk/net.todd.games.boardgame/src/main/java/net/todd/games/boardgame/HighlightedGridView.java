@@ -26,4 +26,8 @@ public class HighlightedGridView implements IHighlightedGridView {
 
 		branchGroup.addChild(highlightedStuff);
 	}
+
+	public void clearHighlightedTiles() {
+		branchGroup.removeAllChildren();
+	}
 }

@@ -1,7 +1,9 @@
 package net.todd.games.boardgame;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -29,35 +31,29 @@ public class HighlightGridPresenterTest {
 
 		assertNull(view.tilesToHighlight);
 
-		model.listener.fireEvent();
+		model.userPieceSelectedListener.fireEvent();
 
 		assertSame(model.tilesToHighlight, view.tilesToHighlight);
 	}
 
+	@Test
+	public void testWhenTileIsSelectedViewClearsOutHighlightedTiles() {
+		new HighlightGridPresenter(view, model);
+		
+		assertFalse(view.highlightedTilesCleared);
+		
+		model.gameGridTileSelectedListener.fireEvent();
+		assertTrue(view.highlightedTilesCleared);
+	}
+	
 	private static class GameGridModelStub implements IGameGridModel {
-		IListener listener;
-		TileData[] tilesToHighlight;
-		TileData selectedTile;
-		TileData[][] data;
+		private IListener userPieceSelectedListener;
+		private IListener gameGridTileSelectedListener;
+		private TileData[] tilesToHighlight;
+		private TileData[][] data;
 
 		public TileData[][] getTileData() {
 			return data;
-		}
-
-		public List<Vector3f> getTeamOneStartingGridPositions() {
-			throw new UnsupportedOperationException();
-		}
-
-		public void addTileSelectedListener(IListener listener) {
-			throw new UnsupportedOperationException();
-		}
-
-		public Vector3f getSelectedTileLocation() {
-			throw new UnsupportedOperationException();
-		}
-
-		public void setSelectedTile(TileData position) {
-			selectedTile = position;
 		}
 
 		public TileData[] getTilesToHighlight() {
@@ -65,7 +61,23 @@ public class HighlightGridPresenterTest {
 		}
 
 		public void addUserPieceSelectedListener(IListener listener) {
-			this.listener = listener;
+			this.userPieceSelectedListener = listener;
+		}
+		
+		public void addTileSelectedListener(IListener listener) {
+			this.gameGridTileSelectedListener = listener;
+		}
+		
+		public List<Vector3f> getTeamOneStartingGridPositions() {
+			throw new UnsupportedOperationException();
+		}
+		
+		public Vector3f getSelectedTileLocation() {
+			throw new UnsupportedOperationException();
+		}
+		
+		public void setSelectedTile(TileData position) {
+			throw new UnsupportedOperationException();
 		}
 
 		public List<Vector3f> getTeamTwoStartingGridPositions() {
@@ -78,6 +90,7 @@ public class HighlightGridPresenterTest {
 	}
 
 	private static class HighlightedGridViewStub implements IHighlightedGridView {
+		private boolean highlightedTilesCleared;
 		private TileData[] tilesToHighlight;
 
 		public IBranchGroup getBranchGroup() {
@@ -86,6 +99,10 @@ public class HighlightGridPresenterTest {
 
 		public void highlightTiles(TileData[] tiles) {
 			tilesToHighlight = tiles;
+		}
+		
+		public void clearHighlightedTiles() {
+			highlightedTilesCleared = true;
 		}
 	}
 }

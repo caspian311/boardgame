@@ -10,5 +10,10 @@ public class HighlightGridPresenter {
 				highlightedGridView.highlightTiles(gameGridModel.getTilesToHighlight());
 			}
 		});
+		gameGridModel.addTileSelectedListener(new IListener() {
+			public void fireEvent() {
+				highlightedGridView.clearHighlightedTiles();
+			}
+		});
 	}
 }

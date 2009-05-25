@@ -117,7 +117,7 @@ public class GameGridModelTest {
 			assertSame(tileHighlighterCalculator.tilesToHighlight[i], selectedTilesToHighlight[i]);
 		}
 	}
-
+	
 	private static class GameGridDataStub implements IGameGridData {
 		TileData[][] tileData;
 
