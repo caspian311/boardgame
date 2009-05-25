@@ -11,13 +11,12 @@ public class UserPiecesFactory implements IUserPiecesFactory {
 
 	public IBranchGroup constructUserPieces(IPickerFactory pickerFactory) {
 		IGameGridModel gameGridModel = GameGridModelProvider.getModel();
-		IGamePieceData gamePieceData = new GamePieceData();
-		IGameState gameState = new GameState(gamePieceData);
-		IMovementRuleCollection moveRuleCollection = new MovementRuleCollection(
-				new ProximityRule(), new AvailabilityRule(gameState));
+		IGameState gameState = GameStateProvider.getGameState();
+		IMovementRuleCollection moveRuleCollection = MovementRuleCollectionProvider
+				.getRuleCollection();
 		IMoveValidator moveValidator = new MoveValidator(gameState,
 				moveRuleCollection);
-		IUserPiecesModel userPiecesModel = new UserPiecesModel(gamePieceData,
+		IUserPiecesModel userPiecesModel = new UserPiecesModel(gameState,
 				gameGridModel, moveValidator);
 		IUserPiecesView userPiecesView = new UserPiecesView(bounds,
 				pickerFactory, new BranchGroupFactory());

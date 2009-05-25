@@ -3,28 +3,31 @@ package net.todd.games.boardgame;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
 
 public class TileHighlighterCalculator implements ITileHighlighterCalculator {
+	private final IMovementRuleCollection ruleCollection;
 	private final IGameGridData gameGridData;
 
-	public TileHighlighterCalculator(IGameGridData gameGridData) {
+	public TileHighlighterCalculator(IGameGridData gameGridData,
+			IMovementRuleCollection ruleCollection) {
 		this.gameGridData = gameGridData;
+		this.ruleCollection = ruleCollection;
 	}
 
 	public TileData[] calculateTilesToHighlight(PieceInfo pieceInfo) {
-		// TODO use the MovementRuleCollection
 		List<TileData> tilesToHighlight = new ArrayList<TileData>();
 
 		TileData[][] allTileData = gameGridData.getTileData();
 		for (TileData[] tileData : allTileData) {
 			for (TileData tileDatum : tileData) {
-				float maxDistance = pieceInfo.getSpeed()
-						* GameGridData.TILE_SIZE;
-				float distanceToPiece = new Point3f(tileDatum.getPosition())
-						.distance(new Point3f(pieceInfo.getPosition()));
-				if (distanceToPiece <= maxDistance) {
+				try {
+					for (IRule rule : ruleCollection.getRules()) {
+						rule.validateMove(pieceInfo, new Vector3f(tileDatum
+								.getPosition()));
+					}
 					tilesToHighlight.add(tileDatum);
+				} catch (ValidMoveException e) {
 				}
 			}
 		}

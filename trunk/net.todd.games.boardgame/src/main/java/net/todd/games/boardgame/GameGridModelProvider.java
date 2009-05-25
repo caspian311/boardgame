@@ -6,7 +6,9 @@ public class GameGridModelProvider {
 	public static IGameGridModel getModel() {
 		if (model == null) {
 			IGameGridData gameGridData = new GameGridData();
-			model = new GameGridModel(gameGridData, new TileHighlighterCalculator(gameGridData));
+			model = new GameGridModel(gameGridData,
+					new TileHighlighterCalculator(gameGridData,
+							MovementRuleCollectionProvider.getRuleCollection()));
 		}
 		return model;
 	}

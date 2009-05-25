@@ -14,27 +14,33 @@ public class UserPiecesModel implements IUserPiecesModel {
 	private static final Log log = LogFactory.getLog(UserPiecesModel.class);
 
 	private static final float PIECE_HEIGHT = 10f;
-	private final List<PieceInfo> teamOnePieces;
-	private final List<PieceInfo> teamTwoPieces;
+	private final List<PieceInfo> teamOnePieces = new ArrayList<PieceInfo>();
+	private final List<PieceInfo> teamTwoPieces = new ArrayList<PieceInfo>();
 	private IPieceGroup selectedPieceToMove;
 	private final IGameGridModel gameGridModel;
 
-	public UserPiecesModel(IGamePieceData gamePieceData, final IGameGridModel gameGridModel,
+	public UserPiecesModel(IGameState gameState,
+			final IGameGridModel gameGridModel,
 			final IMoveValidator moveValidator) {
 		this.gameGridModel = gameGridModel;
-		teamOnePieces = new ArrayList<PieceInfo>(adjustPiecesForHeight(gamePieceData
-				.getTeamOnePieces()));
-		teamTwoPieces = new ArrayList<PieceInfo>(adjustPiecesForHeight(gamePieceData
-				.getTeamTwoPieces()));
+
+		for (PieceInfo pieceInfo : gameState.getAllPieces()) {
+			if (pieceInfo.getTeam() == Team.ONE) {
+				teamOnePieces.add(adjustPieceForHeight(pieceInfo));
+			} else {
+				teamTwoPieces.add(adjustPieceForHeight(pieceInfo));
+			}
+		}
 
 		gameGridModel.addTileSelectedListener(new IListener() {
 			public void fireEvent() {
 				try {
 					if (selectedPieceToMove != null) {
-						Vector3f targetLocation = gameGridModel.getSelectedTileLocation();
+						Vector3f targetLocation = gameGridModel
+								.getSelectedTileLocation();
 						adjustPositionForHeight(targetLocation);
-						moveValidator.confirmMove(selectedPieceToMove.getPieceInfo(),
-								targetLocation);
+						moveValidator.confirmMove(selectedPieceToMove
+								.getPieceInfo(), targetLocation);
 						moveAction(selectedPieceToMove, targetLocation);
 					}
 				} catch (ValidMoveException e) {
@@ -44,7 +50,8 @@ public class UserPiecesModel implements IUserPiecesModel {
 		});
 	}
 
-	private void moveAction(IPieceGroup selectedPieceToMove, Vector3f targetLocation) {
+	private void moveAction(IPieceGroup selectedPieceToMove,
+			Vector3f targetLocation) {
 		selectedPieceToMove.movePieceTo(targetLocation);
 	}
 
@@ -54,11 +61,9 @@ public class UserPiecesModel implements IUserPiecesModel {
 		}
 	}
 
-	private List<PieceInfo> adjustPiecesForHeight(List<PieceInfo> pieces) {
-		for (PieceInfo pieceInfo : pieces) {
-			adjustPositionForHeight(pieceInfo.getPosition());
-		}
-		return pieces;
+	private PieceInfo adjustPieceForHeight(PieceInfo pieceInfo) {
+		adjustPositionForHeight(pieceInfo.getPosition());
+		return pieceInfo;
 	}
 
 	public List<PieceInfo> getAllTeamOnePieces() {

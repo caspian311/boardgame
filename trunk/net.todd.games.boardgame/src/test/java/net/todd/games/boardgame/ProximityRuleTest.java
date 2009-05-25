@@ -81,4 +81,14 @@ public class ProximityRuleTest {
 			fail("should not have failed");
 		}
 	}
+
+	@Test
+	public void testIgnoreHeight() {
+		try {
+			rule.validateMove(pieceToMove, new Vector3f(maxDistance / 2, 1000f,
+					maxDistance / 2));
+		} catch (ValidMoveException e) {
+			fail("should not have failed");
+		}
+	}
 }

@@ -19,28 +19,28 @@ import org.junit.Test;
 
 public class UserPieceModelTest {
 	private GameGridModelStub gameGridModel;
-	private GamePieceDataStub gamePieceData;
 	private MoveValidatorStub validator;
+	private GameStateStub gameState;
 
 	@Before
 	public void setUp() {
 		gameGridModel = new GameGridModelStub();
-		gamePieceData = new GamePieceDataStub();
 		validator = new MoveValidatorStub();
+		gameState = new GameStateStub();
 	}
 
 	@Test
-	public void testTeamDataIsGottenFromGamePieceDataAndAdjustedForHeightOfPiece() {
+	public void testTeamDataIsGottenFromGameStateAndAdjustedForHeightOfPiece() {
 		PieceInfo pieceInfo1 = new PieceInfo();
 		pieceInfo1.setPosition(new Vector3f(1f, 2f, 3f));
 		pieceInfo1.setTeam(Team.ONE);
 		PieceInfo pieceInfo2 = new PieceInfo();
 		pieceInfo2.setPosition(new Vector3f(1f, 2f, 4f));
 		pieceInfo2.setTeam(Team.TWO);
-		gamePieceData.teamOne.add(pieceInfo1);
-		gamePieceData.teamTwo.add(pieceInfo2);
-		UserPiecesModel userPieceModel = new UserPiecesModel(gamePieceData, gameGridModel,
-				validator);
+		gameState.allPieces.add(pieceInfo1);
+		gameState.allPieces.add(pieceInfo2);
+		UserPiecesModel userPieceModel = new UserPiecesModel(gameState,
+				gameGridModel, validator);
 
 		List<PieceInfo> allPieces = userPieceModel.getAllTeamOnePieces();
 		allPieces.addAll(userPieceModel.getAllTeamTwoPieces());
@@ -56,9 +56,9 @@ public class UserPieceModelTest {
 		pieceInfo.setId("something");
 		pieceInfo.setPosition(new Vector3f());
 		pieceInfo.setTeam(Team.ONE);
-		gamePieceData.teamOne.add(pieceInfo);
-		final IUserPiecesModel userPieceModel = new UserPiecesModel(gamePieceData, gameGridModel,
-				validator);
+		gameState.allPieces.add(pieceInfo);
+		final IUserPiecesModel userPieceModel = new UserPiecesModel(gameState,
+				gameGridModel, validator);
 
 		PieceGroupStub selectedPiece = new PieceGroupStub();
 		selectedPiece.pieceInfo = pieceInfo;
@@ -77,14 +77,17 @@ public class UserPieceModelTest {
 	}
 
 	@Test
-	public void testModelPullsTeamOneInfoFromGamePieceData() {
+	public void testModelPullsTeamOneInfoFromGameState() {
 		PieceInfo pieceInfo1 = new PieceInfo();
 		pieceInfo1.setPosition(new Vector3f(1, 2, 3));
+		pieceInfo1.setTeam(Team.ONE);
 		PieceInfo pieceInfo2 = new PieceInfo();
 		pieceInfo2.setPosition(new Vector3f(4, 6, 6));
-		gamePieceData.teamOne.add(pieceInfo1);
-		gamePieceData.teamOne.add(pieceInfo2);
-		UserPiecesModel model = new UserPiecesModel(gamePieceData, gameGridModel, validator);
+		pieceInfo2.setTeam(Team.ONE);
+		gameState.allPieces.add(pieceInfo1);
+		gameState.allPieces.add(pieceInfo2);
+		UserPiecesModel model = new UserPiecesModel(gameState, gameGridModel,
+				validator);
 
 		List<PieceInfo> teamOne = model.getAllTeamOnePieces();
 
@@ -94,14 +97,17 @@ public class UserPieceModelTest {
 	}
 
 	@Test
-	public void testModelPullsTeamTwoInfoFromGamePieceData() {
+	public void testModelPullsTeamTwoInfoFromGameState() {
 		PieceInfo pieceInfo1 = new PieceInfo();
 		pieceInfo1.setPosition(new Vector3f(4f, 2f, 6f));
+		pieceInfo1.setTeam(Team.TWO);
 		PieceInfo pieceInfo2 = new PieceInfo();
 		pieceInfo2.setPosition(new Vector3f(2f, 4f, 1f));
-		gamePieceData.teamTwo.add(pieceInfo1);
-		gamePieceData.teamTwo.add(pieceInfo2);
-		UserPiecesModel model = new UserPiecesModel(gamePieceData, gameGridModel, validator);
+		pieceInfo2.setTeam(Team.TWO);
+		gameState.allPieces.add(pieceInfo1);
+		gameState.allPieces.add(pieceInfo2);
+		UserPiecesModel model = new UserPiecesModel(gameState, gameGridModel,
+				validator);
 
 		List<PieceInfo> teamTwo = model.getAllTeamTwoPieces();
 
@@ -116,12 +122,12 @@ public class UserPieceModelTest {
 		pieceInfo.setId("something");
 		pieceInfo.setPosition(new Vector3f(1f, 2f, 4f));
 		pieceInfo.setTeam(Team.ONE);
-		gamePieceData.teamOne.add(pieceInfo);
+		gameState.allPieces.add(pieceInfo);
 
 		validator.shouldFail = true;
 
-		UserPiecesModel userPieceModel = new UserPiecesModel(gamePieceData, gameGridModel,
-				validator);
+		UserPiecesModel userPieceModel = new UserPiecesModel(gameState,
+				gameGridModel, validator);
 
 		PieceGroupStub selectedPiece = new PieceGroupStub();
 		selectedPiece.pieceInfo = pieceInfo;
@@ -146,10 +152,10 @@ public class UserPieceModelTest {
 		pieceInfo.setId("something");
 		pieceInfo.setPosition(new Vector3f(1f, 2f, 4f));
 		pieceInfo.setTeam(Team.ONE);
-		gamePieceData.teamOne.add(pieceInfo);
+		gameState.allPieces.add(pieceInfo);
 
-		UserPiecesModel userPieceModel = new UserPiecesModel(gamePieceData, gameGridModel,
-				validator);
+		UserPiecesModel userPieceModel = new UserPiecesModel(gameState,
+				gameGridModel, validator);
 
 		PieceGroupStub selectedPiece = new PieceGroupStub();
 		selectedPiece.pieceInfo = pieceInfo;
@@ -164,7 +170,7 @@ public class UserPieceModelTest {
 
 	@Test
 	public void testNothingBlowsUpIfThereIsNothingSelectedAndTheGridFiresEvent() {
-		new UserPiecesModel(gamePieceData, gameGridModel, validator);
+		new UserPiecesModel(gameState, gameGridModel, validator);
 
 		gameGridModel.selectedPosition = new Vector3f(1f, 2f, 4f);
 		gameGridModel.positionSelectedListener.notifyListeners();
@@ -176,7 +182,8 @@ public class UserPieceModelTest {
 		PieceGroupStub selectedPiece = new PieceGroupStub();
 		selectedPiece.pieceInfo = pieceInfo;
 
-		UserPiecesModel model = new UserPiecesModel(gamePieceData, gameGridModel, validator);
+		UserPiecesModel model = new UserPiecesModel(gameState, gameGridModel,
+				validator);
 		assertNull(gameGridModel.selectedPieceInfo);
 
 		model.setSelectedPiece(selectedPiece);
@@ -228,19 +235,6 @@ public class UserPieceModelTest {
 		}
 	}
 
-	private static class GamePieceDataStub implements IGamePieceData {
-		List<PieceInfo> teamTwo = new ArrayList<PieceInfo>();
-		List<PieceInfo> teamOne = new ArrayList<PieceInfo>();
-
-		public List<PieceInfo> getTeamOnePieces() {
-			return teamOne;
-		}
-
-		public List<PieceInfo> getTeamTwoPieces() {
-			return teamTwo;
-		}
-	}
-
 	private static class PieceGroupStub implements IPieceGroup {
 		Vector3f movedToPosition;
 		int movePieceToCallCount;
@@ -268,6 +262,22 @@ public class UserPieceModelTest {
 			if (shouldFail) {
 				throw new ValidMoveException("Epic fail!");
 			}
+		}
+	}
+
+	private static class GameStateStub implements IGameState {
+		private final List<PieceInfo> allPieces = new ArrayList<PieceInfo>();
+
+		public List<PieceInfo> getAllPieces() {
+			return allPieces;
+		}
+
+		public Team getTeamToMove() {
+			throw new UnsupportedOperationException();
+		}
+
+		public void moveMade(String id, Vector3f targetLocation) {
+			throw new UnsupportedOperationException();
 		}
 	}
 }

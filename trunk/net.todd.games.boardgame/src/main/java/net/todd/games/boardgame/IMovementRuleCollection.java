@@ -1,10 +1,9 @@
 package net.todd.games.boardgame;
 
-import javax.vecmath.Vector3f;
+import java.util.List;
 
 public interface IMovementRuleCollection {
+	List<IRule> getRules();
 
-	void validateMove(PieceInfo pieceToMove, Vector3f targetLocation)
-			throws ValidMoveException;
-
+	void addRule(IRule rule);
 }

@@ -26,19 +26,13 @@ public class MoveValidator implements IMoveValidator {
 
 	private void validateMove(PieceInfo pieceToMove, Vector3f targetLocation)
 			throws ValidMoveException {
-		if (!isPiecesTurnToPlay(pieceToMove)) {
-			throw new ValidMoveException("Not your turn to play");
+		for (IRule rule : movementRuleCollection.getRules()) {
+			rule.validateMove(pieceToMove, targetLocation);
 		}
-
-		movementRuleCollection.validateMove(pieceToMove, targetLocation);
 	}
 
 	private void updatePieceWithMove(PieceInfo pieceInfo,
 			Vector3f targetLocation) {
 		gameState.moveMade(pieceInfo.getId(), targetLocation);
-	}
-
-	private boolean isPiecesTurnToPlay(PieceInfo pieceInfo) {
-		return gameState.getTeamToMove().equals(pieceInfo.getTeam());
 	}
 }
