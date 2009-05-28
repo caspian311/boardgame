@@ -14,7 +14,7 @@ public class UniverseAdapter implements IUniverse {
 	}
 
 	public void addBranchGraph(IBranchGroup branchGroup) {
-		universe.addBranchGraph(branchGroup.getInternal());
+		universe.addBranchGraph(branchGroup.underlyingImplementation());
 	}
 
 	public Viewer getViewer() {

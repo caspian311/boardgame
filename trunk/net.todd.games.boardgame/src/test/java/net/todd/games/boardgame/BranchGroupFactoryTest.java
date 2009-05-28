@@ -14,8 +14,8 @@ public class BranchGroupFactoryTest {
 		BranchGroupFactory branchGroupFactory = new BranchGroupFactory();
 		IBranchGroup branchGroup = branchGroupFactory.createBranchGroup();
 
-		assertNotNull(branchGroup.getInternal());
-		assertTrue(branchGroup.getInternal() instanceof BranchGroup);
+		assertNotNull(branchGroup.underlyingImplementation());
+		assertTrue(branchGroup.underlyingImplementation() instanceof BranchGroup);
 	}
 
 	@Test

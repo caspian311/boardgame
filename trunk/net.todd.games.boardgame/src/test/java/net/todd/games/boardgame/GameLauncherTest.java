@@ -98,7 +98,7 @@ public class GameLauncherTest {
 		public void addChild(IBranchGroup child) {
 		}
 
-		public BranchGroup getInternal() {
+		public BranchGroup underlyingImplementation() {
 			return null;
 		}
 

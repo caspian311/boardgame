@@ -18,7 +18,7 @@ public class Picker implements IPicker {
 
 	public Picker(IUniverse universe, IBranchGroup branchGroup) {
 		Canvas3D canvas = universe.getCanvas();
-		final PickCanvas pickCanvas = new PickCanvas(canvas, branchGroup.getInternal());
+		final PickCanvas pickCanvas = new PickCanvas(canvas, branchGroup.underlyingImplementation());
 		pickCanvas.setMode(PickInfo.PICK_GEOMETRY);
 		pickCanvas.setTolerance(4.0f);
 

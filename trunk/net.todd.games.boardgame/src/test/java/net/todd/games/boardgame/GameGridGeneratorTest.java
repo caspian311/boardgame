@@ -116,7 +116,7 @@ public class GameGridGeneratorTest {
 			throw new UnsupportedOperationException();
 		}
 
-		public BranchGroup getInternal() {
+		public BranchGroup underlyingImplementation() {
 			throw new UnsupportedOperationException();
 		}
 
@@ -158,7 +158,7 @@ public class GameGridGeneratorTest {
 					throw new UnsupportedOperationException();
 				}
 
-				public BranchGroup getInternal() {
+				public BranchGroup underlyingImplementation() {
 					throw new UnsupportedOperationException();
 				}
 
@@ -183,7 +183,7 @@ public class GameGridGeneratorTest {
 					throw new UnsupportedOperationException();
 				}
 
-				public BranchGroup getInternal() {
+				public BranchGroup underlyingImplementation() {
 					throw new UnsupportedOperationException();
 				}
 
