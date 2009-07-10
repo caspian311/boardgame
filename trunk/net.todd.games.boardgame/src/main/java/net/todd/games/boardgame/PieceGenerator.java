@@ -7,8 +7,10 @@ public class PieceGenerator implements IPieceGenerator {
 		this.bg = bg;
 	}
 
-	public void createPieces(IPicker picker, IUserPiecesFactory userPiecesFactory) {
-		IBranchGroup branchGroup = userPiecesFactory.constructUserPieces(picker);
+	public void createPieces(IPicker picker,
+			IUserPiecesFactory userPiecesFactory) {
+		IBranchGroup branchGroup = userPiecesFactory
+				.constructUserPieces(picker);
 		bg.addChild(branchGroup);
 	}
 }

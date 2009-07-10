@@ -30,6 +30,7 @@ public class HighlightedGridViewTest {
 		BranchGroupFactoryStub branchGroupFactory = new BranchGroupFactoryStub();
 		BranchGroupStub branchGroupStub = new BranchGroupStub();
 		branchGroupFactory.firstBranchGroup = branchGroupStub;
+
 		IHighlightedGridView highlightedGridView = new HighlightedGridView(
 				branchGroupFactory);
 
