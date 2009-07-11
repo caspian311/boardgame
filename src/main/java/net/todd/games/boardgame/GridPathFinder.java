@@ -31,6 +31,7 @@ public class GridPathFinder implements IGridPathFinder {
 		while (!arePointsSame(currentStep, endPoint)) {
 			currentStep = findNextStep(currentStep, endPoint);
 			if (currentStep == null) {
+				printPathFinderState(startingPoint, endPoint);
 				throw new IllegalStateException("no valid move available...");
 			}
 			if (!path.contains(currentStep)) {
@@ -43,6 +44,23 @@ public class GridPathFinder implements IGridPathFinder {
 		}
 
 		return path;
+	}
+
+	private void printPathFinderState(Vector3f startingPoint, Vector3f endPoint) {
+		System.err.println("Trying to find path: " + printLocation(startingPoint) + " to "
+				+ printLocation(endPoint));
+		System.err.println("The grid:");
+		for (Vector3f location : allLocationsOnGrid) {
+			System.err.println(printLocation(location));
+		}
+		System.err.println("Occupied positions on the grid:");
+		for (Vector3f location : occupiedPositionsOnGrid) {
+			System.err.println(printLocation(location));
+		}
+	}
+
+	private String printLocation(Vector3f point) {
+		return "(" + point.x + ", " + point.y + ", " + point.z + ")";
 	}
 
 	private boolean arePointsSame(Vector3f currentStep, Vector3f endPoint) {

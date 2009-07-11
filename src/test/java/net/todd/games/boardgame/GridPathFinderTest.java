@@ -209,14 +209,14 @@ public class GridPathFinderTest {
 		PieceInfo piece7 = new PieceInfo();
 		PieceInfo piece8 = new PieceInfo();
 
-		piece1.setPosition(new Vector3f(-15, 5, -35));
-		piece2.setPosition(new Vector3f(-5, 5, -15));
-		piece3.setPosition(new Vector3f(5, 5, -15));
-		piece4.setPosition(new Vector3f(15, 5, -15));
-		piece5.setPosition(new Vector3f(-15, 5, 35));
-		piece6.setPosition(new Vector3f(-5, 5, 35));
-		piece7.setPosition(new Vector3f(5, 5, -5));
-		piece8.setPosition(new Vector3f(15, 5, 35));
+		piece1.setPosition(new Vector3f(-15.0f, 5.0f, -25.00002f));
+		piece2.setPosition(new Vector3f(-5.0f, 5.0f, -25.00002f));
+		piece3.setPosition(new Vector3f(5.0f, 5.0f, -25.00002f));
+		piece4.setPosition(new Vector3f(24.900038f, 5.0f, -35.0f));
+		piece5.setPosition(new Vector3f(-15.0f, 5.0f, 35.0f));
+		piece6.setPosition(new Vector3f(-5.0f, 5.0f, 25.00002f));
+		piece7.setPosition(new Vector3f(5.0f, 5.0f, 35.0f));
+		piece8.setPosition(new Vector3f(15.0f, 5.0f, 35.0f));
 
 		gameState.allPieces.add(piece1);
 		gameState.allPieces.add(piece2);
@@ -230,11 +230,15 @@ public class GridPathFinderTest {
 		GridPathFinder pathFinder = new GridPathFinder(gameState, new GameGridModel(
 				new GameGridData(), null));
 
-		Vector3f start = new Vector3f(5, 5, -5);
-		Vector3f end = new Vector3f(5, 5, -25);
+		Vector3f start = new Vector3f(-15.0f, 5.0f, -5.0f);
+		Vector3f end = new Vector3f(-15.0f, 5.0f, -25.0f);
 
 		List<Vector3f> path = pathFinder.getPath(start, end);
-		assertEquals(5, path.size());
+		assertEquals(4, path.size());
+		assertEquals(new Vector3f(-15.0f, 0.0f, -5.0f), path.get(0));
+		assertEquals(new Vector3f(-25.0f, 0.0f, -5.0f), path.get(0));
+		assertEquals(new Vector3f(-25.0f, 0.0f, -15.0f), path.get(0));
+		assertEquals(new Vector3f(-15.0f, 0.0f, -25.0f), path.get(0));
 	}
 
 	private static class GameStateStub implements IGameState {
