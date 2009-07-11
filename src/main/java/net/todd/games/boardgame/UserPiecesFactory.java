@@ -14,12 +14,10 @@ public class UserPiecesFactory implements IUserPiecesFactory {
 		IGameState gameState = GameStateProvider.getGameState();
 		IMovementRuleCollection moveRuleCollection = MovementRuleCollectionProvider
 				.getRuleCollection();
-		IMoveValidator moveValidator = new MoveValidator(gameState,
-				moveRuleCollection);
-		IGridPathFinder gridPathFinder = new GridPathFinder(gameState,
-				gameGridModel);
-		IUserPiecesModel userPiecesModel = new UserPieceModel(gameState,
-				gameGridModel, moveValidator, gridPathFinder);
+		IMoveValidator moveValidator = new MoveValidator(gameState, moveRuleCollection);
+		IGridPathFinder gridPathFinder = new GridPathFinder(gameState, new GameGridData());
+		IUserPiecesModel userPiecesModel = new UserPieceModel(gameState, gameGridModel,
+				moveValidator, gridPathFinder);
 		IUserPiecesView userPiecesView = new UserPiecesView(bounds, picker,
 				new BranchGroupFactory());
 		new UserPiecesPresenter(userPiecesView, userPiecesModel);
