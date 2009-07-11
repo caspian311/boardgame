@@ -23,13 +23,17 @@ public class GridPathFinder implements IGridPathFinder {
 			occupiedPositionsOnGrid.add(pieceInfo.getPosition());
 		}
 
-		nodes = new Node[gameGridData.getTileData().length][gameGridData.getTileData()[0].length];
-		for (int x = 0; x < gameGridData.getTileData().length; x++) {
-			for (int y = 0; y < gameGridData.getTileData()[x].length; y++) {
-				TileData tileData = gameGridData.getTileData()[x][y];
-				nodes[x][y] = new Node((int) tileData.getPosition()[0], (int) tileData
-						.getPosition()[2]);
+		if (gameGridData.getTileData().length > 0) {
+			nodes = new Node[gameGridData.getTileData().length][gameGridData.getTileData()[0].length];
+			for (int x = 0; x < gameGridData.getTileData().length; x++) {
+				for (int y = 0; y < gameGridData.getTileData()[x].length; y++) {
+					TileData tileData = gameGridData.getTileData()[x][y];
+					nodes[x][y] = new Node((int) tileData.getPosition()[0], (int) tileData
+							.getPosition()[2]);
+				}
 			}
+		} else {
+			nodes = new Node[0][0];
 		}
 	}
 

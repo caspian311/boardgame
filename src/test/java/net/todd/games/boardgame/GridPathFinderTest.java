@@ -8,24 +8,23 @@ import java.util.List;
 
 import javax.vecmath.Vector3f;
 
-import net.todd.common.uitools.IListener;
-
 import org.junit.Before;
 import org.junit.Test;
 
 public class GridPathFinderTest {
 	private GameStateStub gameState;
-	private GameGridModelStub gameGridModel;
+	private GameGridDataStub gameGridData;
 
 	@Before
 	public void setUp() {
 		gameState = new GameStateStub();
-		gameGridModel = new GameGridModelStub();
+		gameGridData = new GameGridDataStub();
 	}
 
 	@Test
 	public void testPathIsNeverNull() {
-		GridPathFinder pathFinder = new GridPathFinder(gameState, gameGridModel);
+		gameGridData.tileData = new TileData[0][0];
+		GridPathFinder pathFinder = new GridPathFinder(gameState, gameGridData);
 
 		assertNotNull(pathFinder.getPath(new Vector3f(), new Vector3f()));
 	}
@@ -45,12 +44,13 @@ public class GridPathFinderTest {
 		tile4.setSize(10);
 		tile4.setPosition(new float[] { 5, 0, 5 });
 
-		gameGridModel.tileData.add(tile1);
-		gameGridModel.tileData.add(tile2);
-		gameGridModel.tileData.add(tile3);
-		gameGridModel.tileData.add(tile4);
+		gameGridData.tileData = new TileData[2][2];
+		gameGridData.tileData[0][0] = tile1;
+		gameGridData.tileData[0][1] = tile2;
+		gameGridData.tileData[1][0] = tile3;
+		gameGridData.tileData[1][1] = tile4;
 
-		GridPathFinder pathFinder = new GridPathFinder(gameState, gameGridModel);
+		GridPathFinder pathFinder = new GridPathFinder(gameState, gameGridData);
 
 		Vector3f start = new Vector3f(-5, 0, -5);
 		Vector3f end = new Vector3f(5, 0, 5);
@@ -77,14 +77,15 @@ public class GridPathFinderTest {
 		TileData tile6 = new TileData();
 		tile6.setPosition(new float[] { 10, 0, 5 });
 
-		gameGridModel.tileData.add(tile1);
-		gameGridModel.tileData.add(tile2);
-		gameGridModel.tileData.add(tile3);
-		gameGridModel.tileData.add(tile4);
-		gameGridModel.tileData.add(tile5);
-		gameGridModel.tileData.add(tile6);
+		gameGridData.tileData = new TileData[2][3];
+		gameGridData.tileData[0][0] = tile1;
+		gameGridData.tileData[0][1] = tile2;
+		gameGridData.tileData[0][2] = tile3;
+		gameGridData.tileData[1][0] = tile4;
+		gameGridData.tileData[1][1] = tile5;
+		gameGridData.tileData[1][2] = tile6;
 
-		GridPathFinder pathFinder = new GridPathFinder(gameState, gameGridModel);
+		GridPathFinder pathFinder = new GridPathFinder(gameState, gameGridData);
 
 		Vector3f start = new Vector3f(-10, 0, -5);
 		Vector3f end = new Vector3f(10, 0, 5);
@@ -98,108 +99,7 @@ public class GridPathFinderTest {
 	}
 
 	@Test
-	public void testIfObstaclesInDirectPathReturnPathThatGoesAround() {
-		TileData tile1 = new TileData();
-		tile1.setPosition(new float[] { -10, 0, -10 });
-		TileData tile2 = new TileData();
-		tile2.setPosition(new float[] { 0, 0, -10 });
-		TileData tile3 = new TileData();
-		tile3.setPosition(new float[] { 10, 0, -10 });
-		TileData tile4 = new TileData();
-		tile4.setPosition(new float[] { -10, 0, 0 });
-		TileData tile5 = new TileData();
-		tile5.setPosition(new float[] { 0, 0, 0 });
-		TileData tile6 = new TileData();
-		tile6.setPosition(new float[] { 10, 0, 0 });
-		TileData tile7 = new TileData();
-		tile7.setPosition(new float[] { -10, 0, 10 });
-		TileData tile8 = new TileData();
-		tile8.setPosition(new float[] { 0, 0, 10 });
-		TileData tile9 = new TileData();
-		tile9.setPosition(new float[] { 10, 0, 10 });
-
-		gameGridModel.tileData.add(tile1);
-		gameGridModel.tileData.add(tile2);
-		gameGridModel.tileData.add(tile3);
-		gameGridModel.tileData.add(tile4);
-		gameGridModel.tileData.add(tile5);
-		gameGridModel.tileData.add(tile6);
-		gameGridModel.tileData.add(tile7);
-		gameGridModel.tileData.add(tile8);
-		gameGridModel.tileData.add(tile9);
-
-		PieceInfo piece1 = new PieceInfo();
-		piece1.setPosition(new Vector3f(0f, 0f, 0f));
-		gameState.allPieces.add(piece1);
-
-		GridPathFinder pathFinder = new GridPathFinder(gameState, gameGridModel);
-
-		Vector3f start = new Vector3f(-10, 0, -10);
-		Vector3f end = new Vector3f(10, 0, 10);
-
-		List<Vector3f> path = pathFinder.getPath(start, end);
-		assertEquals(5, path.size());
-		assertEquals(new Vector3f(-10, 5, -10), path.get(0));
-		assertEquals(new Vector3f(-10, 5, 0), path.get(1));
-		assertEquals(new Vector3f(-10, 5, 10), path.get(2));
-		assertEquals(new Vector3f(0, 5, 10), path.get(3));
-		assertEquals(new Vector3f(10, 5, 10), path.get(4));
-	}
-
-	@Test
-	public void testIfMultipleObstaclesInDirectPathReturnPathThatGoesAround() {
-		TileData tile1 = new TileData();
-		tile1.setPosition(new float[] { -10, 0, -10 });
-		TileData tile2 = new TileData();
-		tile2.setPosition(new float[] { 0, 0, -10 });
-		TileData tile3 = new TileData();
-		tile3.setPosition(new float[] { 10, 0, -10 });
-		TileData tile4 = new TileData();
-		tile4.setPosition(new float[] { -10, 0, 0 });
-		TileData tile5 = new TileData();
-		tile5.setPosition(new float[] { 0, 0, 0 });
-		TileData tile6 = new TileData();
-		tile6.setPosition(new float[] { 10, 0, 0 });
-		TileData tile7 = new TileData();
-		tile7.setPosition(new float[] { -10, 0, 10 });
-		TileData tile8 = new TileData();
-		tile8.setPosition(new float[] { 0, 0, 10 });
-		TileData tile9 = new TileData();
-		tile9.setPosition(new float[] { 10, 0, 10 });
-
-		gameGridModel.tileData.add(tile1);
-		gameGridModel.tileData.add(tile2);
-		gameGridModel.tileData.add(tile3);
-		gameGridModel.tileData.add(tile4);
-		gameGridModel.tileData.add(tile5);
-		gameGridModel.tileData.add(tile6);
-		gameGridModel.tileData.add(tile7);
-		gameGridModel.tileData.add(tile8);
-		gameGridModel.tileData.add(tile9);
-
-		PieceInfo piece1 = new PieceInfo();
-		piece1.setPosition(new Vector3f(0f, 0f, 0f));
-		PieceInfo piece2 = new PieceInfo();
-		piece2.setPosition(new Vector3f(-10f, 0f, 10f));
-		gameState.allPieces.add(piece1);
-		gameState.allPieces.add(piece2);
-
-		GridPathFinder pathFinder = new GridPathFinder(gameState, gameGridModel);
-
-		Vector3f start = new Vector3f(-10, 0, -10);
-		Vector3f end = new Vector3f(10, 0, 10);
-
-		List<Vector3f> path = pathFinder.getPath(start, end);
-		assertEquals(5, path.size());
-		assertEquals(new Vector3f(-10, 5, -10), path.get(0));
-		assertEquals(new Vector3f(0, 5, -10), path.get(1));
-		assertEquals(new Vector3f(10, 5, -10), path.get(2));
-		assertEquals(new Vector3f(10, 5, 0), path.get(3));
-		assertEquals(new Vector3f(10, 5, 10), path.get(4));
-	}
-
-	@Test
-	public void testComplexCase() {
+	public void testComplexExampleWithObstacles() {
 		PieceInfo piece1 = new PieceInfo();
 		PieceInfo piece2 = new PieceInfo();
 		PieceInfo piece3 = new PieceInfo();
@@ -227,8 +127,7 @@ public class GridPathFinderTest {
 		gameState.allPieces.add(piece7);
 		gameState.allPieces.add(piece8);
 
-		GridPathFinder pathFinder = new GridPathFinder(gameState, new GameGridModel(
-				new GameGridData(), null));
+		GridPathFinder pathFinder = new GridPathFinder(gameState, new GameGridData());
 
 		Vector3f start = new Vector3f(-15.0f, 5.0f, -5.0f);
 		Vector3f end = new Vector3f(-15.0f, 5.0f, -25.0f);
@@ -257,35 +156,12 @@ public class GridPathFinderTest {
 		}
 	}
 
-	private static class GameGridModelStub implements IGameGridModel {
-		private final List<TileData> tileData = new ArrayList<TileData>();
+	private static class GameGridDataStub extends GameGridData {
+		private TileData[][] tileData;
 
-		public List<TileData> getTileData() {
+		@Override
+		public TileData[][] getTileData() {
 			return tileData;
-		}
-
-		public void addTileSelectedListener(IListener listener) {
-			throw new UnsupportedOperationException();
-		}
-
-		public void addUserPieceSelectedListener(IListener listener) {
-			throw new UnsupportedOperationException();
-		}
-
-		public Vector3f getSelectedTileLocation() {
-			throw new UnsupportedOperationException();
-		}
-
-		public TileData[] getTilesToHighlight() {
-			throw new UnsupportedOperationException();
-		}
-
-		public void setSelectedTile(TileData tileData) {
-			throw new UnsupportedOperationException();
-		}
-
-		public void setSelectedUserPiece(PieceInfo pieceInfo) {
-			throw new UnsupportedOperationException();
 		}
 	}
 }
