@@ -1,0 +1,8 @@
+Building the boardgame...
+
+
+$ mvn package
+
+if you are doing this the first time, you will see an error saying that it can't find a dependency.
+
+all jars that can't be found from normal maven repos should be found in the lib directory.
