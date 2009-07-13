@@ -31,7 +31,7 @@ public class MainApplication {
 		canvas3D = createCanvas();
 		universe = new UniverseFactory(canvas3D).createUniverse();
 
-		createFullScreenFrame();
+		createWindowFrame();
 	}
 
 	private void createFullScreenFrame() {
