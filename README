@@ -1,8 +1,35 @@
-Building the boardgame...
 
+------------------------------------------------------------------------
+System Requirements
+------------------------------------------------------------------------
+
+1. Java 3D available at:
+https://java3d.dev.java.net/binary-builds.html
+(this project was built using 1.5.2, other versions may or may not work)
+
+
+------------------------------------------------------------------------
+Building the boardgame
+------------------------------------------------------------------------
 
 $ mvn package
 
-if you are doing this the first time, you will see an error saying that it can't find a dependency.
+If you are doing this the first time, you will see an error saying that 
+it can't find a dependency.  All jars that can't be found from normal 
+maven repos should be found in the lib directory.
 
-all jars that can't be found from normal maven repos should be found in the lib directory.
+The final built jar is located here:
+<project-home>/target/boardgame.jar
+
+
+------------------------------------------------------------------------
+Running the boardgame
+------------------------------------------------------------------------
+
+Go to the location of the jar file mentioned above and run the following
+command:
+
+$java -jar boardgame.jar
+
+
+Enjoy!
