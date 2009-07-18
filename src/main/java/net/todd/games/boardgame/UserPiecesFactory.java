@@ -15,7 +15,7 @@ public class UserPiecesFactory implements IUserPiecesFactory {
 		IMovementRuleCollection moveRuleCollection = MovementRuleCollectionProvider
 				.getRuleCollection();
 		IMoveValidator moveValidator = new MoveValidator(gameState, moveRuleCollection);
-		IGridPathFinder gridPathFinder = new GridPathFinder(gameState, new GameGridData());
+		IGridPathFinder gridPathFinder = new GridPathFinder(gameState, gameGridModel);
 		IUserPiecesModel userPiecesModel = new UserPieceModel(gameState, gameGridModel,
 				moveValidator, gridPathFinder);
 		IUserPiecesView userPiecesView = new UserPiecesView(bounds, picker,
