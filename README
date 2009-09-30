@@ -1,34 +1,23 @@
-------------------------------------------------------------------------
-System Requirements
-------------------------------------------------------------------------
+------------------------------------------------------------------------------
+                          Building the boardgame
+------------------------------------------------------------------------------
+Just run the buid script (build.bat for windows users).
+$ build
 
-1. Java 3D available at:
-https://java3d.dev.java.net/binary-builds.html
-(this project was built using 1.5.2, other versions may or may not work)
+If you are doing this the first time, you will see an error saying that it 
+can't find a few dependencies.  All jars that can't be found from normal maven
+repos should be found in the top-level lib directory.
 
+Once built, the final product is a zip file that contains all the packged 
+libraries as well as a jre containing the proper Java3D native libraries.
 
-------------------------------------------------------------------------
-Building the boardgame
-------------------------------------------------------------------------
+Final zip file located at <project-home>/target/final.
 
-$ mvn package
+------------------------------------------------------------------------------
+                           Running the boardgame
+------------------------------------------------------------------------------
 
-If you are doing this the first time, you will see an error saying that 
-it can't find a dependency.  All jars that can't be found from normal 
-maven repos should be found in the lib directory.
-
-The final built jar is located here:
-<project-home>/target/boardgame.jar
-
-
-------------------------------------------------------------------------
-Running the boardgame
-------------------------------------------------------------------------
-
-Go to the location of the jar file mentioned above and run the following
-command:
-
-$java -jar boardgame.jar
-
+Extract the zip file mentioned about and run the boardgame startup script 
+either by double clicking or by executing from the command line.
 
 Enjoy!
