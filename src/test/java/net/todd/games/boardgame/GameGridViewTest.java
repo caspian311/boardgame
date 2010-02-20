@@ -1,144 +1,100 @@
 package net.todd.games.boardgame;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Node;
 
 import net.todd.common.uitools.IListener;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 public class GameGridViewTest {
-	private BranchGroupFactoryStub branchGroupFactory;
-	private BranchGroupStub branchGroup;
+	private IBranchGroupFactory branchGroupFactory;
+	private IBranchGroup branchGroup;
+	private IPicker picker;
+	private IGameGridView gameGridView;
+	private IListener pickerListener;
+	private TileData mockSelectedTileData;
+	private ITileFactory tileFactory;
 
 	@Before
 	public void setup() {
-		branchGroup = new BranchGroupStub();
-		branchGroupFactory = new BranchGroupFactoryStub();
-		branchGroupFactory.branchGroup = branchGroup;
+		branchGroup = mock(IBranchGroup.class);
+		branchGroupFactory = mock(IBranchGroupFactory.class);
+		picker = mock(IPicker.class);
+		tileFactory = mock(ITileFactory.class);
+		
+		doReturn(branchGroup).when(branchGroupFactory).createBranchGroup();
+		
+		Tile tile = mock(Tile.class);
+		doReturn(tile).when(picker).getSelectedNode();
+		mockSelectedTileData = mock(TileData.class);
+		doReturn(mockSelectedTileData).when(tile).getTileData();
+		
+		gameGridView = new GameGridView(picker, branchGroupFactory, tileFactory);
+		
+		ArgumentCaptor<IListener> pickerListenerCaptor = ArgumentCaptor.forClass(IListener.class);
+		verify(picker).addListener(pickerListenerCaptor.capture());
+		pickerListener = pickerListenerCaptor.getValue();
 	}
 
 	@Test
 	public void testViewNotifiesItsListenersWhenPickerListenerFiresWithATileSelectedNode() {
-		Tile tile = TileFixture.getTile();
-		PickerStub picker = new PickerStub();
-		picker.selectedNode = tile;
-		GameGridView gameGridView = new GameGridView(picker, branchGroupFactory);
-		ListenerStub listener1 = new ListenerStub();
-		ListenerStub listener2 = new ListenerStub();
+		IListener listener1 = mock(IListener.class);
+		IListener listener2 = mock(IListener.class);
 		gameGridView.addTileSelectedListener(listener1);
 		gameGridView.addTileSelectedListener(listener2);
 
-		assertFalse(listener1.fired);
-		assertFalse(listener2.fired);
-		assertNull(gameGridView.getSelectedTile());
+		pickerListener.fireEvent();
 
-		picker.listener.fireEvent();
+		verify(listener1).fireEvent();
+		verify(listener2).fireEvent();
+	}
+	
+	@Test
+	public void whenPickerListenerFiresWithATileSelectedNodeMaketheSelectedTileNodeAvailable() {
+		pickerListener.fireEvent();
 
-		assertTrue(listener1.fired);
-		assertTrue(listener2.fired);
-		assertSame(tile.getTileData(), gameGridView.getSelectedTile());
+		assertSame(mockSelectedTileData, gameGridView.getSelectedTile());
 	}
 
 	@Test
 	public void testViewReturnsBranchCreatedByTheFactory() {
-		PickerStub picker = new PickerStub();
-		GameGridView gameGridView = new GameGridView(picker, branchGroupFactory);
-
 		assertSame(branchGroup, gameGridView.getBranchGroup());
 	}
 
 	@Test
 	public void testViewConstructsGridGivenTileData() {
-		PickerStub picker = new PickerStub();
-		GameGridView gameGridView = new GameGridView(picker, branchGroupFactory);
-		TileData tileDatum1 = TileFixture.getTileData();
-		TileData tileDatum2 = TileFixture.getTileData();
-		TileData tileDatum3 = TileFixture.getTileData();
-		TileData tileDatum4 = TileFixture.getTileData();
+		TileData tileDatum1 = mock(TileData.class);
+		TileData tileDatum2 = mock(TileData.class);
+		TileData tileDatum3 = mock(TileData.class);
+		TileData tileDatum4 = mock(TileData.class);
 		List<TileData> tileData = new ArrayList<TileData>();
 		tileData.add(tileDatum1);
 		tileData.add(tileDatum2);
 		tileData.add(tileDatum3);
 		tileData.add(tileDatum4);
-
+		
+		Tile tile1 = mock(Tile.class);
+		Tile tile2 = mock(Tile.class);
+		Tile tile3 = mock(Tile.class);
+		Tile tile4 = mock(Tile.class);
+		doReturn(tile1).when(tileFactory).createTile(tileDatum1);
+		doReturn(tile2).when(tileFactory).createTile(tileDatum2);
+		doReturn(tile3).when(tileFactory).createTile(tileDatum3);
+		doReturn(tile4).when(tileFactory).createTile(tileDatum4);
+		
 		gameGridView.constructGrid(tileData);
-
-		assertEquals(4, branchGroup.nodes.size());
-		assertEquals(tileDatum1, ((Tile) branchGroup.nodes.get(0))
-				.getTileData());
-		assertEquals(tileDatum2, ((Tile) branchGroup.nodes.get(1))
-				.getTileData());
-		assertEquals(tileDatum3, ((Tile) branchGroup.nodes.get(2))
-				.getTileData());
-		assertEquals(tileDatum4, ((Tile) branchGroup.nodes.get(3))
-				.getTileData());
-	}
-
-	private static class PickerStub implements IPicker {
-		Tile selectedNode;
-		IListener listener;
-
-		public void addListener(IListener listener) {
-			this.listener = listener;
-		}
-
-		public Node getSelectedNode() {
-			return selectedNode;
-		}
-
-		public void removeListener(IListener listener) {
-			throw new UnsupportedOperationException();
-		}
-	}
-
-	private static class ListenerStub implements IListener {
-		boolean fired;
-
-		public void fireEvent() {
-			fired = true;
-		}
-	}
-
-	private static class BranchGroupFactoryStub implements IBranchGroupFactory {
-		BranchGroupStub branchGroup;
-
-		public IBranchGroup createBranchGroup() {
-			return branchGroup;
-		}
-	}
-
-	private static class BranchGroupStub implements IBranchGroup {
-		List<Node> nodes = new ArrayList<Node>();
-
-		public void addChild(Node node) {
-			nodes.add(node);
-		}
-
-		public void addChild(IBranchGroup child) {
-			// throw new UnsupportedOperationException();
-		}
-
-		public void compile() {
-			throw new UnsupportedOperationException();
-		}
-
-		public BranchGroup underlyingImplementation() {
-			throw new UnsupportedOperationException();
-		}
-
-		public void removeAllChildren() {
-			throw new UnsupportedOperationException();
-		}
+		
+		verify(branchGroup).addChild(tile1);
+		verify(branchGroup).addChild(tile2);
+		verify(branchGroup).addChild(tile3);
+		verify(branchGroup).addChild(tile4);
 	}
 }

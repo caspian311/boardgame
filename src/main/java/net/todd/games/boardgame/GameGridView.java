@@ -14,8 +14,11 @@ public class GameGridView implements IGameGridView {
 
 	private TileData selectedTile;
 
+	private final ITileFactory tileFactory;
+
 	public GameGridView(final IPicker picker,
-			IBranchGroupFactory branchGroupFactory) {
+			IBranchGroupFactory branchGroupFactory, ITileFactory tileFactory) {
+		this.tileFactory = tileFactory;
 		board = branchGroupFactory.createBranchGroup();
 
 		picker.addListener(new IListener() {
@@ -32,7 +35,7 @@ public class GameGridView implements IGameGridView {
 
 	public void constructGrid(List<TileData> tileData) {
 		for (TileData tileDatum : tileData) {
-			Tile tile = new Tile(tileDatum);
+			Tile tile = tileFactory.createTile(tileDatum);
 			board.addChild(tile);
 		}
 	}
