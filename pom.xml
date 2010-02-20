@@ -36,6 +36,13 @@
 	</dependencies>
 	<build>
 		<plugins>
+                        <plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-surefire-plugin</artifactId>
+                                <configuration>
+                                        <haltonFailure>false</haltonFailure>
+                                </configuration>
+                        </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
