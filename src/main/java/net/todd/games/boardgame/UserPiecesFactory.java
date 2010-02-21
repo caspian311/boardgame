@@ -19,7 +19,7 @@ public class UserPiecesFactory implements IUserPiecesFactory {
 		IUserPiecesModel userPiecesModel = new UserPieceModel(gameState, gameGridModel,
 				moveValidator, gridPathFinder);
 		IUserPiecesView userPiecesView = new UserPiecesView(bounds, picker,
-				new BranchGroupFactory());
+				new BranchGroupFactory(), new PieceGroupFactory());
 		new UserPiecesPresenter(userPiecesView, userPiecesModel);
 		IBranchGroup branchGroup = userPiecesView.getBranchGroup();
 		return branchGroup;

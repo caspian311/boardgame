@@ -12,10 +12,12 @@ public class UserPiecesView implements IUserPiecesView {
 	private final IBranchGroup allPiecesBranchGroup;
 
 	private final ListenerManager pieceSelectedListenerManager = new ListenerManager();
+	private final IPieceGroupFactory pieceGroupFactory;
 
 	public UserPiecesView(Bounds bounds, final IPicker piecesPicker,
-			IBranchGroupFactory branchGroupFactory) {
+			IBranchGroupFactory branchGroupFactory, IPieceGroupFactory pieceGroupFactory) {
 		this.bounds = bounds;
+		this.pieceGroupFactory = pieceGroupFactory;
 		this.allPiecesBranchGroup = branchGroupFactory.createBranchGroup();
 
 		piecesPicker.addListener(new IListener() {
@@ -31,7 +33,7 @@ public class UserPiecesView implements IUserPiecesView {
 	}
 
 	public void addPiece(PieceInfo pieceInfo) {
-		PieceGroup piece = new PieceGroup(bounds, pieceInfo);
+		PieceGroup piece = pieceGroupFactory.createPieceGroup(bounds, pieceInfo);
 		allPiecesBranchGroup.addChild(piece);
 	}
 

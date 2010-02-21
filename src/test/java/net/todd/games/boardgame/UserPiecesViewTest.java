@@ -1,175 +1,106 @@
 package net.todd.games.boardgame;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Node;
-import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
-import javax.vecmath.Vector3f;
 
 import net.todd.common.uitools.IListener;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 public class UserPiecesViewTest {
-	private IPieceGroup selectedPiece;
-
 	private final Bounds bounds = new BoundingSphere(new Point3d(0, 0, 0), 100);
-	private BranchGroupStub mainBranchGroup;
-	private BranchGroupFactoryStub branchGroupFactory;
+
+	private IBranchGroup allPiecesBranchGroup;
+	private IBranchGroupFactory branchGroupFactory;
+	private IUserPiecesView userPiecesView;
+	private IPicker picker;
+	private IListener pickerListener;
+
+	private IPieceGroupFactory pieceGroupFactory;
 
 	@Before
 	public void setUp() {
-		mainBranchGroup = new BranchGroupStub();
-		branchGroupFactory = new BranchGroupFactoryStub();
-		branchGroupFactory.mainBranchGroup = mainBranchGroup;
+		picker = mock(IPicker.class);
+		pieceGroupFactory = mock(IPieceGroupFactory.class);
+		branchGroupFactory = mock(IBranchGroupFactory.class);
+
+		allPiecesBranchGroup = mock(IBranchGroup.class);
+
+		doReturn(allPiecesBranchGroup).when(branchGroupFactory)
+				.createBranchGroup();
+
+		userPiecesView = new UserPiecesView(bounds, picker, branchGroupFactory,
+				pieceGroupFactory);
+
+		ArgumentCaptor<IListener> pickerListenerCaptor = ArgumentCaptor
+				.forClass(IListener.class);
+		verify(picker).addListener(pickerListenerCaptor.capture());
+		pickerListener = pickerListenerCaptor.getValue();
 	}
 
 	@Test
 	public void testAddingPiecesToViewAddsItToCorrectBranchGroup() {
-		PickerStub picker = new PickerStub();
-		UserPiecesView userPiecesView = new UserPiecesView(bounds, picker,
-				branchGroupFactory);
+		PieceInfo pieceInfo1 = mock(PieceInfo.class);
+		PieceInfo pieceInfo2 = mock(PieceInfo.class);
+		PieceInfo pieceInfo3 = mock(PieceInfo.class);
 
-		PieceInfo pieceInfo1 = new PieceInfo();
-		pieceInfo1.setPosition(new Vector3f(1f, 2f, 3f));
-		pieceInfo1.setColor(new Color3f(1f, 2f, 3f));
-		pieceInfo1.setTeam(Team.ONE);
+		PieceGroup pieceGroup1 = mock(PieceGroup.class);
+		PieceGroup pieceGroup2 = mock(PieceGroup.class);
+		PieceGroup pieceGroup3 = mock(PieceGroup.class);
 
-		PieceInfo pieceInfo2 = new PieceInfo();
-		pieceInfo2.setPosition(new Vector3f(1f, 2f, 3f));
-		pieceInfo2.setColor(new Color3f(1f, 2f, 3f));
-		pieceInfo2.setTeam(Team.TWO);
-
-		PieceInfo pieceInfo3 = new PieceInfo();
-		pieceInfo3.setPosition(new Vector3f(1f, 2f, 3f));
-		pieceInfo3.setColor(new Color3f(1f, 2f, 3f));
-		pieceInfo3.setTeam(Team.TWO);
+		doReturn(pieceGroup1).when(pieceGroupFactory).createPieceGroup(bounds,
+				pieceInfo1);
+		doReturn(pieceGroup2).when(pieceGroupFactory).createPieceGroup(bounds,
+				pieceInfo2);
+		doReturn(pieceGroup3).when(pieceGroupFactory).createPieceGroup(bounds,
+				pieceInfo3);
 
 		userPiecesView.addPiece(pieceInfo1);
 		userPiecesView.addPiece(pieceInfo2);
 		userPiecesView.addPiece(pieceInfo3);
 
-		assertEquals(3, mainBranchGroup.nodeChildren.size());
+		verify(allPiecesBranchGroup).addChild(pieceGroup1);
+		verify(allPiecesBranchGroup).addChild(pieceGroup2);
+		verify(allPiecesBranchGroup).addChild(pieceGroup3);
 	}
 
 	@Test
 	public void testListenersToViewAreNotifiedWhenSomethingIsPicked() {
-		ListenerStub listener = new ListenerStub();
-		PickerStub picker = new PickerStub();
-		UserPiecesView userPiecesView = new UserPiecesView(bounds, picker,
-				branchGroupFactory);
-
-		picker.listener.fireEvent();
-
-		assertFalse(listener.eventFired);
-
+		IListener listener = mock(IListener.class);
 		userPiecesView.addPieceSelectedListener(listener);
 
-		picker.listener.fireEvent();
-
-		assertTrue(listener.eventFired);
+		pickerListener.fireEvent();
+		verify(listener).fireEvent();
 	}
 
 	@Test
+	public void testPieceSelectedListenerNotifiedWhenPickerListenerFiresEvent() {
+		IListener listener = mock(IListener.class);
+		userPiecesView.addPieceSelectedListener(listener);
+		
+		pickerListener.fireEvent();
+		
+		verify(listener).fireEvent();
+	}
+	
+	@Test
 	public void testViewGetsSelectedPieceBeforeNotifyingListeners() {
-		PickerStub picker = new PickerStub();
-		PieceInfo pieceInfo = new PieceInfo();
-		pieceInfo.setPosition(new Vector3f());
-		pieceInfo.setColor(new Color3f());
-		picker.selectedNode = new SelectablePiece(new PieceGroupMock(pieceInfo));
-		final UserPiecesView userPiecesView = new UserPiecesView(bounds,
-				picker, branchGroupFactory);
-		userPiecesView.addPieceSelectedListener(new IListener() {
-			public void fireEvent() {
-				selectedPiece = userPiecesView.getSelectedPiece();
-			}
-		});
-
-		assertNull(selectedPiece);
-
-		picker.listener.fireEvent();
-
-		assertSame(selectedPiece, picker.selectedNode.getPiece());
-	}
-
-	private static class PickerStub implements IPicker {
-		IListener listener;
-		SelectablePiece selectedNode;
-
-		public void addListener(IListener listener) {
-			this.listener = listener;
-		}
-
-		public Node getSelectedNode() {
-			return selectedNode;
-		}
-
-		public void removeListener(IListener listener) {
-			throw new UnsupportedOperationException();
-		}
-	}
-
-	private static class BranchGroupFactoryStub implements IBranchGroupFactory {
-		IBranchGroup mainBranchGroup;
-
-		public IBranchGroup createBranchGroup() {
-			return mainBranchGroup;
-		}
-	}
-
-	private static class BranchGroupStub implements IBranchGroup {
-		List<Node> nodeChildren = new ArrayList<Node>();
-		List<IBranchGroup> bgChildren = new ArrayList<IBranchGroup>();
-
-		public void addChild(Node child) {
-			nodeChildren.add(child);
-		}
-
-		public void addChild(IBranchGroup child) {
-			bgChildren.add(child);
-		}
-
-		public void compile() {
-			throw new UnsupportedOperationException();
-		}
-
-		public BranchGroup underlyingImplementation() {
-			throw new UnsupportedOperationException();
-		}
-
-		public void removeAllChildren() {
-			throw new UnsupportedOperationException();
-		}
-	}
-
-	private static class ListenerStub implements IListener {
-		boolean eventFired;
-
-		public void fireEvent() {
-			eventFired = true;
-		}
-	}
-
-	private static class PieceGroupMock extends PieceGroup {
-		public PieceGroupMock(PieceInfo pieceInfo) {
-			super(null, pieceInfo);
-		}
-
-		@Override
-		public void moveTo(BranchGroup branchGroup) {
-			// do nothing
-		}
+		SelectablePiece selectedNode = mock(SelectablePiece.class);
+		IPieceGroup selectedPiece = mock(IPieceGroup.class);
+		
+		doReturn(selectedNode).when(picker).getSelectedNode();
+		doReturn(selectedPiece).when(selectedNode).getPiece();
+		
+		pickerListener.fireEvent();
+		
+		assertSame(selectedPiece, userPiecesView.getSelectedPiece());
 	}
 }
