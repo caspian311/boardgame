@@ -1,126 +1,79 @@
 package net.todd.games.boardgame;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Node;
-
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InOrder;
 
 public class HighlightedGridViewTest {
-	@Test
-	public void testBranchGroupGottenFromGridViewWasGeneratedByFactoryGivenToTheGridView() {
-		BranchGroupFactoryStub branchGroupFactory = new BranchGroupFactoryStub();
-		branchGroupFactory.firstBranchGroup = new BranchGroupStub();
-		IHighlightedGridView highlightedGridView = new HighlightedGridView(
-				branchGroupFactory);
-		assertSame(branchGroupFactory.firstBranchGroup, highlightedGridView
-				.getBranchGroup());
+	private IHighlightedGridView highlightedGridView;
+	private IBranchGroup branchGroup;
+	private IBranchGroupFactory branchGroupFactory;
+	private IBranchGroup highlitedStuffBranchGroup;
+	private ITileFactory tileFactory;
+
+	@Before
+	public void setUp() {
+		branchGroupFactory = mock(IBranchGroupFactory.class);
+		branchGroup = mock(IBranchGroup.class);
+		highlitedStuffBranchGroup = mock(IBranchGroup.class);
+
+		tileFactory = mock(ITileFactory.class);
+		
+		when(branchGroupFactory.createBranchGroup()).thenReturn(branchGroup, highlitedStuffBranchGroup);
+
+		highlightedGridView = new HighlightedGridView(branchGroupFactory, tileFactory);
 	}
 
 	@Test
-	public void testBranchGroupChildrenAreClearedFirstBeforeHighlitingTiles() {
-		BranchGroupFactoryStub branchGroupFactory = new BranchGroupFactoryStub();
-		BranchGroupStub branchGroupStub = new BranchGroupStub();
-		branchGroupFactory.firstBranchGroup = branchGroupStub;
+	public void testBranchGroupGottenFromGridViewWasGeneratedByFactoryGivenToTheGridView() {
+		assertSame(branchGroup, highlightedGridView.getBranchGroup());
+	}
 
-		IHighlightedGridView highlightedGridView = new HighlightedGridView(
-				branchGroupFactory);
-
-		assertEquals(0, branchGroupStub.removeAllChildrenCallCount);
+	@Test
+	public void testBranchGroupChildrenAreClearedFirstBeforeAddingHighlitedStuff() {
 		highlightedGridView.highlightTiles(new TileData[] {});
-		assertEquals(1, branchGroupStub.removeAllChildrenCallCount);
+		
+		InOrder inOrder = inOrder(branchGroup);
+		inOrder.verify(branchGroup).removeAllChildren();
+		inOrder.verify(branchGroup).addChild(highlitedStuffBranchGroup);
 	}
 
 	@Test
 	public void testHighlightGivenTiles() {
-		BranchGroupFactoryStub branchGroupFactory = new BranchGroupFactoryStub();
-		BranchGroupStub firstBranchGroupStub = new BranchGroupStub();
-		BranchGroupStub secondBranchGroupStub = new BranchGroupStub();
-		branchGroupFactory.firstBranchGroup = firstBranchGroupStub;
-		branchGroupFactory.secondBranchGroup = secondBranchGroupStub;
-		IHighlightedGridView highlightedGridView = new HighlightedGridView(
-				branchGroupFactory);
-
-		int tileSize = new Random().nextInt(100);
-		if (tileSize == 0) {
-			tileSize = 1;
-		}
-		TileData[] tiles = new TileData[tileSize];
-		tiles[0] = new TileData();
-		tiles[0].setPosition(new float[] { 0f, 0f, 0f });
-		tiles[0].setColor(new float[] { 0f, 0f, 0f });
-		tiles[0].setSize(1f);
-
-		for (int i = 1; i < tileSize; i++) {
-			tiles[i] = new TileData();
-			tiles[i].setPosition(new float[] { 0f, 0f, 0f });
-			tiles[i].setColor(new float[] { 0f, 0f, 0f });
-			tiles[i].setSize(1f);
-		}
-
-		assertNull(firstBranchGroupStub.group);
-		highlightedGridView.highlightTiles(tiles);
-		assertSame(firstBranchGroupStub.group, secondBranchGroupStub);
-		assertEquals(tiles.length, secondBranchGroupStub.allChildren.size());
-
-		assertTrue(secondBranchGroupStub.allChildren.get(0) instanceof Tile);
+		TileData tileDatum1 = mock(TileData.class);
+		TileData tileDatum2 = mock(TileData.class);
+		TileData tileDatum3 = mock(TileData.class);
+		
+		doReturn(new float[]{1f, 1f, 1f}).when(tileDatum1).getPosition();
+		doReturn(new float[]{1f, 1f, 1f}).when(tileDatum2).getPosition();
+		doReturn(new float[]{1f, 1f, 1f}).when(tileDatum3).getPosition();
+		
+		Tile tile1 = mock(Tile.class);
+		Tile tile2 = mock(Tile.class);
+		Tile tile3 = mock(Tile.class);
+		
+		doReturn(tile1).when(tileFactory).createTile(tileDatum1);
+		doReturn(tile2).when(tileFactory).createTile(tileDatum2);
+		doReturn(tile3).when(tileFactory).createTile(tileDatum3);
+		
+		highlightedGridView.highlightTiles(new TileData[] {tileDatum1, tileDatum2, tileDatum3});
+		
+		verify(highlitedStuffBranchGroup).addChild(tile1);
+		verify(highlitedStuffBranchGroup).addChild(tile2);
+		verify(highlitedStuffBranchGroup).addChild(tile3);
 	}
 
 	@Test
 	public void testBranchGroupChildrenAreRemovedWhenClearHighlightedTilesIsSelected() {
-		BranchGroupFactoryStub branchGroupFactory = new BranchGroupFactoryStub();
-		BranchGroupStub branchGroupStub = new BranchGroupStub();
-		branchGroupFactory.firstBranchGroup = branchGroupStub;
-		IHighlightedGridView highlightedGridView = new HighlightedGridView(
-				branchGroupFactory);
-
-		assertEquals(0, branchGroupStub.removeAllChildrenCallCount);
 		highlightedGridView.clearHighlightedTiles();
-		assertEquals(1, branchGroupStub.removeAllChildrenCallCount);
-	}
-
-	private static class BranchGroupFactoryStub implements IBranchGroupFactory {
-		private int call;
-		private BranchGroupStub secondBranchGroup;
-		private IBranchGroup firstBranchGroup;
-
-		public IBranchGroup createBranchGroup() {
-			call++;
-			return call == 1 ? firstBranchGroup : secondBranchGroup;
-		}
-	}
-
-	private static class BranchGroupStub implements IBranchGroup {
-		private int removeAllChildrenCallCount;
-		private IBranchGroup group;
-		private final List<Node> allChildren = new ArrayList<Node>();
-
-		public void addChild(IBranchGroup group) {
-			this.group = group;
-		}
-
-		public void addChild(Node child) {
-			allChildren.add(child);
-		}
-
-		public void compile() {
-			throw new UnsupportedOperationException();
-		}
-
-		public BranchGroup underlyingImplementation() {
-			throw new UnsupportedOperationException();
-		}
-
-		public void removeAllChildren() {
-			removeAllChildrenCallCount++;
-		}
+		
+		verify(branchGroup).removeAllChildren();
 	}
 }

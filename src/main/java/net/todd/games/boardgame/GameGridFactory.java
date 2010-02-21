@@ -11,7 +11,7 @@ public class GameGridFactory implements IGameGridFactory {
 
 	public IBranchGroup constructHighlightedGrid() {
 		IHighlightedGridView highlightedGridView = new HighlightedGridView(
-				new BranchGroupFactory());
+				new BranchGroupFactory(), new TileFactory());
 		IGameGridModel gameGridModel = GameGridModelProvider.getModel();
 		new HighlightGridPresenter(highlightedGridView, gameGridModel);
 		return highlightedGridView.getBranchGroup();
