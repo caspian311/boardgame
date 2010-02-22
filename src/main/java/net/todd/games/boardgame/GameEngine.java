@@ -8,29 +8,24 @@ public class GameEngine implements IGameEngine {
 	private final ISceneGenerator sceneGenerator;
 	private final IPieceGenerator pieceGenerator;
 	private final ICameraGenerator cameraGenerator;
-	private final Bounds bounds;
-	private final IGameGridFactory gameGridFactory;
-	private final IUserPiecesFactory userPiecesFactory;
+	// XXX this is a duplicate variable
+	private final static Bounds BOUNDS = new BoundingSphere(new Point3d(0, 0, 0), 100);
 
 	public GameEngine(ISceneGenerator sceneGenerator,
 			IPieceGenerator pieceGenerator, ICameraGenerator cameraGenerator) {
 		this.sceneGenerator = sceneGenerator;
 		this.pieceGenerator = pieceGenerator;
 		this.cameraGenerator = cameraGenerator;
-
-		bounds = new BoundingSphere(new Point3d(0, 0, 0), 100);
-		gameGridFactory = new GameGridFactory();
-		userPiecesFactory = new UserPiecesFactory(bounds);
 	}
 
 	public void createScene(IPicker picker) {
-		sceneGenerator.lightScene(bounds);
-		sceneGenerator.createGameGrid(picker, gameGridFactory);
-		sceneGenerator.createBackground(bounds);
-		pieceGenerator.createPieces(picker, userPiecesFactory);
+		sceneGenerator.lightScene(BOUNDS);
+		sceneGenerator.createGameGrid(picker, new GameGridFactory());
+		sceneGenerator.createBackground(BOUNDS);
+		pieceGenerator.createPieces(picker, new UserPiecesFactory(BOUNDS));
 	}
 
 	public void createCamera(IUniverse su) {
-		cameraGenerator.createCamera(su, bounds);
+		cameraGenerator.createCamera(su, BOUNDS);
 	}
 }
