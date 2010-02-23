@@ -1,10 +1,10 @@
 package net.todd.games.boardgame;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.util.List;
 
@@ -16,142 +16,90 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class GameGridModelTest {
-	private Vector3f positionSelected;
-	private TileData[] selectedTilesToHighlight;
+	private IGameGridModel model;
+	private ITileHighlighterCalculator tileHighlighterCalculator;
+	private IGameGridData gameGridData;
 
 	@Before
 	public void setUp() {
-		positionSelected = null;
+		gameGridData = mock(IGameGridData.class);
+		tileHighlighterCalculator = mock(ITileHighlighterCalculator.class);
+		
+		model = new GameGridModel(gameGridData, tileHighlighterCalculator);
 	}
 
 	@Test
 	public void testGetTileDataPullsFromGridData() {
-		TileData[][] tileData = new TileData[][] {};
-		GameGridDataStub gameGridData = new GameGridDataStub();
-		gameGridData.tileData = tileData;
-		GameGridModel model = new GameGridModel(gameGridData, null);
+		TileData tileData1 = mock(TileData.class);
+		TileData tileData2 = mock(TileData.class);
+		TileData tileData3 = mock(TileData.class);
+		TileData tileData4 = mock(TileData.class);
+		TileData[][] tileData = new TileData[][] {{tileData1, tileData2}, {tileData3, tileData4}};
+		doReturn(tileData).when(gameGridData).getTileData();
+		
 		List<TileData> listOfTiles = model.getTileData();
-		for (TileData[] columns : tileData) {
-			for (TileData tileDatum : columns) {
-				listOfTiles.contains(tileDatum);
-			}
-		}
+		assertEquals(4, listOfTiles.size());
+		assertSame(tileData1, listOfTiles.get(0));
+		assertSame(tileData2, listOfTiles.get(1));
+		assertSame(tileData3, listOfTiles.get(2));
+		assertSame(tileData4, listOfTiles.get(3));
 	}
 
 	@Test
 	public void testModelNotifiesListenersWhenAGridPositionIsSelected() {
-		GameGridModel model = new GameGridModel(null, null);
-		ListenerStub listenerStub1 = new ListenerStub();
-		ListenerStub listenerStub2 = new ListenerStub();
-		model.addTileSelectedListener(listenerStub1);
-		model.addTileSelectedListener(listenerStub2);
-
-		assertFalse(listenerStub1.eventFired);
-		assertFalse(listenerStub2.eventFired);
-
-		TileData tileData = new TileData();
-		tileData.setPosition(new float[] { 1f, 2f, 3f });
+		TileData tileData = mock(TileData.class);
+		doReturn(new float[] { 1f, 2f, 3f }).when(tileData).getPosition();
+		
+		IListener listener = mock(IListener.class);
+		model.addTileSelectedListener(listener);
+		
 		model.setSelectedTile(tileData);
 
-		assertTrue(listenerStub1.eventFired);
-		assertTrue(listenerStub2.eventFired);
+		verify(listener).fireEvent();
 	}
 
 	@Test
 	public void testModelMakesSelectedPositionInformationAvailableBeforeNotifyingListeners() {
-		final GameGridModel model = new GameGridModel(null, null);
-		model.addTileSelectedListener(new IListener() {
-			public void fireEvent() {
-				positionSelected = model.getSelectedTileLocation();
-			}
-		});
-
-		TileData tileData = new TileData();
-		tileData.setPosition(new float[] { 1f, 2f, 3f });
+		float[] position = new float[] { 1f, 2f, 3f };
+		
+		TileData tileData = mock(TileData.class);
+		doReturn(position).when(tileData).getPosition();
+		
 		model.setSelectedTile(tileData);
-		assertEquals(new Vector3f(tileData.getPosition()), positionSelected);
+		
+		Vector3f selectedTilePosition = model.getSelectedTileLocation();
+		assertEquals(position[0], selectedTilePosition.x);
+		assertEquals(position[1], selectedTilePosition.y);
+		assertEquals(position[2], selectedTilePosition.z);
 	}
 
 	@Test
 	public void testSettingSelectedUserPieceNotifiesAllListeners() {
-		GameGridModel model = new GameGridModel(null, null);
-		ListenerStub listener1 = new ListenerStub();
-		ListenerStub listener2 = new ListenerStub();
-		model.addUserPieceSelectedListener(listener1);
-		model.addUserPieceSelectedListener(listener2);
-
-		assertFalse(listener1.eventFired);
-		assertFalse(listener2.eventFired);
+		IListener listener = mock(IListener.class);
+		model.addUserPieceSelectedListener(listener);
 
 		model.setSelectedUserPiece(null);
 
-		assertTrue(listener1.eventFired);
-		assertTrue(listener2.eventFired);
+		verify(listener).fireEvent();
 	}
 
 	@Test
-	public void testModelFindsAllAvailableMovesForPieceBasedOnGivenSelectedUserPiece() {
-		TileHighlighterCalculatorStub tileHighlighterCalculator = new TileHighlighterCalculatorStub();
-
-		GameGridDataStub gameGridData = new GameGridDataStub();
-		TileData tileData1 = new TileData();
-		TileData tileData2 = new TileData();
-		TileData tileData3 = new TileData();
-		TileData tileData4 = new TileData();
-		TileData tileData5 = new TileData();
-		TileData tileData6 = new TileData();
-		gameGridData.tileData = new TileData[][] {
-				{ tileData1, tileData2, tileData3 },
-				{ tileData4, tileData5, tileData6, } };
-
-		tileHighlighterCalculator.tilesToHighlight = new TileData[] {
-				tileData3, tileData4, tileData5 };
-
-		PieceInfo pieceInfo = new PieceInfo();
-		final GameGridModel model = new GameGridModel(gameGridData,
-				tileHighlighterCalculator);
-		model.addUserPieceSelectedListener(new IListener() {
-			public void fireEvent() {
-				selectedTilesToHighlight = model.getTilesToHighlight();
-			}
-		});
-
-		assertNull(tileHighlighterCalculator.givenPieceInfo);
-		assertNull(selectedTilesToHighlight);
-
+	public void testTileHighlighterIsGivenSelectedPiece() {
+		PieceInfo pieceInfo = mock(PieceInfo.class);
 		model.setSelectedUserPiece(pieceInfo);
-
-		assertSame(pieceInfo, tileHighlighterCalculator.givenPieceInfo);
-		for (int i = 0; i < tileHighlighterCalculator.tilesToHighlight.length; i++) {
-			assertSame(tileHighlighterCalculator.tilesToHighlight[i],
-					selectedTilesToHighlight[i]);
-		}
+		
+		model.getTilesToHighlight();
+		
+		verify(tileHighlighterCalculator).calculateTilesToHighlight(pieceInfo);
 	}
+	
+	@Test
+	public void testReturnWhateverCalculatorReturns() {
+		TileData[] expectedHighlightedTiles = new TileData[]{};
+		doReturn(expectedHighlightedTiles).when(tileHighlighterCalculator).calculateTilesToHighlight(null);
 
-	private static class GameGridDataStub implements IGameGridData {
-		TileData[][] tileData;
-
-		public TileData[][] getTileData() {
-			return tileData;
-		}
-	}
-
-	private static class ListenerStub implements IListener {
-		boolean eventFired;
-
-		public void fireEvent() {
-			eventFired = true;
-		}
-	}
-
-	private static class TileHighlighterCalculatorStub implements
-			ITileHighlighterCalculator {
-		TileData[] tilesToHighlight;
-		PieceInfo givenPieceInfo;
-
-		public TileData[] calculateTilesToHighlight(PieceInfo pieceInfo) {
-			this.givenPieceInfo = pieceInfo;
-			return tilesToHighlight;
-		}
+		TileData[] actualHighlightedTiles = model.getTilesToHighlight();
+		
+		assertSame(actualHighlightedTiles, expectedHighlightedTiles);
 	}
 }
