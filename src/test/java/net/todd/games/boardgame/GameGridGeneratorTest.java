@@ -74,30 +74,27 @@ public class GameGridGeneratorTest {
 		verify(branchGroup).addChild(directionalLight);
 	}
 	
-//	@Test
-//	public void testCreateGameGridAddsGameGridToBranchGroup() {
-//		GameGridGenerator gridGenerator = new GameGridGenerator(branchGroup);
-//
-//		assertEquals(0, branchGroup.addedGroup.size());
-//		assertFalse(gameGridFactory.gameGridconstructed);
-//
-//		PickerStub picker = new PickerStub();
-//		gridGenerator.createGameGrid(picker, gameGridFactory);
-//
-//		assertTrue(gameGridFactory.gameGridconstructed);
-//		assertTrue(branchGroup.addedGroup.size() > 0);
-//	}
-//
-//	@Test
-//	public void testCreateGameGridAlsoCreatesHighlightedGrid() {
-//		GameGridGenerator gridGenerator = new GameGridGenerator(branchGroup);
-//
-//		PickerStub picker = new PickerStub();
-//
-//		assertFalse(gameGridFactory.highlightedGridContructed);
-//		gridGenerator.createGameGrid(picker, gameGridFactory);
-//		assertTrue(gameGridFactory.highlightedGridContructed);
-//
-//		assertEquals(2, branchGroup.addedGroup.size());
-//	}
+	@Test
+	public void testCreateGameGridAddsGameGridToBranchGroup() {
+		IPicker picker = mock(IPicker.class);
+		IBranchGroup gameGrid = mock(IBranchGroup.class);
+		
+		doReturn(gameGrid).when(gameGridFactory).constructGameGrid(picker);
+		
+		gridGenerator.createGameGrid(picker, gameGridFactory);
+		
+		verify(branchGroup).addChild(gameGrid);
+	}
+
+	@Test
+	public void testCreateGameGridAlsoCreatesHighlightedGrid() {
+		IPicker picker = mock(IPicker.class);
+		IBranchGroup highlightedGrid = mock(IBranchGroup.class);
+		
+		doReturn(highlightedGrid).when(gameGridFactory).constructHighlightedGrid();
+		
+		gridGenerator.createGameGrid(picker, gameGridFactory);
+		
+		verify(branchGroup).addChild(highlightedGrid);
+	}
 }
