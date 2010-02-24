@@ -1,107 +1,51 @@
 package net.todd.games.boardgame;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
-import javax.vecmath.Vector3f;
 
 import net.todd.common.uitools.IListener;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 public class GameGridPresenterTest {
-	private GameGridViewStub view;
-	private GameGridModelStub model;
+	private IGameGridView view;
+	private IGameGridModel model;
+	private List<TileData> tileDataList;
+	private IListener tileSelectedListener;
 
 	@Before
 	public void setUp() {
-		view = new GameGridViewStub();
-		model = new GameGridModelStub();
+		view = mock(IGameGridView.class);
+		model = mock(IGameGridModel.class);
+		
+		tileDataList = Arrays.asList();
+		doReturn(tileDataList).when(model).getTileData();
+		
+		new GameGridPresenter(view, model);
+		
+		ArgumentCaptor<IListener> tileSelectedListenerCaptor = ArgumentCaptor.forClass(IListener.class);
+		verify(view).addTileSelectedListener(tileSelectedListenerCaptor.capture());
+		tileSelectedListener = tileSelectedListenerCaptor.getValue();
 	}
 
 	@Test
 	public void testGridIsCreatedWithDimensionFromModel() {
-		model.data = new ArrayList<TileData>();
-
-		assertNull(view.data);
-		new GameGridPresenter(view, model);
-		assertEquals(model.data, view.data);
+		verify(view).constructGrid(tileDataList);
 	}
 
 	@Test
 	public void testPresenterListensForSelectedTilesFromViewAndNotifiesModel() {
-		model.data = new ArrayList<TileData>();
+		TileData selectedTileData = mock(TileData.class);
+		doReturn(selectedTileData).when(view).getSelectedTile();
+		
+		tileSelectedListener.fireEvent();
 
-		view.tileData = new TileData();
-		view.tileData.setPosition(new float[] { 1f, 2f, 3f });
-
-		new GameGridPresenter(view, model);
-		assertNull(model.selectedTile);
-		view.listener.fireEvent();
-
-		ComparisonUtil.compareArrays(view.tileData.getPosition(),
-				model.selectedTile.getPosition());
-	}
-
-	public class GameGridViewStub implements IGameGridView {
-		TileData[] tilesToHighlight;
-		private List<TileData> data;
-		private IListener listener;
-		private TileData tileData;
-
-		public void addTileSelectedListener(IListener listener) {
-			this.listener = listener;
-		}
-
-		public IBranchGroup getBranchGroup() {
-			throw new UnsupportedOperationException();
-		}
-
-		public TileData getSelectedTile() {
-			return tileData;
-		}
-
-		public void constructGrid(List<TileData> data) {
-			this.data = data;
-		}
-	}
-
-	private static class GameGridModelStub implements IGameGridModel {
-		IListener listener;
-		TileData[] tilesToHighlight;
-		TileData selectedTile;
-		List<TileData> data;
-
-		public List<TileData> getTileData() {
-			return data;
-		}
-
-		public void addTileSelectedListener(IListener listener) {
-			throw new UnsupportedOperationException();
-		}
-
-		public Vector3f getSelectedTileLocation() {
-			throw new UnsupportedOperationException();
-		}
-
-		public void setSelectedTile(TileData position) {
-			selectedTile = position;
-		}
-
-		public TileData[] getTilesToHighlight() {
-			return tilesToHighlight;
-		}
-
-		public void addUserPieceSelectedListener(IListener listener) {
-			this.listener = listener;
-		}
-
-		public void setSelectedUserPiece(PieceInfo pieceInfo) {
-			throw new UnsupportedOperationException();
-		}
+		verify(model).setSelectedTile(selectedTileData);
 	}
 }
