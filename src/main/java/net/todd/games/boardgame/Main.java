@@ -6,8 +6,14 @@ public class Main {
 	}
 
 	private void execute() {
-		GameLauncher gameLauncher = new GameLauncher();
-		MainApplication mainApplication = new MainApplication("Board Game", gameLauncher);
+		IBranchGroupFactory branchGroupFactory = new BranchGroupFactory();
+		IGameEngineFactory gameEngineFactory = new GameEngineFactory();
+		IUniverse universe = new UniverseProvider().createUniverse();
+		IBranchGroup branchGroup = branchGroupFactory.createBranchGroup();
+		IPicker picker = new PickerFactory(universe).createPicker(branchGroup);
+		MainApplication mainApplication = new MainApplication("Board Game",
+				new GameLauncher(universe, branchGroup, gameEngineFactory
+						.createGameEngine(branchGroup), picker));
 		mainApplication.start();
 	}
 }

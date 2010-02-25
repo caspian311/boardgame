@@ -10,28 +10,19 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import javax.media.j3d.Canvas3D;
 import javax.swing.JFrame;
-
-import com.sun.j3d.utils.universe.SimpleUniverse;
 
 public class MainApplication {
 	private final IGameLauncher gameLauncher;
 	private final String title;
 
-	private final Canvas3D canvas3D;
-	private final IUniverse universe;
-
 	private JFrame frame;
+	private final IUniverse universe;
 
 	public MainApplication(String title, IGameLauncher gameLauncher) {
 		this.title = title;
 		this.gameLauncher = gameLauncher;
-
-		canvas3D = createCanvas();
-		universe = new UniverseFactory(canvas3D).createUniverse();
-
-		createWindowFrame();
+		universe = new UniverseProvider().createUniverse();
 	}
 
 	private void createFullScreenFrame() {
@@ -48,7 +39,7 @@ public class MainApplication {
 		frame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
 		frame.setUndecorated(true);
 
-		canvas3D.addKeyListener(new KeyAdapter() {
+		universe.getCanvas().addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == 27) {
@@ -57,7 +48,7 @@ public class MainApplication {
 			}
 
 		});
-		frame.getContentPane().add(canvas3D, BorderLayout.CENTER);
+		frame.getContentPane().add(universe.getCanvas(), BorderLayout.CENTER);
 
 		frame.setVisible(true);
 	}
@@ -79,7 +70,7 @@ public class MainApplication {
 		int topLeftYCoordinate = (screenSize.height / 2) - (800 / 2);
 		frame.setLocation(topLeftXCoordinate, topLeftYCoordinate);
 
-		canvas3D.addKeyListener(new KeyAdapter() {
+		universe.getCanvas().addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == 27) {
@@ -88,7 +79,7 @@ public class MainApplication {
 			}
 
 		});
-		frame.getContentPane().add(canvas3D, BorderLayout.CENTER);
+		frame.getContentPane().add(universe.getCanvas(), BorderLayout.CENTER);
 
 		frame.setVisible(true);
 	}
@@ -98,24 +89,16 @@ public class MainApplication {
 			for (WindowListener windowListener : frame.getWindowListeners()) {
 				frame.removeWindowListener(windowListener);
 			}
-			for (KeyListener keyListener : canvas3D.getKeyListeners()) {
-				canvas3D.removeKeyListener(keyListener);
+			for (KeyListener keyListener : universe.getCanvas().getKeyListeners()) {
+				universe.getCanvas().removeKeyListener(keyListener);
 			}
 			frame.setVisible(false);
 			frame.dispose();
 		}
 	}
 
-	private Canvas3D createCanvas() {
-		Canvas3D canvas3D = new Canvas3D(SimpleUniverse.getPreferredConfiguration());
-		canvas3D.setFocusable(true);
-		canvas3D.requestFocus();
-		return canvas3D;
-	}
-
 	public void start() {
-		IBranchGroupFactory branchGroupFactory = new BranchGroupFactory();
-		IGameEngineFactory gameEngineFactory = new GameEngineFactory();
-		gameLauncher.launchGame(universe, branchGroupFactory, gameEngineFactory);
+		createWindowFrame();
+		gameLauncher.launchGame();
 	}
 }
