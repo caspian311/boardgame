@@ -3,6 +3,12 @@ package net.todd.games.boardgame;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,32 +17,51 @@ import javax.vecmath.Vector3f;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 public class TileHighlighterCalculatorTest {
-	private GameGridDataStub gameGridData;
-	private MovementRuleCollection movementRuleCollection;
+	private IGameGridData gameGridData;
+	private IMovementRuleCollection ruleCollection;
 
-	private PieceInfo pieceReceived;
+	private ITileHighlighterCalculator tileHighlighterCalculator;
+	private TileData tile1;
+	private TileData tile2;
+	private TileData tile3;
+	private TileData tile4;
+	private TileData tile5;
+	private TileData tile6;
+	private IRule failingRule;
 
 	@Before
-	public void setUp() {
-		movementRuleCollection = new MovementRuleCollection();
-		gameGridData = new GameGridDataStub();
+	public void setUp() throws ValidMoveException {
+		ruleCollection = mock(IMovementRuleCollection.class);
+		gameGridData = mock(IGameGridData.class);
+		
+		tileHighlighterCalculator = new TileHighlighterCalculator(
+				gameGridData, ruleCollection);
+		
+		tile1 = new TileData();
+		tile1.setPosition(new float[] { 0f, 0f, 0f });
+		tile2 = new TileData();
+		tile2.setPosition(new float[] { 0f, 0f, 0f });
+		tile3 = new TileData();
+		tile3.setPosition(new float[] { 0f, 0f, 0f });
+		tile4 = new TileData();
+		tile4.setPosition(new float[] { 0f, 0f, 0f });
+		tile5 = new TileData();
+		tile5.setPosition(new float[] { 0f, 0f, 0f });
+		tile6 = new TileData();
+		tile6.setPosition(new float[] { 0f, 0f, 0f });
+		TileData[][] tileData = new TileData[][] { { tile1, tile2, tile3 },
+				{ tile4, tile5, tile6 } };
+		doReturn(tileData).when(gameGridData).getTileData();
+		
+		failingRule = mock(IRule.class);
+		doThrow(new ValidMoveException("")).when(failingRule).validateMove(any(PieceInfo.class), any(Vector3f.class));
 	}
 
 	@Test
 	public void testIfNoRulesComplainAllTilesGetHighlighted() {
-		TileData tile1 = new TileData();
-		TileData tile2 = new TileData();
-		TileData tile3 = new TileData();
-		TileData tile4 = new TileData();
-		TileData tile5 = new TileData();
-		TileData tile6 = new TileData();
-		gameGridData.tileData = new TileData[][] { { tile1, tile2, tile3 },
-				{ tile4, tile5, tile6 } };
-
-		TileHighlighterCalculator tileHighlighterCalculator = new TileHighlighterCalculator(
-				gameGridData, movementRuleCollection);
 		TileData[] tilesToHighlight = tileHighlighterCalculator
 				.calculateTilesToHighlight(null);
 
@@ -51,30 +76,8 @@ public class TileHighlighterCalculatorTest {
 
 	@Test
 	public void testIfRulesDontAllowAnyThenNoTilesAreHighlighted() {
-		TileData tile1 = new TileData();
-		tile1.setPosition(new float[] { 0f, 0f, 0f });
-		TileData tile2 = new TileData();
-		tile2.setPosition(new float[] { 0f, 0f, 0f });
-		TileData tile3 = new TileData();
-		tile3.setPosition(new float[] { 0f, 0f, 0f });
-		TileData tile4 = new TileData();
-		tile4.setPosition(new float[] { 0f, 0f, 0f });
-		TileData tile5 = new TileData();
-		tile5.setPosition(new float[] { 0f, 0f, 0f });
-		TileData tile6 = new TileData();
-		tile6.setPosition(new float[] { 0f, 0f, 0f });
-		gameGridData.tileData = new TileData[][] { { tile1, tile2, tile3 },
-				{ tile4, tile5, tile6 } };
+		doReturn(Arrays.asList(failingRule)).when(ruleCollection).getRules();
 
-		movementRuleCollection.addRule(new IRule() {
-			public void validateMove(PieceInfo pieceToMove,
-					Vector3f targetLocation) throws ValidMoveException {
-				throw new ValidMoveException("");
-			}
-		});
-
-		TileHighlighterCalculator tileHighlighterCalculator = new TileHighlighterCalculator(
-				gameGridData, movementRuleCollection);
 		TileData[] tilesToHighlight = tileHighlighterCalculator
 				.calculateTilesToHighlight(null);
 
@@ -82,41 +85,16 @@ public class TileHighlighterCalculatorTest {
 	}
 
 	@Test
-	public void testRulesGetsPassedCorrectPieceInfo() {
-		TileData tile1 = new TileData();
-		tile1.setPosition(new float[] { 0f, 0f, 0f });
-		TileData tile2 = new TileData();
-		tile2.setPosition(new float[] { 0f, 0f, 0f });
-		TileData tile3 = new TileData();
-		tile3.setPosition(new float[] { 0f, 0f, 0f });
-		TileData tile4 = new TileData();
-		tile4.setPosition(new float[] { 0f, 0f, 0f });
-		TileData tile5 = new TileData();
-		tile5.setPosition(new float[] { 0f, 0f, 0f });
-		TileData tile6 = new TileData();
-		tile6.setPosition(new float[] { 0f, 0f, 0f });
-		gameGridData.tileData = new TileData[][] { { tile1, tile2, tile3 },
-				{ tile4, tile5, tile6 } };
-
-		movementRuleCollection.addRule(new IRule() {
-			public void validateMove(PieceInfo pieceToMove,
-					Vector3f targetLocation) throws ValidMoveException {
-				pieceReceived = pieceToMove;
-			}
-		});
+	public void testRulesGetsPassedCorrectPieceInfo() throws ValidMoveException {
+		IRule rule = mock(IRule.class);
+		doReturn(Arrays.asList(rule)).when(ruleCollection).getRules();
 
 		PieceInfo pieceInfo = new PieceInfo();
-		TileHighlighterCalculator highlighter = new TileHighlighterCalculator(
-				gameGridData, movementRuleCollection);
-		highlighter.calculateTilesToHighlight(pieceInfo);
-		assertSame(pieceInfo, pieceReceived);
-	}
+		tileHighlighterCalculator.calculateTilesToHighlight(pieceInfo);
 
-	private static class GameGridDataStub implements IGameGridData {
-		private TileData[][] tileData;
-
-		public TileData[][] getTileData() {
-			return tileData;
-		}
+		ArgumentCaptor<PieceInfo> pieceInfoCaptor = ArgumentCaptor.forClass(PieceInfo.class);
+		verify(rule, atLeastOnce()).validateMove(pieceInfoCaptor.capture(), any(Vector3f.class));
+		
+		assertSame(pieceInfo, pieceInfoCaptor.getValue());
 	}
 }
