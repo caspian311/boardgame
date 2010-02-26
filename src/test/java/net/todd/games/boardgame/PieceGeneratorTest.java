@@ -1,83 +1,43 @@
 package net.todd.games.boardgame;
 
-import static org.junit.Assert.assertSame;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Node;
-
-import net.todd.common.uitools.IListener;
-
+import org.junit.Before;
 import org.junit.Test;
 
 public class PieceGeneratorTest {
+	private IBranchGroup branchGroup;
+	private PieceGenerator pieceGenerator;
+	private IUserPiecesFactory userPiecesFactory;
+	private IPicker picker;
+
+	@Before
+	public void setUp() {
+		branchGroup = mock(IBranchGroup.class);
+		
+		pieceGenerator = new PieceGenerator(branchGroup);
+		
+		userPiecesFactory = mock(IUserPiecesFactory.class);
+		picker = mock(IPicker.class);
+	}
+	
 	@Test
 	public void testPieceGeneratorPassesPickerToGivenFactory() {
-		BranchGroupStub branchGroup = new BranchGroupStub();
-		PieceGenerator pieceGenerator = new PieceGenerator(branchGroup);
-		UserPiecesFactoryStub userPiecesFactory = new UserPiecesFactoryStub();
-		PickerStub picker = new PickerStub();
-
 		pieceGenerator.createPieces(picker, userPiecesFactory);
 
-		assertSame(picker, userPiecesFactory.picker);
+		verify(userPiecesFactory).constructUserPieces(picker);
 	}
 
 	@Test
 	public void testPieceGeneratorReturnsFactoryCreatedBranchGroup() {
-		BranchGroupStub branchGroup = new BranchGroupStub();
-		PieceGenerator pieceGenerator = new PieceGenerator(branchGroup);
-		UserPiecesFactoryStub userPiecesFactory = new UserPiecesFactoryStub();
+		IBranchGroup userPiecesBranchGroup = mock(IBranchGroup.class);
+		doReturn(userPiecesBranchGroup).when(userPiecesFactory).constructUserPieces(any(IPicker.class));
+		
+		pieceGenerator.createPieces(picker, userPiecesFactory);
 
-		pieceGenerator.createPieces(null, userPiecesFactory);
-
-		assertSame(branchGroup.addedChild, userPiecesFactory.branchGroup);
-	}
-
-	private static class BranchGroupStub implements IBranchGroup {
-		IBranchGroup addedChild;
-
-		public void addChild(IBranchGroup child) {
-			addedChild = child;
-		}
-
-		public void addChild(Node node) {
-			throw new UnsupportedOperationException();
-		}
-
-		public void compile() {
-			throw new UnsupportedOperationException();
-		}
-
-		public BranchGroup underlyingImplementation() {
-			throw new UnsupportedOperationException();
-		}
-
-		public void removeAllChildren() {
-			throw new UnsupportedOperationException();
-		}
-	}
-
-	private static class UserPiecesFactoryStub implements IUserPiecesFactory {
-		IBranchGroup branchGroup;
-		IPicker picker;
-
-		public IBranchGroup constructUserPieces(IPicker picker) {
-			this.picker = picker;
-			return branchGroup;
-		}
-	}
-
-	private static class PickerStub implements IPicker {
-		public void addListener(IListener listener) {
-			throw new UnsupportedOperationException();
-		}
-
-		public Node getSelectedNode() {
-			throw new UnsupportedOperationException();
-		}
-
-		public void removeListener(IListener listener) {
-			throw new UnsupportedOperationException();
-		}
+		verify(branchGroup).addChild(userPiecesBranchGroup);
 	}
 }
