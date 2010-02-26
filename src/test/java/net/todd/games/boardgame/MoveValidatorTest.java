@@ -2,9 +2,12 @@ package net.todd.games.boardgame;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 import javax.vecmath.Vector3f;
 
@@ -12,20 +15,28 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class MoveValidatorTest {
-	private GameStateStub gameState;
+	private IGameState gameState;
 	private IMovementRuleCollection movementRuleCollection;
+	private IMoveValidator validator;
+	private IRule failingRule;
+	private IRule passingRule;
 
 	@Before
-	public void setUp() {
-		gameState = new GameStateStub();
-		movementRuleCollection = new MovementRuleCollection();
+	public void setUp() throws ValidMoveException {
+		gameState = mock(IGameState.class);
+		movementRuleCollection = mock(IMovementRuleCollection.class);
+
+		validator = new MoveValidator(gameState, movementRuleCollection);
+
+		failingRule = mock(IRule.class);
+		doThrow(new ValidMoveException("Epic Fail!")).when(failingRule)
+				.validateMove(any(PieceInfo.class), any(Vector3f.class));
+
+		passingRule = mock(IRule.class);
 	}
 
 	@Test
-	public void testWillBlowupIfNoPieceOrTargetIsGiven() {
-		MoveValidator validator = new MoveValidator(gameState,
-				movementRuleCollection);
-
+	public void testWillBlowupIfNullPieceIsGiven() {
 		try {
 			validator.confirmMove(null, new Vector3f());
 			fail("should have failed");
@@ -34,7 +45,10 @@ public class MoveValidatorTest {
 					"Either piece doesn't exist or location to move to doesn't exist",
 					e.getMessage());
 		}
+	}
 
+	@Test
+	public void testWillBlowupIfNullTargetIsGiven() {
 		try {
 			validator.confirmMove(new PieceInfo(), null);
 			fail("should have failed");
@@ -43,7 +57,10 @@ public class MoveValidatorTest {
 					"Either piece doesn't exist or location to move to doesn't exist",
 					e.getMessage());
 		}
+	}
 
+	@Test
+	public void testWillBlowupIfNeitherPieceOrTargetIsGiven() {
 		try {
 			validator.confirmMove(null, null);
 			fail("should have failed");
@@ -56,15 +73,8 @@ public class MoveValidatorTest {
 
 	@Test
 	public void testValiatorFailsIfRuleFromCollectionFails() {
-		MoveValidator validator = new MoveValidator(gameState,
-				movementRuleCollection);
-
-		movementRuleCollection.addRule(new IRule() {
-			public void validateMove(PieceInfo pieceToMove,
-					Vector3f targetLocation) throws ValidMoveException {
-				throw new ValidMoveException("Epic Fail!");
-			}
-		});
+		doReturn(Arrays.asList(failingRule)).when(movementRuleCollection)
+				.getRules();
 
 		try {
 			validator.confirmMove(new PieceInfo(), new Vector3f(0f, 0f, 0f));
@@ -76,40 +86,13 @@ public class MoveValidatorTest {
 
 	@Test
 	public void testValiatorDoesntFailIfRulesFromCollectionAllPass() {
-		MoveValidator validator = new MoveValidator(gameState,
-				movementRuleCollection);
-
-		movementRuleCollection.addRule(new IRule() {
-			public void validateMove(PieceInfo pieceToMove,
-					Vector3f targetLocation) throws ValidMoveException {
-			}
-		});
-		movementRuleCollection.addRule(new IRule() {
-			public void validateMove(PieceInfo pieceToMove,
-					Vector3f targetLocation) throws ValidMoveException {
-			}
-		});
+		doReturn(Arrays.asList(passingRule)).when(movementRuleCollection)
+				.getRules();
 
 		try {
 			validator.confirmMove(new PieceInfo(), new Vector3f(0f, 0f, 0f));
 		} catch (ValidMoveException e) {
 			fail("should not have failed");
-		}
-	}
-
-	private static class GameStateStub implements IGameState {
-		private final List<PieceInfo> allPieces = new ArrayList<PieceInfo>();
-		private Team teamToMove;
-
-		public List<PieceInfo> getAllPieces() {
-			return allPieces;
-		}
-
-		public Team getTeamToMove() {
-			return teamToMove;
-		}
-
-		public void moveMade(String id, Vector3f targetLocation) {
 		}
 	}
 }
