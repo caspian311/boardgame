@@ -9,12 +9,8 @@ public class PieceFixture {
 
 	public static PieceInfo createPieceInfo() {
 		PieceInfo info = new PieceInfo();
-		float[] position = new float[3];
-		position[0] = random.nextFloat();
-		position[1] = random.nextFloat();
-		position[2] = random.nextFloat();
-
-		info.setPosition(new Vector3f(position));
+		info.setPosition(new Vector3f(new float[] { random.nextFloat(),
+				random.nextFloat(), random.nextFloat() }));
 		return info;
 	}
 }
