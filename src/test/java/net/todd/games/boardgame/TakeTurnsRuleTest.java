@@ -2,30 +2,30 @@ package net.todd.games.boardgame;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-
-import java.util.List;
-
-import javax.vecmath.Vector3f;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 import org.junit.Before;
 import org.junit.Test;
 
 public class TakeTurnsRuleTest {
-	private GameStateStub gameState;
+	private IGameState gameState;
 	private PieceInfo pieceFromTeam1;
+	private IRule rule;
 
 	@Before
 	public void setUp() {
-		gameState = new GameStateStub();
+		gameState = mock(IGameState.class);
+		
 		pieceFromTeam1 = new PieceInfo();
 		pieceFromTeam1.setTeam(Team.ONE);
+		
+		rule = new TakeTurnsRule(gameState);
 	}
 
 	@Test
 	public void testRulePassesWhenTeamOnesTurnAndPieceFromTeamOneMoves() {
-		TakeTurnsRule rule = new TakeTurnsRule(gameState);
-
-		gameState.teamToMove = Team.ONE;
+		doReturn(Team.ONE).when(gameState).getTeamToMove();
 
 		try {
 			rule.validateMove(pieceFromTeam1, null);
@@ -36,31 +36,13 @@ public class TakeTurnsRuleTest {
 
 	@Test
 	public void testRuleFailsWhenTeamTwoTurnAndPieceFromTeamOneMoves() {
-		TakeTurnsRule rule = new TakeTurnsRule(gameState);
-
-		gameState.teamToMove = Team.TWO;
+		doReturn(Team.TWO).when(gameState).getTeamToMove();
 
 		try {
 			rule.validateMove(pieceFromTeam1, null);
 			fail("invalid move");
 		} catch (ValidMoveException e) {
 			assertEquals("Not your turn to play", e.getMessage());
-		}
-	}
-
-	private static class GameStateStub implements IGameState {
-		private Team teamToMove;
-
-		public List<PieceInfo> getAllPieces() {
-			throw new UnsupportedOperationException();
-		}
-
-		public Team getTeamToMove() {
-			return teamToMove;
-		}
-
-		public void moveMade(String id, Vector3f targetLocation) {
-			throw new UnsupportedOperationException();
 		}
 	}
 }
